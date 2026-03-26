@@ -1,61 +1,23 @@
 # tommitoan.com
 
-Public-first personal brand gateway for Toan Ngo.
+Personal website for Toan Ngo, built with Next.js as a static-exported portfolio and product gateway.
 
-This project is the canonical entry point for the `tommitoan` ecosystem:
+## What is in this repo
 
-- `tommitoan.com` - brand gateway
-- `toanngo.cv` - recruiter-focused CV and resume site
-- `*.tommitoan.space` - selected tools, products, and self-hosted services
-
-The planning documents for this project live in `docs/`.
+- `/` is a sticker-based interactive landing page.
+- `/discover` explains the wider story: homelab, experiments, and channels.
+- `/products` lists public-facing tools and product directions.
+- `src/content/site-content.ts` holds most text and route content.
+- `src/content/home-scene.ts` holds homepage sticker positions, note content, and sticker asset config.
 
 ## Stack
 
 - Next.js 16 App Router
+- React 19
 - TypeScript 5
 - Tailwind CSS v4
 - Framer Motion
 - pnpm
-
-## Current status
-
-Batch 1 foundation is scaffolded:
-
-- static-export setup is in place
-- routes exist for `/`, `/discover`, and `/products`
-- metadata, sitemap, and robots are wired
-- typed site content lives in `src/content/site-content.ts`
-
-Batch 2 homepage gateway is now implemented:
-
-- cinematic 3-panel homepage experience is live
-- `Portfolio`, `Discover`, and `Products` each have distinct route cues
-- responsive behavior and reduced-motion-safe transitions are in place
-
-Batch 3 discover route is now implemented:
-
-- `/discover` now tells the broader narrative behind the brand
-- homelab architecture is featured with a diagram and deployment flow
-- self-hosted service layers, experiments, and social channels are mapped
-
-Batch 4 products route is now implemented:
-
-- `/products` now has a featured product hero for Bazica
-- supporting product cards, status logic, and product lanes are mapped
-- the public/private product boundary is made explicit in the page content
-
-Batch 5 launch polish is now implemented:
-
-- social preview metadata now points to `public/social-card.svg`
-- canonical metadata, manifest, and richer route metadata are wired
-- skip link, keyboard focus states, and active navigation state are in place
-
-Homepage redesign pass is now in progress:
-
-- `/` now follows a stronger command-deck composition instead of the earlier card stack
-- the homepage hero includes a system-stage visual and routing-focused CTA layer
-- gateway panels now have differentiated hierarchy, tone, and destination identity
 
 ## Local development
 
@@ -67,16 +29,45 @@ pnpm typecheck
 pnpm build
 ```
 
+## Key files
+
+- `src/app/page.tsx` - homepage scene renderer
+- `src/components/home/hero-sticker.tsx` - center sticker animation and CV link
+- `src/content/home-scene.ts` - editable sticker layout config
+- `src/content/site-content.ts` - typed content for the rest of the site
+- `src/app/discover/page.tsx` - Discover route
+- `src/app/products/page.tsx` - Products route
+- `next.config.ts` - static export config
+
+## Adjust sticker positions
+
+If a sticker looks too high, too low, too far left, or too far right, edit `src/content/home-scene.ts`.
+
+Example:
+
+```ts
+{
+  id: "backend",
+  className:
+    "absolute top-[25%] right-[8%] z-10 group drop-shadow-lg transition-transform duration-300 hover:scale-110 hover:-rotate-3",
+}
+```
+
+Useful class changes:
+
+- move up: lower `top-[25%]` to something like `top-[20%]`
+- move down: increase `top-[25%]` to `top-[30%]`
+- move left: increase `right-[8%]` or lower `left-[45%]`
+- move right: lower `right-[8%]` or increase `left-[45%]`
+- resize: change `width` and `height`
+
+More beginner-friendly guidance is in `docs/sticker-positioning-guide.md`.
+
 ## Docs
 
-- `docs/README.md`
-- `docs/business-strategy.md`
-- `docs/brand-ecosystem.md`
-- `docs/site-architecture.md`
-- `docs/content-strategy.md`
-- `docs/design-direction.md`
-- `docs/technical-direction.md`
-- `docs/implementation-plan.md`
-- `docs/delivery-batches.md`
-- `docs/deployment-strategy.md`
-- `docs/opencode-build-prompt.md`
+- `docs/README.md` - docs index
+- `docs/project-overview.md` - current project map
+- `docs/development-guide.md` - run, build, and edit workflow
+- `docs/sticker-positioning-guide.md` - how to move homepage stickers safely
+
+Legacy planning docs are still kept in `docs/` for reference.

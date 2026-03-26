@@ -1,37 +1,37 @@
 # Docs Index
 
-Planning and implementation documents for `tommitoan.com`.
+This folder now has two groups of documents:
 
-## Purpose
+- current guides for working on the codebase today
+- earlier planning documents kept for context
 
-`tommitoan.com` is the public-first gateway for Toan Ngo's personal brand. It is not a CV clone. It is the main entry point that routes visitors toward:
-
-- portfolio and resume
-- homelab and self-hosted work
-- public products and experiments
-- personal content channels
-
-## Documents
+## Current guides
 
 | File | Purpose |
 |------|---------|
-| `business-strategy.md` | Audience, goals, positioning, and business-facing product choices |
-| `brand-ecosystem.md` | Domain roles, ecosystem map, and public/private boundaries |
-| `site-architecture.md` | Route map, page structure, user flows, and information architecture |
-| `content-strategy.md` | What content belongs on each area of the site |
-| `design-direction.md` | Visual, motion, layout, and interaction direction |
-| `technical-direction.md` | Framework choice, stack recommendation, and technical architecture |
-| `implementation-plan.md` | Build phases, technical decisions, and delivery order |
-| `delivery-batches.md` | Small implementation batches designed for focused OpenCode sessions |
-| `deployment-strategy.md` | Domain, hosting, rollout, and post-launch guidance |
-| `opencode-build-prompt.md` | Ready-to-use implementation prompt for OpenCode |
+| `project-overview.md` | Current route map, content sources, and code ownership |
+| `development-guide.md` | Local setup, commands, and common edit workflow |
+| `sticker-positioning-guide.md` | Beginner guide for moving homepage stickers |
 
-## Working assumptions
+## Existing planning docs
 
-- `tommitoan.com` is the canonical root domain
-- the site is public-first
-- private tools are not linked prominently on the public homepage
-- `toanngo.cv` remains a dedicated resume and recruiter satellite
-- the third panel is officially named `Products`
-- visual inspiration should reuse the stronger brand quality of `/_tommitoan/toanngo.cv/`
-- SEO and site-platform patterns should borrow from `/me/`
+| File | Purpose |
+|------|---------|
+| `business-strategy.md` | Audience, goals, and product positioning |
+| `brand-ecosystem.md` | Domain roles and ecosystem map |
+| `site-architecture.md` | Original route and information architecture plan |
+| `content-strategy.md` | Content placement plan |
+| `design-direction.md` | Visual and motion direction |
+| `technical-direction.md` | Stack and implementation approach |
+| `implementation-plan.md` | Delivery phases and build plan |
+| `delivery-batches.md` | Small implementation batches |
+| `deployment-strategy.md` | Hosting and rollout planning |
+| `opencode-build-prompt.md` | Historical build prompt |
+
+## Recommended reading order
+
+1. `project-overview.md`
+2. `development-guide.md`
+3. `sticker-positioning-guide.md`
+
+Read the planning docs only when you need older intent or design rationale.
