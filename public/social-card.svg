@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Tommi Toan social card">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#06101d" />
+      <stop offset="55%" stop-color="#0b1426" />
+      <stop offset="100%" stop-color="#05070d" />
+    </linearGradient>
+    <radialGradient id="glow1" cx="0" cy="0" r="1" gradientTransform="translate(250 140) rotate(24) scale(360 210)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6dd3ff" stop-opacity="0.34" />
+      <stop offset="1" stop-color="#6dd3ff" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glow2" cx="0" cy="0" r="1" gradientTransform="translate(980 120) rotate(160) scale(260 180)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffc56d" stop-opacity="0.24" />
+      <stop offset="1" stop-color="#ffc56d" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <rect width="1200" height="630" fill="url(#glow1)" />
+  <rect width="1200" height="630" fill="url(#glow2)" />
+  <g opacity="0.18" stroke="#cfe8ff">
+    <path d="M0 508H1200" />
+    <path d="M0 540H1200" />
+    <path d="M160 0V630" />
+    <path d="M194 0V630" />
+  </g>
+  <g transform="translate(96 92)">
+    <rect x="0" y="0" width="168" height="42" rx="21" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.12)" />
+    <text x="84" y="27" fill="#d4ecff" font-size="15" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" letter-spacing="4">PERSONAL BRAND GATEWAY</text>
+    <text x="0" y="142" fill="#f1f7ff" font-size="82" font-weight="700" font-family="Arial, Helvetica, sans-serif">Tommi Toan</text>
+    <text x="0" y="216" fill="#cfe1f5" font-size="32" font-family="Arial, Helvetica, sans-serif">Builder of backend systems, self-hosted platforms,</text>
+    <text x="0" y="256" fill="#cfe1f5" font-size="32" font-family="Arial, Helvetica, sans-serif">and useful digital products.</text>
+    <text x="0" y="340" fill="#8fa9bf" font-size="24" font-family="Arial, Helvetica, sans-serif">Portfolio  •  Discover  •  Products</text>
+  </g>
+  <g transform="translate(760 126)">
+    <rect width="324" height="370" rx="30" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.12)" />
+    <rect x="28" y="28" width="268" height="88" rx="22" fill="rgba(109,211,255,0.12)" />
+    <text x="48" y="68" fill="#edf7ff" font-size="18" font-family="Arial, Helvetica, sans-serif" letter-spacing="2">CHOOSE THE DOOR</text>
+    <text x="48" y="96" fill="#edf7ff" font-size="32" font-weight="700" font-family="Arial, Helvetica, sans-serif">that matches intent</text>
+    <rect x="28" y="146" width="268" height="62" rx="20" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)" />
+    <rect x="28" y="224" width="268" height="62" rx="20" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)" />
+    <rect x="28" y="302" width="268" height="40" rx="20" fill="rgba(255,197,109,0.1)" stroke="rgba(255,197,109,0.16)" />
+    <text x="52" y="184" fill="#edf7ff" font-size="24" font-family="Arial, Helvetica, sans-serif">Portfolio</text>
+    <text x="52" y="262" fill="#edf7ff" font-size="24" font-family="Arial, Helvetica, sans-serif">Discover</text>
+    <text x="52" y="328" fill="#ffd9a0" font-size="20" font-family="Arial, Helvetica, sans-serif">Products</text>
+  </g>
+</svg>
