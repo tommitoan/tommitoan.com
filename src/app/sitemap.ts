@@ -8,5 +8,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     { url: `${baseUrl}/`, priority: 1 },
+    { url: `${baseUrl}/tech/`, priority: 0.9 },
+    { url: `${baseUrl}/discover/`, priority: 0.85 },
+    { url: `${baseUrl}/fengshui/`, priority: 0.8 },
   ];
 }

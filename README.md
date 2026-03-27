@@ -1,14 +1,16 @@
 # tommitoan.com
 
-Personal website for Toan Ngo, built with Next.js as a static-exported portfolio and product gateway.
+Personal website for Toan Ngo, built with Next.js as a space gateway with three internal worlds: `Tech`, `Discover`, and `Fengshui`.
 
 ## What is in this repo
 
-- `/` is a sticker-based interactive landing page.
-- `/discover` explains the wider story: homelab, experiments, and channels.
-- `/products` lists public-facing tools and product directions.
-- `src/content/site-content.ts` holds most text and route content.
-- `src/content/home-scene.ts` holds homepage sticker positions, note content, and sticker asset config.
+- `/` is a fullscreen 3D astronaut gateway with 3 interactive portal windows, built with React Three Fiber and Framer Motion
+- `/tech` is the internal engineering and CV route
+- `/discover` is the broader story: homelab, experiments, and channels
+- `/fengshui` is the curated Bazica and Feng Shui product lane
+- `src/content/site-content.ts` holds shared site metadata and route copy
+- `src/content/space-gateway-content.ts` controls homepage portal labels, colors, and destinations
+- `src/content/tech-content.ts` controls the internal Tech route
 
 ## Stack
 
@@ -17,6 +19,7 @@ Personal website for Toan Ngo, built with Next.js as a static-exported portfolio
 - TypeScript 5
 - Tailwind CSS v4
 - Framer Motion
+- React Three Fiber / Drei (for 3D astronaut and starfield)
 - pnpm
 
 ## Local development
@@ -31,43 +34,31 @@ pnpm build
 
 ## Key files
 
-- `src/app/page.tsx` - homepage scene renderer
-- `src/components/home/hero-sticker.tsx` - center sticker animation and CV link
-- `src/content/home-scene.ts` - editable sticker layout config
-- `src/content/site-content.ts` - typed content for the rest of the site
-- `src/app/discover/page.tsx` - Discover route
-- `src/app/products/page.tsx` - Products route
-- `next.config.ts` - static export config
+- `src/app/(gateway)/page.tsx` - homepage route
+- `src/components/gateway/space-gateway-home.tsx` - the layered R3F + Framer Motion 3D gateway scene
+- `src/components/canvas/StarsBackground.tsx` - mathematical drifting starfield
+- `src/components/canvas/SpaceBackgroundAstronaut.tsx` - procedural floating 2D astronaut
+- `src/app/(content)/tech/page.tsx` - Tech route
+- `src/app/(content)/discover/page.tsx` - Discover route
+- `src/app/(content)/fengshui/page.tsx` - Fengshui route
 
-## Adjust sticker positions
+## Adjust the homepage gateway
 
-If a sticker looks too high, too low, too far left, or too far right, edit `src/content/home-scene.ts`.
+If you want to change the homepage routes, labels, colors, or gradients, edit `src/content/space-gateway-content.ts`.
 
-Example:
+If you want to change the 3D layout, physics, or visuals, edit:
 
-```ts
-{
-  id: "backend",
-  className:
-    "absolute top-[25%] right-[8%] z-10 group drop-shadow-lg transition-transform duration-300 hover:scale-110 hover:-rotate-3",
-}
-```
+- `src/components/gateway/space-gateway-home.tsx`
+- `src/components/canvas/spaceBackgroundConfig.ts`
+- `src/components/canvas/SpaceBackgroundAstronaut.tsx`
 
-Useful class changes:
-
-- move up: lower `top-[25%]` to something like `top-[20%]`
-- move down: increase `top-[25%]` to `top-[30%]`
-- move left: increase `right-[8%]` or lower `left-[45%]`
-- move right: lower `right-[8%]` or increase `left-[45%]`
-- resize: change `width` and `height`
-
-More beginner-friendly guidance is in `docs/sticker-positioning-guide.md`.
+More beginner-friendly guidance is in `docs/gateway-scene-guide.md`.
 
 ## Docs
 
 - `docs/README.md` - docs index
-- `docs/project-overview.md` - current project map
+- `docs/project-overview.md` - current route map and content ownership
 - `docs/development-guide.md` - run, build, and edit workflow
-- `docs/sticker-positioning-guide.md` - how to move homepage stickers safely
+- `docs/gateway-scene-guide.md` - how to tune the homepage gateway scene
 
-Legacy planning docs are still kept in `docs/` for reference.
+Older planning docs are still kept in `docs/` for reference.

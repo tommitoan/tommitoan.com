@@ -11,7 +11,7 @@ This folder now has two groups of documents:
 |------|---------|
 | `project-overview.md` | Current route map, content sources, and code ownership |
 | `development-guide.md` | Local setup, commands, and common edit workflow |
-| `sticker-positioning-guide.md` | Beginner guide for moving homepage stickers |
+| `gateway-scene-guide.md` | Beginner guide for tuning the homepage gateway |
 
 ## Existing planning docs
 
@@ -32,6 +32,6 @@ This folder now has two groups of documents:
 
 1. `project-overview.md`
 2. `development-guide.md`
-3. `sticker-positioning-guide.md`
+3. `gateway-scene-guide.md`
 
 Read the planning docs only when you need older intent or design rationale.

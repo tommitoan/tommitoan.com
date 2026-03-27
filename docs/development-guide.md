@@ -20,25 +20,37 @@ pnpm build
 
 ## Everyday workflow
 
-1. Start `pnpm dev`.
-2. Open the homepage.
-3. Edit the file you care about.
-4. Save the file and check the browser.
-5. Run `pnpm lint` and `pnpm typecheck` before finishing.
+1. Start `pnpm dev`
+2. Open the route you want to change
+3. Edit the matching content file, component, or CSS
+4. Save and review the result
+5. Run `pnpm lint` and `pnpm typecheck`
 
 ## What to edit for common tasks
 
-### Change homepage sticker positions
+### Change homepage window labels or route targets
 
-Edit `src/content/home-scene.ts`.
+Edit `src/content/gateway-content.ts`.
 
-### Change homepage popup text
+### Change homepage scene visuals
 
-Edit `homeNotes` inside `src/content/home-scene.ts`.
+Edit:
 
-### Change Discover or Products content
+- `src/components/gateway/space-gateway-home.tsx`
+- `src/components/gateway/space-window.tsx`
+- `src/app/globals.css`
+
+### Change Tech route copy
+
+Edit `src/content/tech-content.ts`.
+
+### Change Discover route copy
 
 Edit `src/content/site-content.ts`.
+
+### Change Fengshui route copy
+
+Edit `src/app/(content)/fengshui/page.tsx` or move more text into a dedicated content file later.
 
 ### Change SEO metadata
 
@@ -49,15 +61,15 @@ Edit:
 
 ### Change images
 
-Put new image assets in `public/`.
+Put new images in `public/`.
 
-## Good habit for frontend changes
+## Good habits for this project
 
-- move one sticker at a time
-- refresh often and compare before/after
-- test both desktop and mobile sizes
-- avoid editing layout classes directly inside many components when one config file can control them
+- keep route text in content files when possible
+- keep visual tuning in components and CSS
+- check both fullscreen homepage and long-scroll routes
+- test both desktop and mobile
 
-## Current homepage layout source of truth
+## Current homepage source of truth
 
-For homepage sticker placement, treat `src/content/home-scene.ts` as the single source of truth.
+For the homepage gateway, treat `src/content/gateway-content.ts` as the source of truth for route intent and labels.

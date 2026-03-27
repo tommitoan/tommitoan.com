@@ -93,14 +93,14 @@ export const siteContent = {
     title: "Tommi Toan",
     domain: "https://tommitoan.com",
     description:
-      "Simple portfolio for Toan Ngo covering software engineering, homelab infrastructure, public tools, and contact links.",
-    tagline: "Software engineer building backend systems, homelab platforms, and useful digital products.",
+      "Space gateway for Toan Ngo covering technology work, discovery routes, Feng Shui product experiments, and contact paths.",
+    tagline: "Software engineer building backend systems, homelab platforms, and useful product worlds.",
   },
   navigation: [
     { label: "Home", href: "/#home" },
+    { label: "Tech", href: "/tech" },
     { label: "Discover", href: "/discover" },
-    { label: "Products", href: "/products" },
-    { label: "CV", href: "https://toanngo.cv", external: true },
+    { label: "Fengshui", href: "/fengshui" },
   ] satisfies NavItem[],
   home: {
     eyebrow: "Tommi Toan",
@@ -439,6 +439,6 @@ export const siteContent = {
       "A product page should increase trust, not curiosity at any cost. If a tool is unfinished, private, or contextless, it should stay out of the public hub until it earns the right to be here.",
   },
   footer: {
-    note: "tommitoan.com is the simple public front door. toanngo.cv remains the dedicated CV and resume site.",
+    note: "tommitoan.com is now the main gateway for Tech, Discover, and Fengshui routes. The external CV remains available when needed.",
   },
 };

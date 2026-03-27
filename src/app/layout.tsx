@@ -86,11 +86,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
   return (
     <html lang="en">
-      <body className={`${displayFont.variable} ${bodyFont.variable} antialiased m-0 p-0 overflow-hidden`}>
+      <body className={`${displayFont.variable} ${bodyFont.variable} m-0 p-0 antialiased`}>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-        <main id="main-content" className="w-full h-screen relative bg-[#f7f4ed]">
-          {children}
-        </main>
+        {children}
       </body>
     </html>
   );
