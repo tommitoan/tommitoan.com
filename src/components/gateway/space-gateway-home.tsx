@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { spaceGateways, type SpaceGateway } from "@/content/space-gateway-content";
 import { SpaceBackgroundAstronaut } from "@/components/canvas/SpaceBackgroundAstronaut";
+import { StarsBackgroundClient } from "@/components/tech/StarsBackgroundClient";
 import { Canvas } from "@react-three/fiber";
 
 export function SpaceGatewayHome() {
@@ -42,6 +43,16 @@ export function SpaceGatewayHome() {
 
   return (
     <section className="space-gateway-shell relative w-full h-screen overflow-hidden text-white">
+      {/* Base background layers (absolute, behind everything) */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{ backgroundImage: "url('/bg.png')", backgroundSize: "cover", backgroundPosition: "center" }}
+      />
+      <div className="absolute inset-0 z-[1] pointer-events-none bg-[radial-gradient(circle_at_top,rgba(77,150,255,0.10),transparent_28%),radial-gradient(circle_at_80%_20%,rgba(176,87,255,0.08),transparent_24%),linear-gradient(180deg,rgba(3,7,17,0.45)_0%,rgba(7,16,28,0.45)_100%)]" />
+      <div className="absolute inset-0 z-[2] pointer-events-none">
+        <StarsBackgroundClient absolute />
+      </div>
+
       {/* Container that zooms IN when a portal is selected */}
       <motion.div
         animate={{
@@ -50,7 +61,7 @@ export function SpaceGatewayHome() {
           y: selected ? "30vh" : "0vh", // Pan up towards the center of the portal
         }}
         transition={{ duration: 1.4, ease: "easeInOut" }}
-        className="absolute inset-0 w-full h-full"
+        className="absolute inset-0 w-full h-full z-[3]"
       >
         {/* Layer 1: Backgrounds */}
         <div className="space-nebula space-nebula-left" />

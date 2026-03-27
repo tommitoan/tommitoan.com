@@ -2129,11 +2129,6 @@ select:focus-visible {
     min-height: 100vh;
     flex-direction: column;
     justify-content: space-between;
-    overflow: hidden;
-    background:
-      radial-gradient(circle at top, rgba(55, 126, 255, 0.22), transparent 22%),
-      radial-gradient(circle at 80% 16%, rgba(201, 97, 255, 0.18), transparent 18%),
-      linear-gradient(180deg, #030711 0%, #07111d 52%, #040813 100%);
   }
 
   .space-nebula,

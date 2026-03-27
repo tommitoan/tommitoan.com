@@ -63,15 +63,23 @@ const CANVAS_STYLE: React.CSSProperties = {
   left: 0,
   width: "100vw",
   height: "100vh",
-  zIndex: -5,
+  zIndex: 2,
   pointerEvents: "none",
 };
 
-export function StarsBackground() {
+const CANVAS_ABSOLUTE_STYLE: React.CSSProperties = {
+  position: "absolute",
+  inset: 0,
+  width: "100%",
+  height: "100%",
+  pointerEvents: "none",
+};
+
+export function StarsBackground({ absolute = false }: { absolute?: boolean }) {
   return (
     <Canvas
       camera={{ position: [0, 0, 1] }}
-      style={CANVAS_STYLE}
+      style={absolute ? CANVAS_ABSOLUTE_STYLE : CANVAS_STYLE}
       dpr={[1, 2]}
       gl={{ antialias: false, powerPreference: "low-power" }}
     >
