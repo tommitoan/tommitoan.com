@@ -50,7 +50,7 @@ export function SpaceGatewayHome() {
       />
       <div className="absolute inset-0 z-[1] pointer-events-none bg-[radial-gradient(circle_at_top,rgba(77,150,255,0.10),transparent_28%),radial-gradient(circle_at_80%_20%,rgba(176,87,255,0.08),transparent_24%),linear-gradient(180deg,rgba(3,7,17,0.45)_0%,rgba(7,16,28,0.45)_100%)]" />
       <div className="absolute inset-0 z-[2] pointer-events-none">
-        <StarsBackgroundClient absolute />
+        <StarsBackgroundClient absolute gateway />
       </div>
 
       {/* Container that zooms IN when a portal is selected */}
@@ -111,8 +111,8 @@ export function SpaceGatewayHome() {
                     e.stopPropagation();
                     handleSelect(gateway);
                   }}
-                  className={`group relative flex-1 w-full md:w-auto h-full border-2 rounded-[2rem] overflow-hidden ${selected ? 'cursor-default pointer-events-none' : 'cursor-pointer'} flex flex-col items-center transition-all duration-500 bg-white/[0.02] backdrop-blur-sm ${
-                    isHovered || isSelected ? gateway.borderColor : 'border-white/10'
+                  className={`group relative flex-1 w-full md:w-auto h-full border-2 rounded-[2rem] overflow-hidden ${selected ? 'cursor-default pointer-events-none' : 'cursor-pointer'} flex flex-col items-center transition-all duration-500 ${
+                    isHovered || isSelected ? gateway.borderColor : 'border-white/25'
                   }`}
                   style={{
                     boxShadow: isHovered || isSelected ? `0 0 80px -10px ${gateway.glowColor}` : '0 0 0px transparent',

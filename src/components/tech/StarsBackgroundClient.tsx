@@ -7,6 +7,6 @@ const StarsBackground = dynamic(
   { ssr: false }
 );
 
-export function StarsBackgroundClient({ absolute = false }: { absolute?: boolean }) {
-  return <StarsBackground absolute={absolute} />;
+export function StarsBackgroundClient({ absolute = false, gateway = false }: { absolute?: boolean; gateway?: boolean }) {
+  return <StarsBackground absolute={absolute} gateway={gateway} />;
 }

@@ -6,9 +6,18 @@ import { Points, PointMaterial } from "@react-three/drei";
 import type { Points as ThreePoints } from "three";
 
 const STARS_CONFIG = {
-  count: 1200,
+  count: 300,
   radius: 1.2,
-  size: 0.002,
+  size: 0.004,
+  color: "#c8a8ff",
+  rotationX: 10,
+  rotationY: 15,
+};
+
+const GATEWAY_STARS_CONFIG = {
+  count: 1500,
+  radius: 1.2,
+  size: 0.003,
   color: "#915EFF",
   rotationX: 15,
   rotationY: 20,
@@ -32,14 +41,14 @@ function useSpherePoints(count: number, radius: number): Float32Array {
   }, [count, radius]);
 }
 
-function StarField() {
+function StarField({ config }: { config: typeof STARS_CONFIG }) {
   const ref = useRef<ThreePoints>(null!);
-  const positions = useSpherePoints(STARS_CONFIG.count, STARS_CONFIG.radius);
+  const positions = useSpherePoints(config.count, config.radius);
 
   useFrame((_state, delta) => {
     if (!ref.current) return;
-    ref.current.rotation.x -= delta / STARS_CONFIG.rotationX;
-    ref.current.rotation.y -= delta / STARS_CONFIG.rotationY;
+    ref.current.rotation.x -= delta / config.rotationX;
+    ref.current.rotation.y -= delta / config.rotationY;
   });
 
   return (
@@ -47,8 +56,8 @@ function StarField() {
       <Points ref={ref} positions={positions} stride={3} frustumCulled={false}>
         <PointMaterial
           transparent
-          color={STARS_CONFIG.color}
-          size={STARS_CONFIG.size}
+          color={config.color}
+          size={config.size}
           sizeAttenuation
           depthWrite={false}
         />
@@ -75,7 +84,8 @@ const CANVAS_ABSOLUTE_STYLE: React.CSSProperties = {
   pointerEvents: "none",
 };
 
-export function StarsBackground({ absolute = false }: { absolute?: boolean }) {
+export function StarsBackground({ absolute = false, gateway = false }: { absolute?: boolean; gateway?: boolean }) {
+  const config = gateway ? GATEWAY_STARS_CONFIG : STARS_CONFIG;
   return (
     <Canvas
       camera={{ position: [0, 0, 1] }}
@@ -83,7 +93,7 @@ export function StarsBackground({ absolute = false }: { absolute?: boolean }) {
       dpr={[1, 2]}
       gl={{ antialias: false, powerPreference: "low-power" }}
     >
-      <StarField />
+      <StarField config={config} />
     </Canvas>
   );
 }
