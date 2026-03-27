@@ -4,7 +4,6 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { spaceGateways, type SpaceGateway } from "@/content/space-gateway-content";
-import { StarsBackground } from "@/components/canvas/StarsBackground";
 import { SpaceBackgroundAstronaut } from "@/components/canvas/SpaceBackgroundAstronaut";
 import { Canvas } from "@react-three/fiber";
 
@@ -54,8 +53,6 @@ export function SpaceGatewayHome() {
         className="absolute inset-0 w-full h-full"
       >
         {/* Layer 1: Backgrounds */}
-        <div className="space-stars-layer" />
-        <StarsBackground />
         <div className="space-nebula space-nebula-left" />
         <div className="space-nebula space-nebula-right" />
         <div className="space-grid-haze" />
