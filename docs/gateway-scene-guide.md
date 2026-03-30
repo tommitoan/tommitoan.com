@@ -60,6 +60,12 @@ Edit `gatewaySceneConfig.row` in `src/components/gateway/gatewaySceneConfig.ts`.
 
 Edit `gatewaySceneConfig.planets.<portal>` in `src/components/gateway/gatewaySceneConfig.ts`.
 
+The planet is positioned inside the shared `gatewaySceneConfig.planetStage` area, not the full card.
+
+That is important because the bottom of the card is reserved visually for the title panel.
+
+If a planet feels centered in code but still looks off in the frame, adjust `planetStage` first, then the per-planet anchor.
+
 Each planet has:
 
 - `size` for responsive width and height
@@ -68,6 +74,11 @@ Each planet has:
 - `anchor.offsetXPercent` to nudge left or right
 - `anchor.offsetYPercent` to nudge up or down
 - `hoverLiftPx` to control how much the planet rises on hover
+
+Shared stage controls:
+
+- `planetStage.topPercent` moves the whole planet stage down from the top
+- `planetStage.heightPercent` controls how much of the card is treated as the planet area
 
 Example:
 

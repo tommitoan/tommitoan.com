@@ -24,6 +24,11 @@ interface PlanetSceneConfig {
   hoverLiftPx: number;
 }
 
+interface PlanetStageConfig {
+  topPercent: number;
+  heightPercent: number;
+}
+
 export const gatewaySceneConfig = {
   row: {
     scale: 0.7,
@@ -38,6 +43,10 @@ export const gatewaySceneConfig = {
     height: { mobileRem: 26, viewport: 70, desktopRem: 34 },
     radiusRem: 2,
   },
+  planetStage: {
+    topPercent: 0,
+    heightPercent: 70,
+  } satisfies PlanetStageConfig,
   planets: {
     tech: {
       size: { mobileRem: 6.2, viewport: 10, desktopRem: 8.1 },
@@ -129,5 +138,15 @@ export function createAnchorStyle(anchor: SceneAnchor): CSSProperties {
     left,
     top,
     transform: `translate(${translateX}, ${translateY})`,
+  };
+}
+
+export function createPlanetStageStyle(stage: PlanetStageConfig): CSSProperties {
+  return {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: `${stage.topPercent}%`,
+    height: `${stage.heightPercent}%`,
   };
 }

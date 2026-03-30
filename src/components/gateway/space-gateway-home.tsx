@@ -15,6 +15,7 @@ import {
   createAnchorStyle,
   createFrameStyle,
   createGapStyle,
+  createPlanetStageStyle,
   createSquareStyle,
 } from "@/components/gateway/gatewaySceneConfig";
 import { Canvas } from "@react-three/fiber";
@@ -150,25 +151,26 @@ export function SpaceGatewayHome() {
                   )}
 
                   {/* 3D Planet */}
-                  <div className="absolute inset-0 pointer-events-none">
-                    <motion.div
-                      animate={{
-                        y: isHovered || isSelected ? -planetScene.hoverLiftPx : 0,
-                        scale: isHovered || isSelected ? 1.05 : 1,
-                      }}
-                      transition={{ duration: 1.2, ease: "easeOut" }}
-                      style={{
-                        ...createAnchorStyle(planetScene.anchor),
-                        ...createSquareStyle(planetScene.size),
-                        filter: `drop-shadow(0 0 ${isHovered || isSelected ? '48px' : '24px'} ${gateway.glowColor})`,
-                        transition: 'filter 0.7s ease',
-                      }}
-                    >
-                      <PlanetSphereClient
-                        {...gateway.planet}
-                        isHovered={isHovered || isSelected}
-                      />
-                    </motion.div>
+                  <div className="pointer-events-none" style={createPlanetStageStyle(gatewaySceneConfig.planetStage)}>
+                    <div style={createAnchorStyle(planetScene.anchor)}>
+                      <motion.div
+                        animate={{
+                          y: isHovered || isSelected ? -planetScene.hoverLiftPx : 0,
+                          scale: isHovered || isSelected ? 1.05 : 1,
+                        }}
+                        transition={{ duration: 1.2, ease: "easeOut" }}
+                        style={{
+                          ...createSquareStyle(planetScene.size),
+                          filter: `drop-shadow(0 0 ${isHovered || isSelected ? '48px' : '24px'} ${gateway.glowColor})`,
+                          transition: 'filter 0.7s ease',
+                        }}
+                      >
+                        <PlanetSphereClient
+                          {...gateway.planet}
+                          isHovered={isHovered || isSelected}
+                        />
+                      </motion.div>
+                    </div>
                   </div>
 
                   {/* HUD panels removed — Matrix rain is enough */}
