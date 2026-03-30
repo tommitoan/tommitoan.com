@@ -6,12 +6,12 @@ import { Points, PointMaterial } from "@react-three/drei";
 import type { Points as ThreePoints } from "three";
 
 const STARS_CONFIG = {
-  count: 300,
+  count: 150,
   radius: 1.2,
   size: 0.004,
   color: "#c8a8ff",
-  rotationX: 10,
-  rotationY: 15,
+  rotationX: 5,
+  rotationY: 10,
 };
 
 const GATEWAY_STARS_CONFIG = {
