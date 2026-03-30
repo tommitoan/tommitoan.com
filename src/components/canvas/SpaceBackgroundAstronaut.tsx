@@ -39,6 +39,7 @@ export function SpaceBackgroundAstronaut({ isWarping = false, targetIndex = 1 }:
   const glowRef = useRef<Mesh>(null);
   const texture = useLoader(TextureLoader, "/astronaunt_1.png");
   const glowTexture = useMemo(() => createGlowTexture(), []);
+  const astronautConfig = spaceBackgroundConfig.astronaut;
   
   // Track warp progress
   const warpProgress = useRef(0);
@@ -56,62 +57,57 @@ export function SpaceBackgroundAstronaut({ isWarping = false, targetIndex = 1 }:
     const time = state.clock.elapsedTime;
     
     if (isWarping) {
-       // Quickly accelerate warp progress
-       warpProgress.current = MathUtils.damp(warpProgress.current, 1, 4, delta);
-       
-       // Calculate target X position based on which portal was clicked (-1 for left, 0 for center, 1 for right)
+       warpProgress.current = MathUtils.damp(warpProgress.current, 1, astronautConfig.warp.progressDamping, delta);
+        
        const xDir = targetIndex === 0 ? -1 : targetIndex === 2 ? 1 : 0;
-       
-       // Sucked into portal effect
-       // Shrinks rapidly
-       const scale = MathUtils.lerp(2.4, 0.1, warpProgress.current);
+        
+       const scale = MathUtils.lerp(astronautConfig.placement.scale, astronautConfig.warp.endScale, warpProgress.current);
        root.scale.setScalar(scale);
-       
-       // Flies upwards and towards the target portal
-       root.position.y = MathUtils.lerp(-1.8, 1.5, warpProgress.current);
-       root.position.x = MathUtils.lerp(0, xDir * 2.5, warpProgress.current);
-       root.position.z = MathUtils.lerp(1, -2, warpProgress.current); // fly away from camera
-       
-       // Starts spinning out of control
-       pose.rotation.z += delta * 15 * warpProgress.current;
-       pose.rotation.x += delta * 10 * warpProgress.current;
-       
-    } else {
-      // Idle state
-      // Position at bottom center, acting as foreground observer
-      root.position.set(0, -1.8, 1);
-      root.scale.setScalar(2.4); // make larger to seem closer
+        
+       root.position.y = MathUtils.lerp(astronautConfig.placement.y, astronautConfig.warp.endY, warpProgress.current);
+       root.position.x = MathUtils.lerp(astronautConfig.placement.x, xDir * astronautConfig.warp.targetOffsetX, warpProgress.current);
+       root.position.z = MathUtils.lerp(astronautConfig.placement.z, astronautConfig.warp.endZ, warpProgress.current);
+        
+       pose.rotation.z += delta * astronautConfig.warp.spinSpeedZ * warpProgress.current;
+       pose.rotation.x += delta * astronautConfig.warp.spinSpeedX * warpProgress.current;
+        
+     } else {
+      warpProgress.current = MathUtils.damp(warpProgress.current, 0, astronautConfig.warp.progressDamping, delta);
+      root.position.set(
+        astronautConfig.placement.x,
+        astronautConfig.placement.y,
+        astronautConfig.placement.z,
+      );
+      root.scale.setScalar(astronautConfig.placement.scale);
 
-      // Slight floating effect for the whole group
-      root.position.y = -1.8 + Math.sin(time * 0.5) * 0.05;
+      if (astronautConfig.idle.enabled) {
+        root.position.y = astronautConfig.placement.y + Math.sin(time * astronautConfig.idle.floatSpeed) * astronautConfig.idle.floatAmplitudeY;
+      }
 
-      // Billboard looks at camera
       billboard.quaternion.copy(state.camera.quaternion);
 
-      // Subtle breathing/bobbing for the pose
-      pose.position.y = MathUtils.damp(
-        pose.position.y,
-        Math.sin(time * 0.8) * 0.02,
-        3.8,
-        delta,
-      );
-      // Subtle rotation/sway
-      pose.rotation.z = MathUtils.damp(
-        pose.rotation.z,
-        Math.sin(time * 0.5) * 0.02,
-        2.0,
-        delta,
-      );
-      pose.rotation.x = MathUtils.damp(
-        pose.rotation.x,
-        Math.cos(time * 0.4) * 0.02,
-        3.6,
-        delta,
-      );
+      const poseY = astronautConfig.idle.enabled
+        ? Math.sin(time * astronautConfig.idle.poseBobSpeed) * astronautConfig.idle.poseBobAmplitudeY
+        : 0;
+
+      const tiltZ = astronautConfig.idle.enabled
+        ? Math.sin(time * astronautConfig.idle.poseTiltSpeedZ) * astronautConfig.idle.poseTiltAmplitudeZ
+        : 0;
+
+      const tiltX = astronautConfig.idle.enabled
+        ? Math.cos(time * astronautConfig.idle.poseTiltSpeedX) * astronautConfig.idle.poseTiltAmplitudeX
+        : 0;
+
+      pose.position.y = MathUtils.damp(pose.position.y, poseY, 3.8, delta);
+      pose.rotation.z = MathUtils.damp(pose.rotation.z, tiltZ, 2.0, delta);
+      pose.rotation.x = MathUtils.damp(pose.rotation.x, tiltX, 3.6, delta);
     }
 
     if (!Array.isArray(glow.material)) {
-      glow.material.opacity = (0.4 + Math.sin(time) * 0.1) * (1 - warpProgress.current);
+      glow.material.opacity = (
+        astronautConfig.glow.baseOpacity +
+        Math.sin(time * astronautConfig.glow.pulseSpeed) * astronautConfig.glow.pulseAmplitude
+      ) * (1 - warpProgress.current);
     }
   });
 
@@ -122,8 +118,8 @@ export function SpaceBackgroundAstronaut({ isWarping = false, targetIndex = 1 }:
           ref={glowRef}
           position={[0, -0.02, -0.02]}
           scale={[
-            spaceBackgroundConfig.astronaut.spriteWidth * spaceBackgroundConfig.astronaut.glowScale,
-            spaceBackgroundConfig.astronaut.spriteHeight * spaceBackgroundConfig.astronaut.glowScale,
+            astronautConfig.sprite.width * astronautConfig.sprite.glowScale,
+            astronautConfig.sprite.height * astronautConfig.sprite.glowScale,
             1,
           ]}
           renderOrder={1}
@@ -141,8 +137,8 @@ export function SpaceBackgroundAstronaut({ isWarping = false, targetIndex = 1 }:
         <group ref={poseRef}>
           <mesh
             scale={[
-              spaceBackgroundConfig.astronaut.spriteWidth,
-              spaceBackgroundConfig.astronaut.spriteHeight,
+              astronautConfig.sprite.width,
+              astronautConfig.sprite.height,
               1,
             ]}
             renderOrder={2}

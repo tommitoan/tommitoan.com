@@ -7,6 +7,16 @@ import { spaceGateways, type SpaceGateway } from "@/content/space-gateway-conten
 import { SpaceBackgroundAstronaut } from "@/components/canvas/SpaceBackgroundAstronaut";
 import { StarsBackgroundClient } from "@/components/tech/StarsBackgroundClient";
 import { PlanetSphereClient } from "@/components/gateway/PlanetSphereClient";
+import { MatrixRainCanvas } from "@/components/gateway/MatrixRainCanvas";
+import { AuroraCanvas } from "@/components/gateway/AuroraCanvas";
+import { FengShuiLeavesCanvas } from "@/components/gateway/FengShuiLeavesCanvas";
+import {
+  gatewaySceneConfig,
+  createAnchorStyle,
+  createFrameStyle,
+  createGapStyle,
+  createSquareStyle,
+} from "@/components/gateway/gatewaySceneConfig";
 import { Canvas } from "@react-three/fiber";
 
 export function SpaceGatewayHome() {
@@ -87,10 +97,18 @@ export function SpaceGatewayHome() {
 
         {/* The 3 Tall Portals */}
         <div className="relative z-10 w-full h-full flex flex-col items-center justify-center pt-8 pb-32 md:pb-16 px-6">
-          <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-center justify-center w-full max-w-7xl h-[70vh]">
+          <div
+            className="flex flex-col md:flex-row items-center justify-center w-full max-w-7xl origin-center"
+            style={{
+              ...createGapStyle(gatewaySceneConfig.row.gapMobileRem, gatewaySceneConfig.row.gapDesktopRem),
+              height: `clamp(${gatewaySceneConfig.row.heightMobileRem}rem, ${gatewaySceneConfig.row.heightViewport}vh, ${gatewaySceneConfig.row.heightDesktopRem}rem)`,
+              transform: `scale(${gatewaySceneConfig.row.scale})`,
+            }}
+          >
             {spaceGateways.map((gateway, i) => {
               const isHovered = hoveredPortal === gateway.id;
               const isSelected = selected === gateway.id;
+              const planetScene = gatewaySceneConfig.planets[gateway.id];
 
               return (
                 <motion.div
@@ -108,24 +126,40 @@ export function SpaceGatewayHome() {
                     e.stopPropagation();
                     handleSelect(gateway);
                   }}
-                  className={`group relative flex-1 w-full md:w-auto h-full border-2 rounded-[2rem] overflow-hidden ${selected ? 'cursor-default pointer-events-none' : 'cursor-pointer'} flex flex-col items-center transition-all duration-500 ${
+                  className={`group relative border-2 overflow-hidden ${selected ? 'cursor-default pointer-events-none' : 'cursor-pointer'} flex flex-col items-center transition-all duration-500 ${
                     isHovered || isSelected ? gateway.borderColor : 'border-white/25'
                   }`}
                   style={{
+                    ...createFrameStyle(gatewaySceneConfig.frame),
                     boxShadow: isHovered || isSelected ? `0 0 80px -10px ${gateway.glowColor}` : '0 0 0px transparent',
                     zIndex: 50,
                   }}
                 >
+                  {/* Matrix rain background — tech only, rendered before planet so planet floats on top */}
+                  {gateway.id === 'tech' && <MatrixRainCanvas />}
+
+                  {/* Aurora background — discover only */}
+                  {gateway.id === 'discover' && <AuroraCanvas />}
+
+                  {/* Silver wind + falling leaves — fengshui */}
+                  {gateway.id === 'fengshui' && (
+                    <>
+                      <AuroraCanvas theme="silver" windConfig={gatewaySceneConfig.effects.fengshuiWind} />
+                      <FengShuiLeavesCanvas config={gatewaySceneConfig.effects.fengshuiLeaves} />
+                    </>
+                  )}
+
                   {/* 3D Planet */}
-                  <div className="absolute inset-0 flex items-center justify-center mb-24 pointer-events-none">
+                  <div className="absolute inset-0 pointer-events-none">
                     <motion.div
                       animate={{
-                        y: isHovered || isSelected ? -20 : 0,
+                        y: isHovered || isSelected ? -planetScene.hoverLiftPx : 0,
                         scale: isHovered || isSelected ? 1.05 : 1,
                       }}
                       transition={{ duration: 1.2, ease: "easeOut" }}
-                      className="w-52 h-52 md:w-72 md:h-72"
                       style={{
+                        ...createAnchorStyle(planetScene.anchor),
+                        ...createSquareStyle(planetScene.size),
                         filter: `drop-shadow(0 0 ${isHovered || isSelected ? '48px' : '24px'} ${gateway.glowColor})`,
                         transition: 'filter 0.7s ease',
                       }}
@@ -136,6 +170,8 @@ export function SpaceGatewayHome() {
                       />
                     </motion.div>
                   </div>
+
+                  {/* HUD panels removed — Matrix rain is enough */}
 
                   {/* Text at bottom */}
                   <motion.div
@@ -163,7 +199,11 @@ export function SpaceGatewayHome() {
 
       {/* Foreground Astronaut */}
       <div className="absolute inset-0 z-[60] pointer-events-none">
-        <Canvas style={{ pointerEvents: "none" }} camera={{ position: [0, 0, 5], fov: 50 }} dpr={[1, 2]}>
+        <Canvas
+          style={{ pointerEvents: "none" }}
+          camera={{ position: gatewaySceneConfig.astronautCamera.position, fov: gatewaySceneConfig.astronautCamera.fov }}
+          dpr={[1, 2]}
+        >
           <SpaceBackgroundAstronaut isWarping={!!selected} targetIndex={activeIndex} />
         </Canvas>
       </div>
