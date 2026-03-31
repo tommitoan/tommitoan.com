@@ -178,12 +178,12 @@ export function SpaceGatewayHome() {
                   {/* Text at bottom */}
                   <motion.div
                     animate={{ opacity: selected ? 0 : 1 }}
-                    className="relative z-10 w-full mt-auto p-8 text-center bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none"
+                    className="relative z-10 w-full mt-auto p-4 pb-4 md:pb-6 text-center bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none"
                   >
-                    <h2 className="text-3xl md:text-4xl font-extrabold mb-3 tracking-wider uppercase text-white/90 group-hover:text-white transition-colors drop-shadow-md">
+                    <h2 className="text-xl md:text-2xl font-extrabold mb-1 tracking-wider uppercase text-white/90 group-hover:text-white transition-colors drop-shadow-md">
                       {gateway.label}
                     </h2>
-                    <p className="text-sm md:text-base text-white/60 group-hover:text-white/90 transition-colors opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 duration-300">
+                    <p className="text-xs md:text-sm text-white/60 group-hover:text-white/90 transition-colors opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 duration-300">
                       {gateway.description}
                     </p>
                   </motion.div>
