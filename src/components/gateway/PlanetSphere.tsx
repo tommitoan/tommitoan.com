@@ -48,6 +48,7 @@ export interface PlanetTextures {
 
 interface PlanetMeshProps extends PlanetTextures {
   isHovered: boolean;
+  onReady?: () => void;
 }
 
 // ─── Circuit overlay ──────────────────────────────────────────────────────────
@@ -169,6 +170,7 @@ function PlanetMesh({
   fengShuiClouds,
   crystalBall,
   woodBase,
+  onReady,
 }: PlanetMeshProps) {
   const groupRef    = useRef<Group>(null);
   const cloudRef    = useRef<Mesh>(null);
@@ -232,6 +234,10 @@ function PlanetMesh({
     ctx.fillRect(0, 0, 1024, 512);
     return new THREE.CanvasTexture(canvas);
   }, [crystalBall]);
+
+  useEffect(() => {
+    onReady?.();
+  }, [onReady]);
 
   return (
     <>
@@ -361,20 +367,6 @@ function PlanetMesh({
   );
 }
 
-// ─── Fallback ─────────────────────────────────────────────────────────────────
-
-function FallbackSphere({ atmosphereColor }: { atmosphereColor: string }) {
-  return (
-    <>
-      <ambientLight intensity={0.8} />
-      <mesh>
-        <sphereGeometry args={[1, 32, 32]} />
-        <meshStandardMaterial color={atmosphereColor} roughness={0.7} />
-      </mesh>
-    </>
-  );
-}
-
 const CANVAS_STYLE: React.CSSProperties = {
   background: "transparent",
   width: "100%",
@@ -389,7 +381,7 @@ export function PlanetSphere(props: PlanetMeshProps) {
       dpr={[1, 2]}
       style={CANVAS_STYLE}
     >
-      <Suspense fallback={<FallbackSphere atmosphereColor={props.atmosphereColor} />}>
+      <Suspense fallback={null}>
         {props.woodBase && <WoodBaseCameraSetup />}
         <PlanetMesh {...props} />
       </Suspense>

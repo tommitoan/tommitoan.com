@@ -10,6 +10,7 @@ const PlanetSphere = dynamic(
 
 interface Props extends PlanetTextures {
   isHovered: boolean;
+  onReady?: () => void;
 }
 
 export function PlanetSphereClient(props: Props) {
