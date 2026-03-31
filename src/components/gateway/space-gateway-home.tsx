@@ -75,7 +75,6 @@ export function SpaceGatewayHome() {
         <div className="space-nebula space-nebula-left" />
         <div className="space-nebula space-nebula-right" />
         <div className="space-grid-haze" />
-        <div className="space-horizon" />
 
         {/* Ambient glow on hover */}
         <AnimatePresence>
