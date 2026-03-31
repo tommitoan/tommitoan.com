@@ -20,6 +20,7 @@ interface PlanetSceneConfig {
   size: ResponsiveSize;
   anchor: SceneAnchor;
   hoverLiftPx: number;
+  frameHeightScale?: number;
 }
 
 interface PlanetStageConfig {
@@ -29,37 +30,40 @@ interface PlanetStageConfig {
 
 export const gatewaySceneConfig = {
   row: {
-    scale: 1, // WAS 0.7. explicitly sizing dimensions down instead
-    gapMobileRem: 1.4,
-    gapDesktopRem: 2.1,
-    heightMobileRem: 23.66,
-    heightViewport: 63.7,
-    heightDesktopRem: 30.94,
+    scale: 1,
+    gapMobileRem: 1.2,
+    gapDesktopRem: 2.4,
+    heightMobileRem: 24,
+    heightViewport: 66,
+    heightDesktopRem: 50,
   },
   frame: {
-    width: { mobileRem: 13.65, viewport: 20.02, desktopRem: 18.2 },
-    height: { mobileRem: 23.66, viewport: 63.7, desktopRem: 30.94 },
-    radiusRem: 1.82,
+    width: { mobileRem: 13.5, viewport: 20.5, desktopRem: 24.5 },
+    height: { mobileRem: 24, viewport: 66, desktopRem: 50 },
+    radiusRem: 1.4,
   },
   planetStage: {
-    topPercent: 0,
-    heightPercent: 100,
+    topPercent: 5,
+    heightPercent: 75,
   } satisfies PlanetStageConfig,
   planets: {
     tech: {
-      size: { mobileRem: 5.64, viewport: 9.1, desktopRem: 7.37 },
+      size: { mobileRem: 10.75, viewport: 17.5, desktopRem: 20.0 },
       anchor: { horizontal: "center", vertical: "center" },
       hoverLiftPx: 18,
+      frameHeightScale: 1.0,
     },
     discover: {
-      size: { mobileRem: 5.64, viewport: 9.1, desktopRem: 7.37 },
+      size: { mobileRem: 11.0, viewport: 18.0, desktopRem: 20.5 },
       anchor: { horizontal: "center", vertical: "center" },
       hoverLiftPx: 18,
+      frameHeightScale: 1.0,
     },
     fengshui: {
-      size: { mobileRem: 5.91, viewport: 9.55, desktopRem: 7.73 },
+      size: { mobileRem: 10.75, viewport: 17.5, desktopRem: 20.0 },
       anchor: { horizontal: "center", vertical: "center" },
       hoverLiftPx: 18,
+      frameHeightScale: 1.0,
     },
   } satisfies Record<SpaceGatewayId, PlanetSceneConfig>,
   effects: {

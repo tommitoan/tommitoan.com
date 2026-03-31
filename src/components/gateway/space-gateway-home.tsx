@@ -96,7 +96,7 @@ export function SpaceGatewayHome() {
         <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#000_100%)] pointer-events-none opacity-80" />
 
         {/* The 3 Tall Portals */}
-        <div className="relative z-10 w-full h-full flex flex-col items-center justify-center pt-8 pb-32 md:pb-16 px-6">
+        <div className="relative z-10 w-full h-full flex flex-col items-center justify-center pt-4 pb-4 px-4 md:px-6">
           <div
             className="flex flex-col md:flex-row items-center justify-center w-full max-w-7xl origin-center"
             style={{
@@ -130,7 +130,15 @@ export function SpaceGatewayHome() {
                     isHovered || isSelected ? gateway.borderColor : 'border-white/25'
                   }`}
                   style={{
-                    ...createFrameStyle(gatewaySceneConfig.frame),
+                    ...createFrameStyle({
+                      width: gatewaySceneConfig.frame.width,
+                      height: {
+                        mobileRem: gatewaySceneConfig.frame.height.mobileRem * (planetScene.frameHeightScale ?? 1),
+                        viewport: gatewaySceneConfig.frame.height.viewport * (planetScene.frameHeightScale ?? 1),
+                        desktopRem: gatewaySceneConfig.frame.height.desktopRem * (planetScene.frameHeightScale ?? 1),
+                      },
+                      radiusRem: gatewaySceneConfig.frame.radiusRem,
+                    }),
                     boxShadow: isHovered || isSelected ? `0 0 80px -10px ${gateway.glowColor}` : '0 0 0px transparent',
                     zIndex: 50,
                   }}
