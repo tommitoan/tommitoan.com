@@ -9,7 +9,7 @@ export const spaceBackgroundConfig = {
   },
   astronaut: {
     sprite: {
-      width: 0.3,
+      width: 0.35,
       height: 0.5,
       glowScale: 1.2,
     },

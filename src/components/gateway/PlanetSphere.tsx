@@ -18,9 +18,6 @@ export interface PlanetBloom {
   position: [number, number, number];
   intensity: number;
   color: string;
-  distance: number;
-  decay: number;
-  hoverPosition: [number, number, number];
   hoverIntensity: number;
 }
 
@@ -248,12 +245,12 @@ function PlanetMesh({
       {crystalBall && (
         <>
           <directionalLight
-            position={[-1.5, 2.0, 2.5]}
+            position={[0, 2.0, 2.5]}
             intensity={2.8}
             color="#d8ecff"
           />
-          {/* Strong upper-left point light → creates the tight specular hotspot on glass */}
-          <pointLight position={[-0.5, 1.0, 1.8]} intensity={12.0} color="#ffffff" distance={8} decay={2} />
+          {/* Strong upper point light → creates the tight specular hotspot on glass */}
+          <pointLight position={[0, 1.0, 1.8]} intensity={12.0} color="#ffffff" distance={8} decay={2} />
         </>
       )}
 

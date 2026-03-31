@@ -14,8 +14,6 @@ interface ResponsiveSize {
 interface SceneAnchor {
   horizontal: HorizontalAlign;
   vertical: VerticalAlign;
-  offsetXPercent: number;
-  offsetYPercent: number;
 }
 
 interface PlanetSceneConfig {
@@ -31,37 +29,37 @@ interface PlanetStageConfig {
 
 export const gatewaySceneConfig = {
   row: {
-    scale: 0.7,
-    gapMobileRem: 2,
-    gapDesktopRem: 3,
-    heightMobileRem: 26,
-    heightViewport: 70,
-    heightDesktopRem: 34,
+    scale: 1, // WAS 0.7. explicitly sizing dimensions down instead
+    gapMobileRem: 1.4,
+    gapDesktopRem: 2.1,
+    heightMobileRem: 18.2,
+    heightViewport: 49,
+    heightDesktopRem: 23.8,
   },
   frame: {
-    width: { mobileRem: 15, viewport: 22, desktopRem: 20 },
-    height: { mobileRem: 26, viewport: 70, desktopRem: 34 },
-    radiusRem: 2,
+    width: { mobileRem: 10.5, viewport: 15.4, desktopRem: 14 },
+    height: { mobileRem: 18.2, viewport: 49, desktopRem: 23.8 },
+    radiusRem: 1.4,
   },
   planetStage: {
     topPercent: 0,
-    heightPercent: 70,
+    heightPercent: 100,
   } satisfies PlanetStageConfig,
   planets: {
     tech: {
-      size: { mobileRem: 6.2, viewport: 10, desktopRem: 8.1 },
-      anchor: { horizontal: "center", vertical: "center", offsetXPercent: 0, offsetYPercent: -8 },
-      hoverLiftPx: 20,
+      size: { mobileRem: 4.34, viewport: 7, desktopRem: 5.67 },
+      anchor: { horizontal: "center", vertical: "center" },
+      hoverLiftPx: 14,
     },
     discover: {
-      size: { mobileRem: 6.2, viewport: 10, desktopRem: 8.1 },
-      anchor: { horizontal: "center", vertical: "center", offsetXPercent: 0, offsetYPercent: -8 },
-      hoverLiftPx: 20,
+      size: { mobileRem: 4.34, viewport: 7, desktopRem: 5.67 },
+      anchor: { horizontal: "center", vertical: "center" },
+      hoverLiftPx: 14,
     },
     fengshui: {
-      size: { mobileRem: 6.5, viewport: 10.5, desktopRem: 8.5 },
-      anchor: { horizontal: "center", vertical: "center", offsetXPercent: 0, offsetYPercent: -8 },
-      hoverLiftPx: 20,
+      size: { mobileRem: 4.55, viewport: 7.35, desktopRem: 5.95 },
+      anchor: { horizontal: "center", vertical: "center" },
+      hoverLiftPx: 14,
     },
   } satisfies Record<SpaceGatewayId, PlanetSceneConfig>,
   effects: {
@@ -113,31 +111,15 @@ export function createGapStyle(gapMobileRem: number, gapDesktopRem: number): CSS
 }
 
 export function createAnchorStyle(anchor: SceneAnchor): CSSProperties {
-  const left =
-    anchor.horizontal === "left"
-      ? `${anchor.offsetXPercent}%`
-      : anchor.horizontal === "center"
-        ? `calc(50% + ${anchor.offsetXPercent}%)`
-        : `calc(100% + ${anchor.offsetXPercent}%)`;
-
-  const top =
-    anchor.vertical === "top"
-      ? `${anchor.offsetYPercent}%`
-      : anchor.vertical === "center"
-        ? `calc(50% + ${anchor.offsetYPercent}%)`
-        : `calc(100% + ${anchor.offsetYPercent}%)`;
-
-  const translateX =
-    anchor.horizontal === "left" ? "0" : anchor.horizontal === "center" ? "-50%" : "-100%";
-
-  const translateY =
-    anchor.vertical === "top" ? "0" : anchor.vertical === "center" ? "-50%" : "-100%";
-
   return {
     position: "absolute",
-    left,
-    top,
-    transform: `translate(${translateX}, ${translateY})`,
+    left: "0",
+    top: "0",
+    right: "0",
+    bottom: "0",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   };
 }
 
@@ -145,7 +127,7 @@ export function createPlanetStageStyle(stage: PlanetStageConfig): CSSProperties 
   return {
     position: "absolute",
     left: 0,
-    right: 0,
+    width: "100%",
     top: `${stage.topPercent}%`,
     height: `${stage.heightPercent}%`,
   };
