@@ -1,15 +1,15 @@
-export type FengshuiPillar = {
+export type FengShuiPillar = {
   title: string;
   description: string;
 };
 
-export type FengshuiLane = {
+export type FengShuiLane = {
   title: string;
   items: string[];
 };
 
 export const fengshuiContent = {
-  eyebrow: "Fengshui",
+  eyebrow: "Feng Shui",
   title: "A product lane where symbolic systems become usable software.",
   description:
     "This route is for Bazica, Ba-zi, and the broader curiosity around Feng Shui that keeps turning into code, interfaces, and product experiments.",
@@ -33,7 +33,7 @@ export const fengshuiContent = {
       description:
         "More explainers, richer product storytelling, and possibly additional tools around Ba-zi, calendar systems, and Feng Shui workflows if the surface stays clear enough.",
     },
-  ] satisfies FengshuiPillar[],
+  ] satisfies FengShuiPillar[],
   lanes: [
     {
       title: "Current artifact",
@@ -47,7 +47,7 @@ export const fengshuiContent = {
       title: "Longer horizon",
       items: ["Interactive calculators", "Teaching-oriented interfaces", "A stronger product ecosystem"],
     },
-  ] satisfies FengshuiLane[],
+  ] satisfies FengShuiLane[],
   principles: [
     "Translate domain complexity into understandable software",
     "Keep the product respectful, clear, and useful",

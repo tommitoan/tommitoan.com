@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Tommi Toan",
     short_name: "Tommi Toan",
-    description: "Space gateway for Toan Ngo covering Tech, Discover, and Fengshui routes.",
+    description: "Space gateway for Toan Ngo covering Tech, Discover, and Feng Shui routes.",
     start_url: "/",
     display: "standalone",
     background_color: "#050812",

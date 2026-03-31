@@ -6,12 +6,12 @@ import { RouteIntro } from "@/components/sections/route-intro";
 import { fengshuiContent } from "@/content/fengshui-content";
 
 export const metadata = createMetadata({
-  title: "Fengshui",
+  title: "Feng Shui",
   description: fengshuiContent.description,
   path: "/fengshui/",
 });
 
-export default function FengshuiPage() {
+export default function FengShuiPage() {
   return (
     <PageShell className="space-y-8 pb-20 pt-10 md:space-y-10 md:pb-28 md:pt-14">
       <RouteIntro
@@ -41,7 +41,7 @@ export default function FengshuiPage() {
         <div className="space-route-panel overflow-hidden rounded-[2rem] p-3">
           <div className="overflow-hidden rounded-[1.4rem] border border-white/8 bg-[#10120d]">
             <Image
-              src="/bazica-screen.png"
+              src="/projects/bazica/preview.png"
               alt="Bazica preview"
               width={1600}
               height={900}

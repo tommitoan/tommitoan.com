@@ -61,12 +61,6 @@ export type EducationItem = {
   href?: string;
 };
 
-type ContactLink = {
-  label: string;
-  value: string;
-  href: string;
-};
-
 export const portfolio = {
   navigation: [
     { id: "about", label: "Overview" },
@@ -267,7 +261,7 @@ export const portfolio = {
         "Published and actively maintained across 36 releases. 23 stars and 13 forks from the community. Live demo at bazica-web.tommitoan.com.",
       stack: ["Go", "MIT License", "pkg.go.dev"],
       href: "https://github.com/tommitoan/bazica",
-      image: "/bazica-screen.png",
+      image: "/projects/bazica/preview.png",
       imagePosition: "50% 30%",
       stats: [
         { label: "Stars", value: "23" },
@@ -283,7 +277,7 @@ export const portfolio = {
         "Commit → GitHub Actions → Argo CD Sync → k3s Deploy → Health Checks → Live. Prometheus + Grafana + Jaeger + Loki + Alertmanager with Redis Cluster Operator and MinIO storage.",
       stack: ["k3s", "Argo CD", "Helm", "GitHub Actions", "Prometheus", "Grafana", "Jaeger", "Redis Cluster", "Nginx Ingress", "Cloudflared"],
       href: "",
-      diagram: "/homelab-diagram.png",
+      diagram: "/discover/homelab/diagram.png",
       imagePosition: "50% 15%"
     }
   ] satisfies ProjectItem[],

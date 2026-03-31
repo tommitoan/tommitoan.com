@@ -4,17 +4,17 @@ import { useFrame, useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
 import { MathUtils } from "three";
 import type { Group } from "three";
-import { spaceBackgroundConfig } from "./spaceBackgroundConfig";
+import { gatewayHomeConfig } from "@/components/gateway/gatewayHomeConfig";
 
 export function SpaceBackgroundAstronaut({ isWarping = false, targetIndex = 1 }: { isWarping?: boolean, targetIndex?: number }) {
   const rootRef = useRef<Group>(null);
   const billboardRef = useRef<Group>(null);
   const poseRef = useRef<Group>(null);
-  const texture = useLoader(TextureLoader, "/astronaunt_1.png");
-  const astronautConfig = spaceBackgroundConfig.astronaut;
-  
+  const texture = useLoader(TextureLoader, gatewayHomeConfig.astronaut.assetSrc);
+  const astronautConfig = gatewayHomeConfig.astronaut;
+
   const warpProgress = useRef(0);
-  
+
   useFrame((state, delta) => {
     const root = rootRef.current;
     const billboard = billboardRef.current;
@@ -25,23 +25,22 @@ export function SpaceBackgroundAstronaut({ isWarping = false, targetIndex = 1 }:
     }
 
     const time = state.clock.elapsedTime;
-    
+
     if (isWarping) {
-       warpProgress.current = MathUtils.damp(warpProgress.current, 1, astronautConfig.warp.progressDamping, delta);
-        
-       const xDir = targetIndex === 0 ? -1 : targetIndex === 2 ? 1 : 0;
-        
-       const scale = MathUtils.lerp(astronautConfig.placement.scale, astronautConfig.warp.endScale, warpProgress.current);
-       root.scale.setScalar(scale);
-        
-       root.position.y = MathUtils.lerp(astronautConfig.placement.y, astronautConfig.warp.endY, warpProgress.current);
-       root.position.x = MathUtils.lerp(astronautConfig.placement.x, xDir * astronautConfig.warp.targetOffsetX, warpProgress.current);
-       root.position.z = MathUtils.lerp(astronautConfig.placement.z, astronautConfig.warp.endZ, warpProgress.current);
-        
-       pose.rotation.z += delta * astronautConfig.warp.spinSpeedZ * warpProgress.current;
-       pose.rotation.x += delta * astronautConfig.warp.spinSpeedX * warpProgress.current;
-        
-     } else {
+      warpProgress.current = MathUtils.damp(warpProgress.current, 1, astronautConfig.warp.progressDamping, delta);
+
+      const xDir = targetIndex === 0 ? -1 : targetIndex === 2 ? 1 : 0;
+
+      const scale = MathUtils.lerp(astronautConfig.placement.scale, astronautConfig.warp.endScale, warpProgress.current);
+      root.scale.setScalar(scale);
+
+      root.position.y = MathUtils.lerp(astronautConfig.placement.y, astronautConfig.warp.endY, warpProgress.current);
+      root.position.x = MathUtils.lerp(astronautConfig.placement.x, xDir * astronautConfig.warp.targetOffsetX, warpProgress.current);
+      root.position.z = MathUtils.lerp(astronautConfig.placement.z, astronautConfig.warp.endZ, warpProgress.current);
+
+      pose.rotation.z += delta * astronautConfig.warp.spinSpeedZ * warpProgress.current;
+      pose.rotation.x += delta * astronautConfig.warp.spinSpeedX * warpProgress.current;
+    } else {
       warpProgress.current = MathUtils.damp(warpProgress.current, 0, astronautConfig.warp.progressDamping, delta);
       root.position.set(
         astronautConfig.placement.x,

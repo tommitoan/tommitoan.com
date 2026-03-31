@@ -1,64 +1,75 @@
 # tommitoan.com
 
-Personal website for Toan Ngo, built with Next.js as a space gateway with three internal worlds: `Tech`, `Discover`, and `Fengshui`.
+Personal website for Toan Ngo, built as a static Next.js space gateway with three routes: `Tech`, `Discover`, and `Feng Shui`.
 
-## What is in this repo
+## Routes
 
-- `/` is a fullscreen 3D astronaut gateway with 3 interactive portal windows, built with React Three Fiber and Framer Motion
-- `/tech` is the internal engineering and CV route
-- `/discover` is the broader story: homelab, experiments, and channels
-- `/fengshui` is the curated Bazica and Feng Shui product lane
-- `src/content/site-content.ts` holds shared site metadata and route copy
-- `src/content/space-gateway-content.ts` controls homepage portal labels, colors, and destinations
-- `src/content/tech-content.ts` controls the internal Tech route
+- `/` gateway homepage with 3 interactive portals
+- `/tech` engineering profile and CV route
+- `/discover` homelab, experiments, and public channels
+- `/fengshui` Bazica and symbolic-product route
 
-## Stack
+## Repo Structure
 
-- Next.js 16 App Router
-- React 19
-- TypeScript 5
-- Tailwind CSS v4
-- Framer Motion
-- React Three Fiber / Drei (for 3D astronaut and starfield)
-- pnpm
+- `src/app/` route entry points, layouts, metadata, sitemap, robots, manifest
+- `src/components/gateway/` homepage scene, planet renderer, and gateway config
+- `src/components/tech/` tech route sections and shared motion helpers
+- `src/components/layout/` shared header, footer, and page shell
+- `src/content/` route copy and structured content
+- `src/lib/` metadata and small utilities
+- `public/gateway/` homepage background, astronaut, and planet textures
+- `public/profile/` profile imagery
+- `public/projects/` project previews
+- `public/discover/` discover-route imagery
 
-## Local development
+## Current Docs
+
+- `docs/README.md`
+- `docs/features.md`
+- `docs/implementation.md`
+- `docs/configuration.md`
+- `docs/gateway-config.md`
+- `docs/run-guide.md`
+- `docs/notes.md`
+
+## Commands
 
 ```bash
 pnpm install
 pnpm dev
 pnpm lint
 pnpm typecheck
+pnpm test:unit
 pnpm build
+pnpm start
 ```
 
-## Key files
+## Main Files
 
-- `src/app/(gateway)/page.tsx` - homepage route
-- `src/components/gateway/space-gateway-home.tsx` - the layered R3F + Framer Motion 3D gateway scene
-- `src/components/canvas/StarsBackground.tsx` - mathematical drifting starfield
-- `src/components/canvas/SpaceBackgroundAstronaut.tsx` - procedural floating 2D astronaut
-- `src/app/(content)/tech/page.tsx` - Tech route
-- `src/app/(content)/discover/page.tsx` - Discover route
-- `src/app/(content)/fengshui/page.tsx` - Fengshui route
-
-## Adjust the homepage gateway
-
-If you want to change the homepage routes, labels, colors, or gradients, edit `src/content/space-gateway-content.ts`.
-
-If you want to change the 3D layout, physics, or visuals, edit:
-
+- `src/app/(gateway)/page.tsx`
 - `src/components/gateway/space-gateway-home.tsx`
-- `src/components/canvas/spaceBackgroundConfig.ts`
+- `src/components/gateway/gatewayHomeConfig.ts`
+- `src/components/gateway/PlanetSphere.tsx`
 - `src/components/canvas/SpaceBackgroundAstronaut.tsx`
+- `src/app/(content)/tech/page.tsx`
+- `src/app/(content)/discover/page.tsx`
+- `src/app/(content)/fengshui/page.tsx`
 
-More beginner-friendly guidance is in `docs/gateway-scene-guide.md`.
+## Gateway Source Of Truth
 
-## Docs
+Homepage scene configuration lives in `src/components/gateway/gatewayHomeConfig.ts`.
 
-- `docs/README.md` - docs index
-- `docs/project-overview.md` - current route map and content ownership
-- `docs/development-guide.md` - run, build, and edit workflow
-- `docs/gateway-scene-guide.md` - how to tune the homepage gateway scene
+That file controls:
 
-Older planning docs are still kept in `docs/` for reference.
+- shared background and starfield settings
+- portal labels, routes, themes, and effects
+- frame size and row spacing
+- planet textures, size, hover motion, and alignment
+- astronaut asset, placement, idle motion, and warp motion
+- selection timing, zoom, and flash behavior
+
+## Notes
+
+- The app uses static export via `next.config.ts`.
+- There are currently no environment variables required for local development.
+- Canonical contact email is `tommitoan1995@gmail.com`.

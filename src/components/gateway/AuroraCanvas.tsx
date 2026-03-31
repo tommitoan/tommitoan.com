@@ -141,7 +141,11 @@ export function AuroraCanvas({
         ctx.beginPath();
         for (let i = 0; i < points.length; i++) {
           const [x, y] = points[i];
-          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+          if (i === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
         }
         ctx.strokeStyle  = xGrad;
         ctx.lineWidth    = layer.width;

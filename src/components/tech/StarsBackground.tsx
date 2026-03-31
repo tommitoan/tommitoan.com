@@ -4,34 +4,28 @@ import { useRef, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Points, PointMaterial } from "@react-three/drei";
 import type { Points as ThreePoints } from "three";
+import { gatewayHomeConfig } from "@/components/gateway/gatewayHomeConfig";
 
-const STARS_CONFIG = {
-  count: 150,
-  radius: 1.2,
-  size: 0.004,
-  color: "#c8a8ff",
-  rotationX: 5,
-  rotationY: 10,
-};
+type StarsConfig =
+  | (typeof gatewayHomeConfig.spaceTheme.stars)["content"]
+  | (typeof gatewayHomeConfig.spaceTheme.stars)["gateway"];
 
-const GATEWAY_STARS_CONFIG = {
-  count: 1500,
-  radius: 1.2,
-  size: 0.003,
-  color: "#915EFF",
-  rotationX: 15,
-  rotationY: 20,
-};
+function seededRandom(seed: number) {
+  const value = Math.sin(seed) * 10000;
+  return value - Math.floor(value);
+}
 
 function useSpherePoints(count: number, radius: number): Float32Array {
   return useMemo(() => {
     const arr = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
+      let seed = i * 3 + 1;
       let x: number, y: number, z: number;
       do {
-        x = (Math.random() - 0.5) * 2;
-        y = (Math.random() - 0.5) * 2;
-        z = (Math.random() - 0.5) * 2;
+        x = (seededRandom(seed) - 0.5) * 2;
+        y = (seededRandom(seed + 1) - 0.5) * 2;
+        z = (seededRandom(seed + 2) - 0.5) * 2;
+        seed += 3;
       } while (x * x + y * y + z * z > 1);
       arr[i * 3] = x * radius;
       arr[i * 3 + 1] = y * radius;
@@ -41,7 +35,7 @@ function useSpherePoints(count: number, radius: number): Float32Array {
   }, [count, radius]);
 }
 
-function StarField({ config }: { config: typeof STARS_CONFIG }) {
+function StarField({ config }: { config: StarsConfig }) {
   const ref = useRef<ThreePoints>(null!);
   const positions = useSpherePoints(config.count, config.radius);
 
@@ -85,7 +79,7 @@ const CANVAS_ABSOLUTE_STYLE: React.CSSProperties = {
 };
 
 export function StarsBackground({ absolute = false, gateway = false }: { absolute?: boolean; gateway?: boolean }) {
-  const config = gateway ? GATEWAY_STARS_CONFIG : STARS_CONFIG;
+  const config = gateway ? gatewayHomeConfig.spaceTheme.stars.gateway : gatewayHomeConfig.spaceTheme.stars.content;
   return (
     <Canvas
       camera={{ position: [0, 0, 1] }}

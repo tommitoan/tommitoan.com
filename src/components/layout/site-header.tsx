@@ -13,7 +13,7 @@ export function SiteHeader() {
       <div className="mx-auto flex w-[min(1120px,calc(100%-1.5rem))] flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
         <Link href="/" className="flex items-center gap-2 rounded-full border border-cyan-300/24 bg-cyan-300/10 py-1 pl-1 pr-3 text-sm font-semibold tracking-[-0.05em] text-cyan-50 sm:text-[15px]">
           <span className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-violet-400/30 bg-gradient-to-br from-violet-500/70 to-cyan-400/40">
-            <Image src="/avatar_cartoon.png" alt="Tommi Toan" width={28} height={28} className="h-full w-full object-cover" />
+            <Image src="/profile/avatar-cartoon.png" alt="Tommi Toan" width={28} height={28} className="h-full w-full object-cover" />
           </span>
           Tommi Toan
         </Link>

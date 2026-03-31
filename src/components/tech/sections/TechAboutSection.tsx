@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Reveal } from "@/components/tech/Reveal";
 import { SectionHeading } from "@/components/tech/SectionHeading";
 import { portfolio } from "@/content/portfolio";
@@ -26,11 +27,13 @@ export function TechAboutSection() {
         <Reveal className="flex flex-col items-center">
           <div className="relative flex h-64 w-64 items-center justify-center rounded-full border border-violet-500/20 bg-gradient-to-br from-violet-500/30 via-[#171c3b] to-[#0b1027]" style={{ boxShadow: "0 0 40px rgba(145,94,255,0.15)" }}>
             <div className="absolute inset-[6px] overflow-hidden rounded-full">
-              <img
-                src="/avatar.png"
+              <Image
+                src="/profile/avatar.png"
                 alt="Toan Ngo"
+                fill
+                sizes="256px"
                 className="h-full w-full object-cover object-[center_15%]"
-                draggable="false"
+                priority
               />
             </div>
           </div>

@@ -149,13 +149,13 @@ export default function DiscoverPage() {
         <p className="text-xs uppercase tracking-[0.22em] text-cyan-200/72">Next Route</p>
         <div className="mt-4 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <p className="max-w-2xl text-lg leading-8 text-white/74">
-            If Discover shows the operating system behind the brand, Fengshui is where a more symbolic and product-shaped branch starts to become tangible.
+            If Discover shows the operating system behind the brand, Feng Shui is where a more symbolic and product-shaped branch starts to become tangible.
           </p>
           <Link
             href="/fengshui"
             className="inline-flex rounded-full border border-white/12 bg-white/4 px-5 py-3 text-sm font-medium text-white transition hover:bg-white/8"
           >
-            Go to Fengshui
+            Go to Feng Shui
           </Link>
         </div>
       </div>

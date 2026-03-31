@@ -9,7 +9,8 @@
     "build": "next build",
     "start": "npx serve@latest out -p 3000",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:unit": "vitest run"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
@@ -32,6 +33,7 @@
     "eslint": "^9.38.0",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4.1.13",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.2"
   }
 }
