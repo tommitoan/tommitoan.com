@@ -8,7 +8,6 @@ import { StarsBackgroundClient } from "@/components/tech/StarsBackgroundClient";
 import { PlanetSphereClient } from "@/components/gateway/PlanetSphereClient";
 import { MatrixRainCanvas } from "@/components/gateway/MatrixRainCanvas";
 import { AuroraCanvas } from "@/components/gateway/AuroraCanvas";
-import { FengShuiLeavesCanvas } from "@/components/gateway/FengShuiLeavesCanvas";
 import {
   createAnchorStyle,
   createFrameStyle,
@@ -61,6 +60,7 @@ export function SpaceGatewayHome() {
   const activePortalOffsetX = activePortal
     ? gatewayHomeConfig.transitions.zoomOffsetXByPortal[activePortal.id]
     : "0vw";
+  const debug = gatewayHomeConfig.debug;
 
   return (
     <section className="space-gateway-shell relative w-full h-screen overflow-hidden text-white">
@@ -79,9 +79,9 @@ export function SpaceGatewayHome() {
         transition={{ duration: gatewayHomeConfig.transitions.zoomDurationSeconds, ease: "easeInOut" }}
         className="absolute inset-0 w-full h-full z-[3]"
       >
-        <div className="space-nebula space-nebula-left" />
-        <div className="space-nebula space-nebula-right" />
-        <div className="space-grid-haze" />
+        {debug.showPortalEffects ? <div className="space-nebula space-nebula-left" /> : null}
+        {debug.showPortalEffects ? <div className="space-nebula space-nebula-right" /> : null}
+        {debug.showPortalEffects ? <div className="space-grid-haze" /> : null}
 
         <AnimatePresence>
           {hoveredPortal && !selected && (
@@ -129,8 +129,8 @@ export function SpaceGatewayHome() {
                     e.stopPropagation();
                     handleSelect(gateway);
                   }}
-                  className={`group relative border-2 overflow-hidden ${selected ? 'cursor-default pointer-events-none' : 'cursor-pointer'} flex flex-col items-center transition-all duration-500 ${
-                    isHovered || isSelected ? gateway.theme.borderColorClass : 'border-white/25'
+                  className={`group relative overflow-hidden ${selected ? 'cursor-default pointer-events-none' : 'cursor-pointer'} flex flex-col items-center transition-all duration-500 ${
+                    debug.showFrames ? `border-2 ${isHovered || isSelected ? gateway.theme.borderColorClass : 'border-white/25'}` : 'border-0'
                   }`}
                   style={{
                     ...createFrameStyle({
@@ -142,51 +142,57 @@ export function SpaceGatewayHome() {
                       },
                       radiusRem: gatewayHomeConfig.frame.radiusRem,
                     }),
-                    boxShadow: isHovered || isSelected ? `0 0 80px -10px ${gateway.theme.glowColor}` : '0 0 0px transparent',
+                    boxShadow: debug.showFrames && (isHovered || isSelected) ? `0 0 80px -10px ${gateway.theme.glowColor}` : '0 0 0px transparent',
                     zIndex: 50,
                   }}
                 >
-                  {gateway.effects.map((effect, effectIndex) => (
+                  {debug.showPortalEffects ? gateway.effects.map((effect, effectIndex) => (
                     <GatewayEffectLayer key={`${gateway.id}-${effect.kind}-${effectIndex}`} effect={effect} />
-                  ))}
+                  )) : null}
 
-                  <div className="pointer-events-none" style={createPlanetStageStyle(gatewayHomeConfig.planetStage)}>
-                    <div style={createAnchorStyle(gateway.planet.anchor)}>
-                      <motion.div
-                        animate={{
-                          y: isHovered || isSelected ? -gateway.planet.hoverLiftPx : 0,
-                          scale: isHovered || isSelected ? 1.05 : 1,
-                        }}
-                        transition={{ duration: 1.2, ease: "easeOut" }}
-                        style={{
-                          ...createSquareStyle(gateway.planet.size),
-                          filter: `drop-shadow(0 0 ${isHovered || isSelected ? '48px' : '24px'} ${gateway.theme.glowColor})`,
-                          transition: 'filter 0.7s ease',
-                        }}
-                      >
-                        <PlanetSphereClient
-                          {...gateway.planet}
-                          isHovered={isHovered || isSelected}
-                        />
-                      </motion.div>
+                  {debug.showPlanets ? (
+                    <div className="pointer-events-none" style={createPlanetStageStyle(gatewayHomeConfig.planetStage)}>
+                      <div style={createAnchorStyle(gateway.planet.anchor)}>
+                        <motion.div
+                          animate={{
+                            y: isHovered || isSelected ? -gateway.planet.hoverLiftPx : 0,
+                            scale: isHovered || isSelected ? 1.05 : 1,
+                          }}
+                          transition={{ duration: 1.2, ease: "easeOut" }}
+                          style={{
+                            ...createSquareStyle(gateway.planet.size),
+                            filter: `drop-shadow(0 0 ${isHovered || isSelected ? '48px' : '24px'} ${gateway.theme.glowColor})`,
+                            transition: 'filter 0.7s ease',
+                          }}
+                        >
+                          <PlanetSphereClient
+                            {...gateway.planet}
+                            isHovered={isHovered || isSelected}
+                          />
+                        </motion.div>
+                      </div>
                     </div>
-                  </div>
+                  ) : null}
 
-                  <motion.div
-                    animate={{ opacity: selected ? 0 : 1 }}
-                    className="relative z-10 w-full mt-auto p-4 pb-4 md:pb-6 text-center bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none"
-                  >
-                    <h2 className="text-xl md:text-2xl font-extrabold mb-1 tracking-wider uppercase text-white/90 group-hover:text-white transition-colors drop-shadow-md">
-                      {gateway.label}
-                    </h2>
-                    <p className="text-xs md:text-sm text-white/60 group-hover:text-white/90 transition-colors opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 duration-300">
-                      {gateway.description}
-                    </p>
-                  </motion.div>
+                  {debug.showLabels ? (
+                    <motion.div
+                      animate={{ opacity: selected ? 0 : 1 }}
+                      className="relative z-10 w-full mt-auto p-4 pb-4 md:pb-6 text-center bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none"
+                    >
+                      <h2 className="text-xl md:text-2xl font-extrabold mb-1 tracking-wider uppercase text-white/90 group-hover:text-white transition-colors drop-shadow-md">
+                        {gateway.label}
+                      </h2>
+                      <p className="text-xs md:text-sm text-white/60 group-hover:text-white/90 transition-colors opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 duration-300">
+                        {gateway.description}
+                      </p>
+                    </motion.div>
+                  ) : null}
 
-                  <div
-                    className={`absolute inset-0 transition-opacity duration-700 bg-gradient-to-t ${gateway.theme.hoverGradientClass} pointer-events-none ${isHovered || isSelected ? 'opacity-30' : 'opacity-0'}`}
-                  />
+                  {debug.showPortalEffects ? (
+                    <div
+                      className={`absolute inset-0 transition-opacity duration-700 bg-gradient-to-t ${gateway.theme.hoverGradientClass} pointer-events-none ${isHovered || isSelected ? 'opacity-30' : 'opacity-0'}`}
+                    />
+                  ) : null}
                 </motion.div>
               );
             })}
@@ -194,15 +200,17 @@ export function SpaceGatewayHome() {
         </div>
       </motion.div>
 
-      <div className="absolute inset-0 z-[60] pointer-events-none">
-        <Canvas
-          style={{ pointerEvents: "none" }}
-          camera={{ position: gatewayHomeConfig.astronaut.camera.position, fov: gatewayHomeConfig.astronaut.camera.fov }}
-          dpr={[1, 2]}
-        >
-          <SpaceBackgroundAstronaut isWarping={!!selected} targetIndex={activeIndex} />
-        </Canvas>
-      </div>
+      {debug.showAstronaut ? (
+        <div className="absolute inset-0 z-[60] pointer-events-none">
+          <Canvas
+            style={{ pointerEvents: "none" }}
+            camera={{ position: gatewayHomeConfig.astronaut.camera.position, fov: gatewayHomeConfig.astronaut.camera.fov }}
+            dpr={[1, 2]}
+          >
+            <SpaceBackgroundAstronaut isWarping={!!selected} targetIndex={activeIndex} />
+          </Canvas>
+        </div>
+      ) : null}
 
       <AnimatePresence>
         {selected && (
@@ -230,10 +238,6 @@ function GatewayEffectLayer({ effect }: { effect: GatewayHomeEffect }) {
 
   if (effect.kind === "aurora") {
     return <AuroraCanvas theme={effect.theme} windConfig={effect.windConfig} />;
-  }
-
-  if (effect.kind === "leaves") {
-    return <FengShuiLeavesCanvas config={effect.config} />;
   }
 
   return null;

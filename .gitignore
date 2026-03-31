@@ -5,3 +5,6 @@ out
 *.log
 tsconfig.tsbuildinfo
 ref
+
+dist/
+build/

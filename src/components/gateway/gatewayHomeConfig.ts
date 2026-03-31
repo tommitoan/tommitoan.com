@@ -1,6 +1,5 @@
 import type { CSSProperties } from "react";
-import type { WindConfig } from "@/components/gateway/AuroraCanvas";
-import type { LeavesConfig } from "@/components/gateway/FengShuiLeavesCanvas";
+import type { WindBandPalette, WindConfig } from "@/components/gateway/AuroraCanvas";
 import type { PlanetTextures } from "@/components/gateway/PlanetSphere";
 
 export type GatewayHomeId = "tech" | "discover" | "fengshui";
@@ -11,6 +10,61 @@ export interface ResponsiveSize {
   mobileRem: number;
   viewport: number;
   desktopRem: number;
+}
+
+export interface GatewayStarTwinkleConfig {
+  enabled: boolean;
+  fraction?: number;
+  speedMin?: number;
+  speedMax?: number;
+  amplitudeMin?: number;
+  amplitudeMax?: number;
+}
+
+export interface GatewayStarLayerConfig {
+  id: string;
+  count: number;
+  sizeMin: number;
+  sizeMax: number;
+  opacityMin: number;
+  opacityMax: number;
+  palette: string[];
+  rotationX: number;
+  rotationY: number;
+  haloScale?: number;
+  haloOpacity?: number;
+  parallaxStrength?: number;
+  twinkle: GatewayStarTwinkleConfig;
+}
+
+export interface GatewayStarPerformanceConfig {
+  maxDpr: number;
+  mobileScale: number;
+  reducedMotionDisableTwinkle: boolean;
+}
+
+export interface GatewayStarDistributionConfig {
+  diagonalBias: number;
+  diagonalWidth: number;
+  diagonalOffset: number;
+  secondaryDiagonalBias: number;
+  secondaryDiagonalWidth: number;
+  secondaryDiagonalOffset: number;
+}
+
+export interface GatewayStarsConfig {
+  radius: number;
+  layers: GatewayStarLayerConfig[];
+  performance: GatewayStarPerformanceConfig;
+  distribution: GatewayStarDistributionConfig;
+}
+
+export interface GatewayDebugConfig {
+  showFrames: boolean;
+  showPlanets: boolean;
+  showAstronaut: boolean;
+  showLabels: boolean;
+  showPortalEffects: boolean;
 }
 
 export interface GatewayPlanetAnchor {
@@ -29,8 +83,7 @@ export interface GatewayPlanetLayout {
 
 export type GatewayHomeEffect =
   | { kind: "matrixRain" }
-  | { kind: "aurora"; theme?: "aurora" | "silver"; windConfig?: WindConfig }
-  | { kind: "leaves"; config?: LeavesConfig };
+  | { kind: "aurora"; theme?: "aurora" | "silver"; windConfig?: WindConfig };
 
 export interface GatewayHomePortal {
   id: GatewayHomeId;
@@ -65,6 +118,21 @@ function makePortalPlanetLayout(size: ResponsiveSize): GatewayPlanetLayout {
   };
 }
 
+const FENG_SHUI_WIND_PALETTE: WindBandPalette[] = [
+  { hue: 104, saturation: 58, alpha: 0.52, thickness: 10, lightness: 70 },
+  { hue: 112, saturation: 66, alpha: 0.58, thickness: 8, lightness: 76 },
+  { hue: 118, saturation: 74, alpha: 0.62, thickness: 9, lightness: 80 },
+  { hue: 124, saturation: 68, alpha: 0.48, thickness: 7, lightness: 74 },
+  { hue: 132, saturation: 72, alpha: 0.64, thickness: 8, lightness: 82 },
+  { hue: 138, saturation: 64, alpha: 0.44, thickness: 6, lightness: 72 },
+  { hue: 144, saturation: 70, alpha: 0.60, thickness: 8, lightness: 78 },
+  { hue: 150, saturation: 62, alpha: 0.54, thickness: 7, lightness: 75 },
+  { hue: 156, saturation: 68, alpha: 0.58, thickness: 8, lightness: 81 },
+  { hue: 162, saturation: 56, alpha: 0.42, thickness: 6, lightness: 73 },
+  { hue: 126, saturation: 80, alpha: 0.66, thickness: 9, lightness: 84 },
+  { hue: 146, saturation: 76, alpha: 0.50, thickness: 7, lightness: 79 },
+];
+
 export const gatewayHomeConfig = {
   spaceTheme: {
     background: {
@@ -83,15 +151,112 @@ export const gatewayHomeConfig = {
         rotationY: 10,
       },
       gateway: {
-        count: 1500,
-        radius: 1.2,
-        size: 0.003,
-        color: "#915EFF",
-        rotationX: 15,
-        rotationY: 20,
-      },
+        radius: 2.2,
+        layers: [
+          {
+            id: "far",
+            count: 32000,
+            sizeMin: 0.0016,
+            sizeMax: 0.003,
+            opacityMin: 0.24,
+            opacityMax: 0.52,
+            palette: ["#f8fbff", "#dce8ff", "#bed1ff", "#d8c3ff", "#ffd9c6"],
+            rotationX: 24,
+            rotationY: 42,
+            twinkle: {
+              enabled: true,
+              fraction: 0.12,
+              speedMin: 0.11,
+              speedMax: 0.24,
+              amplitudeMin: 0.04,
+              amplitudeMax: 0.1,
+            },
+          },
+          {
+            id: "mid",
+            count: 11000,
+            sizeMin: 0.003,
+            sizeMax: 0.0052,
+            opacityMin: 0.45,
+            opacityMax: 0.95,
+            palette: ["#ffffff", "#dce8ff", "#bed1ff", "#d8c3ff", "#ffcfad", "#ffdff4"],
+            rotationX: 16,
+            rotationY: 28,
+            twinkle: {
+              enabled: true,
+              fraction: 0.34,
+              speedMin: 0.16,
+              speedMax: 0.4,
+              amplitudeMin: 0.12,
+              amplitudeMax: 0.28,
+            },
+          },
+          {
+            id: "accent",
+            count: 400,
+            sizeMin: 0.006,
+            sizeMax: 0.0105,
+            opacityMin: 0.78,
+            opacityMax: 1,
+            palette: ["#ffffff", "#e7f0ff", "#d8c3ff", "#ffd6b8", "#ffc98c"],
+            rotationX: 14,
+            rotationY: 24,
+            parallaxStrength: 0.018,
+            twinkle: {
+              enabled: true,
+              fraction: 0.72,
+              speedMin: 0.12,
+              speedMax: 0.28,
+              amplitudeMin: 0.16,
+              amplitudeMax: 0.34,
+            },
+          },
+          {
+            id: "hero",
+            count: 70,
+            sizeMin: 0.0105,
+            sizeMax: 0.016,
+            opacityMin: 0.84,
+            opacityMax: 1,
+            palette: ["#ffffff", "#eef5ff", "#ddd0ff", "#ffd6b8", "#ffbe78"],
+            rotationX: 12,
+            rotationY: 20,
+            haloScale: 3.8,
+            haloOpacity: 0.28,
+            parallaxStrength: 0.032,
+            twinkle: {
+              enabled: true,
+              fraction: 1,
+              speedMin: 0.08,
+              speedMax: 0.22,
+              amplitudeMin: 0.22,
+              amplitudeMax: 0.46,
+            },
+          },
+        ],
+        performance: {
+          maxDpr: 1.5,
+          mobileScale: 0.45,
+          reducedMotionDisableTwinkle: true,
+        },
+        distribution: {
+          diagonalBias: 0.28,
+          diagonalWidth: 0.24,
+          diagonalOffset: 0.04,
+          secondaryDiagonalBias: 0.12,
+          secondaryDiagonalWidth: 0.34,
+          secondaryDiagonalOffset: -0.18,
+        },
+      } satisfies GatewayStarsConfig,
     },
   },
+  debug: {
+    showFrames: true,
+    showPlanets: true,
+    showAstronaut: true,
+    showLabels: true,
+    showPortalEffects: true,
+  } satisfies GatewayDebugConfig,
   transitions: {
     routeDelayMs: 1800,
     reducedMotionRouteDelayMs: 120,
@@ -264,19 +429,11 @@ export const gatewayHomeConfig = {
       effects: [
         {
           kind: "aurora",
-          theme: "silver",
           windConfig: {
-            density: 8,
-            speed: 0.45,
-            thickness: 0.78,
-          },
-        },
-        {
-          kind: "leaves",
-          config: {
-            count: 38,
-            sizeMin: 4,
-            sizeMax: 12,
+            density: 12,
+            speed: 0.42,
+            thickness: 0.52,
+            palette: FENG_SHUI_WIND_PALETTE,
           },
         },
       ],

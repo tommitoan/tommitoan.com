@@ -2,10 +2,19 @@
 
 import { useEffect, useRef } from "react";
 
+export interface WindBandPalette {
+  hue: number;
+  saturation: number;
+  alpha: number;
+  thickness: number;
+  lightness: number;
+}
+
 export interface WindConfig {
-  density?: number;    // number of bands to render (4–24, default uses all defs)
-  speed?: number;      // phase-speed multiplier, e.g. 0.5 = half speed, 2.0 = double (default 1.0)
-  thickness?: number;  // thickness multiplier, e.g. 1.5 = 50 % thicker (default 1.0)
+  density?: number;
+  speed?: number;
+  thickness?: number;
+  palette?: WindBandPalette[];
 }
 
 interface Band {
@@ -87,8 +96,8 @@ export function AuroraCanvas({
     if (!ctx) return;
 
     let animId = 0;
-    const defs   = theme === "silver" ? SILVER_DEFS : AURORA_DEFS;
-    const speed  = windConfig?.speed     ?? 1.0;
+    const defs = windConfig?.palette ?? (theme === "silver" ? SILVER_DEFS : AURORA_DEFS);
+    const speed  = windConfig?.speed ?? 1.0;
     const thick  = windConfig?.thickness ?? 1.0;
     const bands  = makeBands(defs, windConfig?.density, speed, thick);
     let w = 0;
