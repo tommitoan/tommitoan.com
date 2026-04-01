@@ -6,6 +6,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { SpaceBackgroundAstronaut } from "@/components/canvas/SpaceBackgroundAstronaut";
 import { StarsBackgroundClient } from "@/components/tech/StarsBackgroundClient";
 import { PlanetSphereClient } from "@/components/gateway/PlanetSphereClient";
+import { GatewayLoadingScreen } from "@/components/gateway/GatewayLoadingScreen";
 import { MatrixRainCanvas } from "@/components/gateway/MatrixRainCanvas";
 import { AuroraCanvas } from "@/components/gateway/AuroraCanvas";
 import {
@@ -160,8 +161,6 @@ export function SpaceGatewayHome() {
     ? gatewayHomeConfig.transitions.zoomOffsetXByPortal[activePortal.id]
     : "0vw";
   const debug = gatewayHomeConfig.debug;
-  const progressCircumference = 2 * Math.PI * 42;
-  const progressOffset = progressCircumference - (loadingProgress / 100) * progressCircumference;
 
   return (
     <section className="space-gateway-shell relative w-full h-screen overflow-hidden text-white">
@@ -330,86 +329,11 @@ export function SpaceGatewayHome() {
         )}
       </AnimatePresence>
 
-      <AnimatePresence>
-        {!isGatewayReady ? (
-          <motion.div
-            key="gateway-loading"
-            initial={{ opacity: 1 }}
-            animate={isLoaderFinishing ? { opacity: 0 } : { opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="absolute inset-0 z-[140] flex items-center justify-center bg-[#01040b]"
-          >
-            <div className="relative flex h-[min(62vw,30rem)] w-[min(88vw,56rem)] items-center justify-center overflow-hidden rounded-[2.6rem] border border-cyan-300/14 bg-[linear-gradient(180deg,rgba(3,10,20,1),rgba(1,4,10,1))] shadow-[0_0_70px_rgba(72,187,255,0.05)]">
-              <div className="pointer-events-none absolute inset-[1.1rem] rounded-[2rem] border border-cyan-200/12" />
-              <div className="pointer-events-none absolute inset-x-[12%] top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/55 to-transparent" />
-              <div className="pointer-events-none absolute inset-x-[18%] bottom-0 h-px bg-gradient-to-r from-transparent via-cyan-300/30 to-transparent" />
-              <div className="pointer-events-none absolute left-[8%] top-[12%] h-[76%] w-px bg-gradient-to-b from-transparent via-cyan-300/18 to-transparent" />
-              <div className="pointer-events-none absolute right-[8%] top-[12%] h-[76%] w-px bg-gradient-to-b from-transparent via-cyan-300/18 to-transparent" />
-
-              <div className="pointer-events-none absolute inset-0 opacity-16" style={{
-                backgroundImage: "radial-gradient(circle_at_center,rgba(97,218,251,0.06),transparent_18%),linear-gradient(115deg,transparent_0%,rgba(103,232,249,0.05)_45%,transparent_55%)",
-              }} />
-
-              <div className="relative flex flex-col items-center gap-6 px-8 text-center">
-                <div className="relative h-28 w-28">
-                  <svg className="absolute inset-0 -rotate-90" viewBox="0 0 100 100" aria-hidden="true">
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="42"
-                      fill="none"
-                      stroke="rgba(125, 211, 252, 0.12)"
-                      strokeWidth="4"
-                    />
-                    <motion.circle
-                      cx="50"
-                      cy="50"
-                      r="42"
-                      fill="none"
-                      stroke="url(#gateway-loader-ring)"
-                      strokeWidth="4"
-                      strokeLinecap="round"
-                      strokeDasharray={progressCircumference}
-                      animate={{ strokeDashoffset: progressOffset }}
-                      transition={{ duration: 0.24, ease: "easeOut" }}
-                    />
-                    <defs>
-                      <linearGradient id="gateway-loader-ring" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#67e8f9" />
-                        <stop offset="55%" stopColor="#7dd3fc" />
-                        <stop offset="100%" stopColor="#c084fc" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-
-                  <div className="absolute inset-[1.15rem] rounded-full border border-cyan-200/10 bg-cyan-300/5" />
-                  <motion.div
-                    className="absolute inset-[0.35rem] rounded-full border-2 border-transparent border-t-cyan-300/85 border-r-sky-300/75"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1.4, ease: "linear", repeat: Infinity }}
-                  />
-                  <motion.div
-                    className="absolute inset-[1.45rem] rounded-full border border-cyan-200/18"
-                    animate={{ opacity: [0.35, 0.85, 0.35], scale: [0.96, 1, 0.96] }}
-                    transition={{ duration: 1.8, ease: "easeInOut", repeat: Infinity }}
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center text-xl font-semibold tracking-[0.16em] text-cyan-100/92">
-                    {loadingProgress}%
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <p className="text-sm uppercase tracking-[0.42em] text-cyan-100/78">
-                    Loading System
-                  </p>
-                  <div className="mx-auto h-px w-40 bg-gradient-to-r from-transparent via-cyan-300/60 to-transparent" />
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+      <GatewayLoadingScreen
+        loadingProgress={loadingProgress}
+        isVisible={!isGatewayReady}
+        isFinishing={isLoaderFinishing}
+      />
     </section>
   );
 }

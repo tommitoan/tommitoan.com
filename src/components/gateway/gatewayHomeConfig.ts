@@ -67,6 +67,13 @@ export interface GatewayDebugConfig {
   showPortalEffects: boolean;
 }
 
+export interface GatewayLoaderConfig {
+  dashDensity: number;
+  scaleSize: number;
+  color: string;
+  glowStrength: number;
+}
+
 export interface GatewayPlanetAnchor {
   horizontal: HorizontalAlign;
   vertical: VerticalAlign;
@@ -257,6 +264,12 @@ export const gatewayHomeConfig = {
     showLabels: true,
     showPortalEffects: true,
   } satisfies GatewayDebugConfig,
+  loader: {
+    dashDensity: 72,
+    scaleSize: 1,
+    color: "#67e8f9",
+    glowStrength: 4.8,
+  } satisfies GatewayLoaderConfig,
   transitions: {
     routeDelayMs: 1800,
     reducedMotionRouteDelayMs: 120,

@@ -27,6 +27,28 @@ Homepage gateway configuration lives in `src/components/gateway/gatewayHomeConfi
 
 Use these flags in `src/components/gateway/gatewayHomeConfig.ts` when you want to inspect the gateway background and stars without the foreground UI.
 
+## `loader`
+
+- `dashDensity`
+  Number of dash segments in the loading ring.
+- `scaleSize`
+  Overall loader scale multiplier.
+- `color`
+  Main ring color and percent color.
+- `glowStrength`
+  Blur strength used for the active dash glow.
+
+Example:
+
+```ts
+loader: {
+  dashDensity: 72,
+  scaleSize: 1,
+  color: "#67e8f9",
+  glowStrength: 4.8,
+}
+```
+
 Recommended isolation setup:
 
 ```ts

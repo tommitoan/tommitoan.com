@@ -84,6 +84,7 @@ describe("gatewayHomeConfig", () => {
   it("uses layered gateway stars with mixed cool and warm palette accents", () => {
     const gatewayStars = gatewayHomeConfig.spaceTheme.stars.gateway;
     const gatewayDebug = gatewayHomeConfig.debug;
+    const gatewayLoader = gatewayHomeConfig.loader;
 
     expect(gatewayStars.layers).toHaveLength(4);
     expect(gatewayStars.layers.map((layer) => layer.id)).toEqual(["far", "mid", "accent", "hero"]);
@@ -101,5 +102,9 @@ describe("gatewayHomeConfig", () => {
     expect(typeof gatewayDebug.showFrames).toBe("boolean");
     expect(typeof gatewayDebug.showPlanets).toBe("boolean");
     expect(typeof gatewayDebug.showAstronaut).toBe("boolean");
+    expect(gatewayLoader.dashDensity).toBe(72);
+    expect(gatewayLoader.scaleSize).toBe(1);
+    expect(gatewayLoader.color).toBe("#67e8f9");
+    expect(gatewayLoader.glowStrength).toBe(4.8);
   });
 });
