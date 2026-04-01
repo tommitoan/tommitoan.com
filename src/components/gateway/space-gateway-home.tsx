@@ -13,6 +13,7 @@ import {
   createAnchorStyle,
   createFrameStyle,
   createGapStyle,
+  createHoverBackdropStyle,
   createPlanetStageStyle,
   createSquareStyle,
   gatewayHomeConfig,
@@ -191,9 +192,10 @@ export function SpaceGatewayHome() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.8 }}
-              className={`absolute inset-0 z-0 pointer-events-none opacity-40 mix-blend-screen bg-gradient-to-t ${
+              className={`absolute z-0 pointer-events-none mix-blend-screen bg-gradient-to-t ${
                 gatewayHomeConfig.portals.find((g) => g.id === hoveredPortal)?.theme.hoverGradientClass
               }`}
+              style={createHoverBackdropStyle(gatewayHomeConfig.hoverBackdrop)}
             />
           )}
         </AnimatePresence>
@@ -206,7 +208,7 @@ export function SpaceGatewayHome() {
             style={{
               ...createGapStyle(gatewayHomeConfig.row.gapMobileRem, gatewayHomeConfig.row.gapDesktopRem),
               height: `clamp(${gatewayHomeConfig.row.heightMobileRem}rem, ${gatewayHomeConfig.row.heightViewport}vh, ${gatewayHomeConfig.row.heightDesktopRem}rem)`,
-              transform: `scale(${gatewayHomeConfig.row.scale})`,
+              transform: `translateY(${gatewayHomeConfig.row.offsetYPx}px) scale(${gatewayHomeConfig.row.scale})`,
             }}
           >
             {gatewayHomeConfig.portals.map((gateway, i) => {
@@ -220,7 +222,9 @@ export function SpaceGatewayHome() {
                   animate={{
                     opacity: selected && !isSelected ? 0 : 1,
                     y: 0,
-                    filter: selected && isSelected ? "brightness(1.5) contrast(1.2)" : "brightness(1) contrast(1)",
+                    filter: selected && isSelected
+                      ? `brightness(${gatewayHomeConfig.hover.selectedBrightness}) contrast(${gatewayHomeConfig.hover.selectedContrast})`
+                      : "brightness(1) contrast(1)",
                   }}
                   transition={{ duration: 0.8, delay: selected ? 0 : 0.2 + i * 0.15 }}
                   onHoverStart={() => !selected && setHoveredPortal(gateway.id)}
@@ -242,7 +246,9 @@ export function SpaceGatewayHome() {
                       },
                       radiusRem: gatewayHomeConfig.frame.radiusRem,
                     }),
-                    boxShadow: debug.showFrames && (isHovered || isSelected) ? `0 0 80px -10px ${gateway.theme.glowColor}` : '0 0 0px transparent',
+                    boxShadow: debug.showFrames && (isHovered || isSelected)
+                      ? `0 0 ${gatewayHomeConfig.frame.hoverGlowBlurPx}px ${gatewayHomeConfig.frame.hoverGlowSpreadPx}px ${gateway.theme.glowColor}`
+                      : '0 0 0px transparent',
                     zIndex: 50,
                   }}
                 >
@@ -256,12 +262,12 @@ export function SpaceGatewayHome() {
                         <motion.div
                           animate={{
                             y: isHovered || isSelected ? -gateway.planet.hoverLiftPx : 0,
-                            scale: isHovered || isSelected ? 1.05 : 1,
+                            scale: isHovered || isSelected ? gatewayHomeConfig.hover.planetScale : 1,
                           }}
                           transition={{ duration: 1.2, ease: "easeOut" }}
                           style={{
                             ...createSquareStyle(gateway.planet.size),
-                            filter: `drop-shadow(0 0 ${isHovered || isSelected ? '48px' : '24px'} ${gateway.theme.glowColor})`,
+                            filter: `drop-shadow(0 0 ${isHovered || isSelected ? gatewayHomeConfig.hover.planetGlowBlurPx : gatewayHomeConfig.hover.planetGlowRestBlurPx}px ${gateway.theme.glowColor})`,
                             transition: 'filter 0.7s ease',
                           }}
                         >
@@ -291,7 +297,8 @@ export function SpaceGatewayHome() {
 
                   {debug.showPortalEffects ? (
                     <div
-                      className={`absolute inset-0 transition-opacity duration-700 bg-gradient-to-t ${gateway.theme.hoverGradientClass} pointer-events-none ${isHovered || isSelected ? 'opacity-30' : 'opacity-0'}`}
+                      className={`absolute inset-0 transition-opacity duration-700 bg-gradient-to-t ${gateway.theme.hoverGradientClass} pointer-events-none ${isHovered || isSelected ? 'opacity-100' : 'opacity-0'}`}
+                      style={{ opacity: isHovered || isSelected ? gatewayHomeConfig.hover.overlayOpacity : 0 }}
                     />
                   ) : null}
                 </motion.div>

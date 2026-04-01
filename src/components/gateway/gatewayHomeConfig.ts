@@ -111,6 +111,15 @@ interface PlanetStageConfig {
   heightPercent: number;
 }
 
+interface HoverBackdropConfig {
+  insetXPercent: number;
+  topPercent: number;
+  heightPercent: number;
+  blurPx: number;
+  opacity: number;
+  radiusRem: number;
+}
+
 function makePortalPlanetLayout(size: ResponsiveSize): GatewayPlanetLayout {
   return {
     size,
@@ -286,17 +295,36 @@ export const gatewayHomeConfig = {
   },
   row: {
     scale: 1,
-    gapMobileRem: 1.2,
-    gapDesktopRem: 2.4,
+    offsetYPx: -70,
+    gapMobileRem: 2,
+    gapDesktopRem: 4,
     heightMobileRem: 24,
     heightViewport: 66,
     heightDesktopRem: 50,
   },
   frame: {
-    width: { mobileRem: 13.5, viewport: 20.5, desktopRem: 24.5 },
+    width: { mobileRem: 10.5, viewport: 15.5, desktopRem: 20.5 },
     height: { mobileRem: 24, viewport: 66, desktopRem: 50 },
     radiusRem: 1.4,
+    hoverGlowBlurPx: 24,
+    hoverGlowSpreadPx: -18,
   },
+  hover: {
+    selectedBrightness: 1.06,
+    selectedContrast: 1.02,
+    planetScale: 1.01,
+    planetGlowBlurPx: 18,
+    planetGlowRestBlurPx: 12,
+    overlayOpacity: 0.06,
+  },
+  hoverBackdrop: {
+    insetXPercent: 18,
+    topPercent: 34,
+    heightPercent: 42,
+    blurPx: 72,
+    opacity: 0.26,
+    radiusRem: 999,
+  } satisfies HoverBackdropConfig,
   planetStage: {
     topPercent: 5,
     heightPercent: 75,
@@ -308,21 +336,21 @@ export const gatewayHomeConfig = {
       fov: 50,
     },
     sprite: {
-      width: 0.33,
+      width: 0.35,
       height: 0.5,
     },
     placement: {
       x: 0,
-      y: -1,
+      y: -1.6,
       z: 1,
       scale: 4,
     },
     idle: {
       enabled: true,
-      floatAmplitudeY: 0.04,
-      floatSpeed: 0.5,
+      floatAmplitudeY: 0.03,
+      floatSpeed: 1.5,
       poseBobAmplitudeY: 0.018,
-      poseBobSpeed: 0.8,
+      poseBobSpeed: 1.8,
       poseTiltAmplitudeZ: 0.018,
       poseTiltSpeedZ: 0.5,
       poseTiltAmplitudeX: 0.018,
@@ -350,7 +378,7 @@ export const gatewayHomeConfig = {
         borderColorClass: "border-green-500/50",
       },
       planet: {
-        ...makePortalPlanetLayout({ mobileRem: 10.75, viewport: 17.5, desktopRem: 20 }),
+        ...makePortalPlanetLayout({ mobileRem: 7.75, viewport: 14.5, desktopRem: 16 }),
         diffuse: "/gateway/textures/planets/earth-atmosphere.jpg",
         normal: "/gateway/textures/planets/earth-normal.jpg",
         specular: "/gateway/textures/planets/earth-specular.jpg",
@@ -387,7 +415,7 @@ export const gatewayHomeConfig = {
         borderColorClass: "border-fuchsia-500/50",
       },
       planet: {
-        ...makePortalPlanetLayout({ mobileRem: 11, viewport: 18, desktopRem: 20.5 }),
+        ...makePortalPlanetLayout({ mobileRem: 7.75, viewport: 14.5, desktopRem: 16 }),
         diffuse: "/gateway/textures/planets/earth-atmosphere.jpg",
         normal: "/gateway/textures/planets/earth-normal.jpg",
         specular: "/gateway/textures/planets/earth-specular.jpg",
@@ -419,7 +447,7 @@ export const gatewayHomeConfig = {
         borderColorClass: "border-white/40",
       },
       planet: {
-        ...makePortalPlanetLayout({ mobileRem: 10.75, viewport: 17.5, desktopRem: 20 }),
+        ...makePortalPlanetLayout({ mobileRem: 7.75, viewport: 14.5, desktopRem: 16 }),
         diffuse: "/gateway/textures/planets/earth-atmosphere.jpg",
         normal: "/gateway/textures/planets/earth-normal.jpg",
         specular: "/gateway/textures/planets/earth-specular.jpg",
@@ -430,8 +458,8 @@ export const gatewayHomeConfig = {
         ambientIntensity: 0.5,
         rotationOffset: 1.8,
         axialTilt: 0.5,
-        rotationSpeed: 0.06,
-        cloudSpeed: 0.28,
+        rotationSpeed: 0.4,
+        cloudSpeed: 0.5,
         bloom: {
           position: [0, 2.5, 3],
           intensity: 1.8,
@@ -519,5 +547,18 @@ export function createPlanetStageStyle(stage: PlanetStageConfig): CSSProperties 
     width: "100%",
     top: `${stage.topPercent}%`,
     height: `${stage.heightPercent}%`,
+  };
+}
+
+export function createHoverBackdropStyle(stage: HoverBackdropConfig): CSSProperties {
+  return {
+    position: "absolute",
+    left: `${stage.insetXPercent}%`,
+    width: `${100 - stage.insetXPercent * 2}%`,
+    top: `${stage.topPercent}%`,
+    height: `${stage.heightPercent}%`,
+    filter: `blur(${stage.blurPx}px)`,
+    borderRadius: `${stage.radiusRem}rem`,
+    opacity: stage.opacity,
   };
 }
