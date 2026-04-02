@@ -102,6 +102,7 @@ export interface GatewayHomePortal {
     glowColor: string;
     borderColorClass: string;
     frameBg: string;
+    frameImageSrc?: string;
   };
   planet: PlanetTextures & GatewayPlanetLayout;
   effects: GatewayHomeEffect[];
@@ -393,10 +394,11 @@ export const gatewayHomeConfig = {
       href: "/tech",
       description: "Dive into software, engineering, and digital tools.",
       theme: {
-        hoverGradientClass: "from-green-600/40 to-cyan-500/0",
-        glowColor: "rgba(38, 211, 80, 0.6)",
-        borderColorClass: "border-green-500/50",
-        frameBg: "radial-gradient(ellipse at 50% 55%, rgba(0,255,136,0.09) 0%, rgba(0,50,25,0.55) 45%, rgba(0,0,0,0.88) 100%)",
+        hoverGradientClass: "from-fuchsia-600/40 to-purple-500/0",
+        glowColor: "rgba(192, 38, 211, 0.6)",
+        borderColorClass: "border-fuchsia-500/50",
+        frameBg: "radial-gradient(ellipse at 50% 55%, rgba(192,38,211,0.10) 0%, rgba(50,0,70,0.55) 45%, rgba(0,0,0,0.88) 100%)",
+        frameImageSrc: "/gateway/backgrounds/tech-bg.png",
       },
       planet: {
         ...makePortalPlanetLayout({ mobileRem: 7.75, viewport: 14.5, desktopRem: 16 }),
@@ -405,8 +407,8 @@ export const gatewayHomeConfig = {
         specular: "/gateway/textures/planets/earth-specular.jpg",
         clouds: "/gateway/textures/planets/earth-clouds.png",
         lights: "/gateway/textures/planets/earth-lights.png",
-        colorTint: "#55ff88",
-        atmosphereColor: "#20b033",
+        colorTint: "#dd88ff",
+        atmosphereColor: "#9933dd",
         ambientIntensity: 4.4,
         rotationOffset: 1.8,
         axialTilt: 0.5,
@@ -419,7 +421,7 @@ export const gatewayHomeConfig = {
           hoverIntensity: 2.2,
         },
         techOverlay: {
-          circuitColor: "#00ff88",
+          circuitColor: "#cc44ff",
           circuitOpacity: 0.65,
         },
       },
@@ -431,10 +433,10 @@ export const gatewayHomeConfig = {
       href: "/discover",
       description: "Explore our curated collections and discoveries.",
       theme: {
-        hoverGradientClass: "from-fuchsia-600/40 to-purple-600/0",
-        glowColor: "rgba(192, 38, 211, 0.6)",
-        borderColorClass: "border-fuchsia-500/50",
-        frameBg: "radial-gradient(ellipse at 50% 45%, rgba(192,38,211,0.10) 0%, rgba(50,0,70,0.58) 45%, rgba(0,0,0,0.88) 100%)",
+        hoverGradientClass: "from-cyan-500/40 to-sky-400/0",
+        glowColor: "rgba(34, 211, 238, 0.6)",
+        borderColorClass: "border-cyan-400/50",
+        frameBg: "radial-gradient(ellipse at 50% 45%, rgba(34,211,238,0.10) 0%, rgba(0,40,60,0.58) 45%, rgba(0,0,0,0.88) 100%)",
       },
       planet: {
         ...makePortalPlanetLayout({ mobileRem: 7.75, viewport: 14.5, desktopRem: 16 }),
@@ -442,8 +444,8 @@ export const gatewayHomeConfig = {
         normal: "/gateway/textures/planets/earth-normal.jpg",
         specular: "/gateway/textures/planets/earth-specular.jpg",
         clouds: "/gateway/textures/planets/earth-clouds.png",
-        colorTint: "#dd88ff",
-        atmosphereColor: "#9933dd",
+        colorTint: "#66eeff",
+        atmosphereColor: "#0099cc",
         ambientIntensity: 4.4,
         rotationOffset: 1.8,
         axialTilt: 0.5,

@@ -2,12 +2,11 @@
 
 import { useEffect, useRef } from "react";
 
-// Mostly 0s and 1s for the "compile code" feel, plus hex/symbols for variety
 const CHARS =
   "01101001011010010110100101101001011010010110" +
   "ABCDEFabcdef0123456789!?<>#@";
 
-const FS = 14; // font size / column width in px
+const FS = 11; // smaller font = denser columns
 
 export function MatrixRainCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -50,12 +49,11 @@ export function MatrixRainCanvas() {
 
     const tick = (now: number) => {
       animId = requestAnimationFrame(tick);
-      // ~22 fps — rain doesn't need 60fps and saves CPU
       if (now - lastTime < 45) return;
       lastTime = now;
       if (cols === 0) return;
 
-      // Semi-transparent black fill creates the fading trail
+      // Semi-transparent fill creates the fading trail
       ctx.fillStyle = "rgba(0,0,0,0.08)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -66,14 +64,13 @@ export function MatrixRainCanvas() {
 
         if (py >= 0 && py < canvas.height) {
           const ch = CHARS[Math.floor(Math.random() * CHARS.length)];
-          // Head character: near-white bright green
-          ctx.fillStyle = "rgba(200,255,215,0.96)";
+          // Head character: bright near-white magenta
+          ctx.fillStyle = "rgba(240,200,255,0.96)";
           ctx.fillText(ch, i * FS, py);
         }
 
         drops[i] += speeds[i];
 
-        // Reset column when it passes the bottom — random chance for natural stagger
         if (drops[i] * FS > canvas.height && Math.random() > 0.974) {
           drops[i] = -(Math.random() * 18 + 4);
         }
@@ -96,7 +93,7 @@ export function MatrixRainCanvas() {
     >
       <canvas
         ref={ref}
-        style={{ position: "absolute", top: 0, left: 0, opacity: 0.42 }}
+        style={{ position: "absolute", top: 0, left: 0, opacity: 0.48 }}
       />
     </div>
   );

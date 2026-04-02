@@ -1,5 +1,7 @@
 import { createMetadata } from "@/lib/metadata";
 import { PageShell } from "@/components/layout/page-shell";
+import { StarsBackgroundClient } from "@/components/tech/StarsBackgroundClient";
+import { techPageStarsConfig } from "@/components/tech/techPageConfig";
 import { TechHeroSection } from "@/components/tech/sections/TechHeroSection";
 import { TechAboutSection } from "@/components/tech/sections/TechAboutSection";
 import { TechSkillsSection } from "@/components/tech/sections/TechSkillsSection";
@@ -16,14 +18,25 @@ export const metadata = createMetadata({
 
 export default function TechPage() {
   return (
-    <PageShell className="space-y-24 pb-24 pt-10 md:space-y-32 md:pb-32 md:pt-14">
-      <TechHeroSection />
-      <TechAboutSection />
-      <TechSkillsSection />
-      <TechExperienceSection />
-      <TechEducationSection />
-      <TechProjectsSection />
-      <TechContactSection />
-    </PageShell>
+    <>
+      <div
+        className="pointer-events-none fixed inset-0 -z-30"
+        style={{
+          backgroundImage: "url('/gateway/backgrounds/tech-bg.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      />
+      <StarsBackgroundClient gateway starsConfig={techPageStarsConfig} zIndex={-1} />
+      <PageShell className="space-y-24 pb-24 pt-10 md:space-y-32 md:pb-32 md:pt-14">
+        <TechHeroSection />
+        <TechAboutSection />
+        <TechSkillsSection />
+        <TechExperienceSection />
+        <TechEducationSection />
+        <TechProjectsSection />
+        <TechContactSection />
+      </PageShell>
+    </>
   );
 }

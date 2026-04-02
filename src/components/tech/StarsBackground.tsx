@@ -172,22 +172,22 @@ function ContentStarField({ config }: { config: ContentStarsConfig }) {
   );
 }
 
-function GatewayStarsCanvas({ absolute = false }: { absolute?: boolean }) {
+function GatewayStarsCanvas({ absolute = false, starsConfig, zIndex = 2 }: { absolute?: boolean; starsConfig: GatewayStarsConfig; zIndex?: number }) {
   const reducedMotion = useReducedMotion();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const mobileScale = typeof window !== "undefined" && window.innerWidth < 768
-    ? gatewayHomeConfig.spaceTheme.stars.gateway.performance.mobileScale
+    ? starsConfig.performance.mobileScale
     : 1;
 
   const layers = useMemo(
     () => buildGatewayCanvasLayers(
-      gatewayHomeConfig.spaceTheme.stars.gateway,
+      starsConfig,
       mobileScale,
-      !(reducedMotion && gatewayHomeConfig.spaceTheme.stars.gateway.performance.reducedMotionDisableTwinkle),
+      !(reducedMotion && starsConfig.performance.reducedMotionDisableTwinkle),
     ),
-    [mobileScale, reducedMotion],
+    [mobileScale, reducedMotion, starsConfig],
   );
 
   useEffect(() => {
@@ -355,7 +355,7 @@ function GatewayStarsCanvas({ absolute = false }: { absolute?: boolean }) {
   }, [layers]);
 
   return (
-    <div ref={containerRef} style={absolute ? CANVAS_ABSOLUTE_STYLE : CANVAS_STYLE}>
+    <div ref={containerRef} style={absolute ? CANVAS_ABSOLUTE_STYLE : { ...CANVAS_STYLE, zIndex }}>
       <canvas ref={canvasRef} className="h-full w-full" />
     </div>
   );
@@ -383,9 +383,10 @@ const CANVAS_ABSOLUTE_STYLE: React.CSSProperties = {
   pointerEvents: "none",
 };
 
-export function StarsBackground({ absolute = false, gateway = false }: { absolute?: boolean; gateway?: boolean }) {
+export function StarsBackground({ absolute = false, gateway = false, starsConfig, zIndex }: { absolute?: boolean; gateway?: boolean; starsConfig?: GatewayStarsConfig; zIndex?: number }) {
   if (gateway) {
-    return <GatewayStarsCanvas absolute={absolute} />;
+    const resolvedConfig = starsConfig ?? gatewayHomeConfig.spaceTheme.stars.gateway;
+    return <GatewayStarsCanvas absolute={absolute} starsConfig={resolvedConfig} zIndex={zIndex} />;
   }
 
   return (

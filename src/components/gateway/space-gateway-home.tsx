@@ -113,6 +113,7 @@ export function SpaceGatewayHome() {
       if (portal.planet.specular) assetUrls.add(portal.planet.specular);
       if (portal.planet.clouds) assetUrls.add(portal.planet.clouds);
       if ("lights" in portal.planet && portal.planet.lights) assetUrls.add(portal.planet.lights);
+      if (portal.theme.frameImageSrc) assetUrls.add(portal.theme.frameImageSrc);
     }
 
     const preloadImage = (src: string) =>
@@ -291,7 +292,11 @@ export function SpaceGatewayHome() {
                       borderStyle: 'solid',
                       borderColor: gateway.theme.glowColor,
                       boxShadow: buildFrameGlow(gateway.theme.glowColor, isHovered || isSelected, gatewayHomeConfig.frame.glow),
-                      backgroundImage: gateway.theme.frameBg,
+                      backgroundImage: gateway.theme.frameImageSrc
+                        ? `${gateway.theme.frameBg}, url('${gateway.theme.frameImageSrc}')`
+                        : gateway.theme.frameBg,
+                      backgroundSize: gateway.theme.frameImageSrc ? 'auto, cover' : 'auto',
+                      backgroundPosition: gateway.theme.frameImageSrc ? 'auto, center' : 'auto',
                       backgroundColor: 'rgba(0,0,0,0.6)',
                     } : {}),
                     zIndex: 50,
