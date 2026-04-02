@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Reveal } from "@/components/tech/Reveal";
 import { SectionHeading } from "@/components/tech/SectionHeading";
 import { ImageLightbox } from "@/components/tech/ImageLightbox";
@@ -47,10 +48,11 @@ export function TechProjectsSection() {
                   onClick={() => setLightbox({ src: previewSrc, alt: previewAlt })}
                   title="Click to expand"
                 >
-                  <img
+                   <Image
                     src={previewSrc}
                     alt={previewAlt}
-                    className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                    fill
+                    className="object-cover transition duration-500 group-hover:scale-[1.03]"
                     style={{ objectPosition: project.imagePosition ?? "50% 20%" }}
                     draggable="false"
                   />

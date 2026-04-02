@@ -11,9 +11,7 @@ const socialImage = `${siteContent.siteMeta.domain}/social-card.svg`;
 
 export function createMetadata(options: MetadataOptions = {}): Metadata {
   const { title, description, path = "/" } = options;
-  const pageTitle = title
-    ? `${title} | ${siteContent.siteMeta.title}`
-    : `${siteContent.siteMeta.title} | Software Engineer`;
+  const pageTitle = title ?? siteContent.siteMeta.title;
 
   const pageDescription = description ?? siteContent.siteMeta.description;
   const pageUrl = `${siteContent.siteMeta.domain}${path}`;

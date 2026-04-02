@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useCallback } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
 type ImageLightboxProps = {
@@ -46,17 +47,18 @@ export function ImageLightbox({ src, alt, isOpen, onClose }: ImageLightboxProps)
           <motion.div
             key="lightbox-image"
             className="relative z-10 overflow-hidden rounded-2xl border border-white/10 shadow-2xl"
-            style={{ maxWidth: "75vw", maxHeight: "75vh" }}
+            style={{ maxWidth: "75vw", maxHeight: "75vh", width: "75vw", height: "75vh" }}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.92 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
             onClick={(e) => e.stopPropagation()}
           >
-            <img
+            <Image
               src={src}
               alt={alt}
-              className="block max-h-[75vh] max-w-[75vw] object-contain"
+              fill
+              className="object-contain"
               draggable="false"
             />
 

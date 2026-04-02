@@ -30,7 +30,7 @@ export function GatewayLoadingScreen({
           animate={isFinishing ? { opacity: 0 } : { opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="absolute inset-0 z-[140] flex items-center justify-center bg-black"
+          className="absolute inset-0 z-[var(--z-loading)] flex items-center justify-center bg-black"
         >
           <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-black text-white">
             <div

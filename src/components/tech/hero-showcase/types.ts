@@ -1,8 +1,6 @@
 export type OrbitDirection = "clockwise" | "counterclockwise";
 
-export type ShowcasePhase = "off" | "booting" | "visible" | "fading";
-
-export type TooltipContentMode = "text" | "icon" | "iconText" | "none";
+type TooltipContentMode = "text" | "icon" | "iconText" | "none";
 
 export type OrbitTooltipConfig = {
   mode?: TooltipContentMode;

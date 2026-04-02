@@ -1,4 +1,4 @@
-export type NavigationItem = {
+type NavigationItem = {
   id: string;
   label: string;
 };
@@ -14,7 +14,7 @@ type Principle = {
   description: string;
 };
 
-export type SkillItem = {
+type SkillItem = {
   name: string;
   icon?: string;
 };
@@ -25,14 +25,14 @@ type SkillGroup = {
   items: SkillItem[];
 };
 
-export type SubProject = {
+type SubProject = {
   name: string;
   period: string;
   bullets: string[];
   isInternship?: boolean;
 };
 
-export type ExperienceItem = {
+type ExperienceItem = {
   company: string;
   location: string;
   period: string;
@@ -41,7 +41,7 @@ export type ExperienceItem = {
   subProjects?: SubProject[];
 };
 
-export type ProjectItem = {
+type ProjectItem = {
   name: string;
   summary: string;
   impact: string;
@@ -53,7 +53,7 @@ export type ProjectItem = {
   imagePosition?: string;
 };
 
-export type EducationItem = {
+type EducationItem = {
   type: "cert" | "degree";
   title: string;
   subtitle: string;

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Reveal } from "@/components/tech/Reveal";
 import { SectionHeading } from "@/components/tech/SectionHeading";
 import { portfolio } from "@/content/portfolio";
@@ -76,10 +77,12 @@ export function TechSkillsSection() {
                       `}
                     >
                       {item.icon ? (
-                        <img
+                        <Image
                           src={item.icon}
                           alt={item.name}
-                          className="h-6 w-6 object-contain"
+                          width={24}
+                          height={24}
+                          className="object-contain"
                           draggable="false"
                         />
                       ) : (
