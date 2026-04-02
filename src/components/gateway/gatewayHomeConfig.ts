@@ -101,6 +101,7 @@ export interface GatewayHomePortal {
     hoverGradientClass: string;
     glowColor: string;
     borderColorClass: string;
+    frameBg: string;
   };
   planet: PlanetTextures & GatewayPlanetLayout;
   effects: GatewayHomeEffect[];
@@ -306,15 +307,34 @@ export const gatewayHomeConfig = {
     width: { mobileRem: 10.5, viewport: 15.5, desktopRem: 20.5 },
     height: { mobileRem: 24, viewport: 66, desktopRem: 50 },
     radiusRem: 1.4,
-    hoverGlowBlurPx: 24,
-    hoverGlowSpreadPx: -18,
+    borderWidthPx: 1,
+    glow: {
+      restOuterBlurPx: 18,
+      restOuterSpreadPx: 0,
+      restOuterOpacity: 0.35,
+      restMidBlurPx: 6,
+      restMidOpacity: 0.45,
+      restTightBlurPx: 2,
+      restTightSpreadPx: 0,
+      restInsetBlurPx: 10,
+      restInsetOpacity: 0.08,
+      hoverOuterBlurPx: 38,
+      hoverOuterSpreadPx: 4,
+      hoverOuterOpacity: 0.65,
+      hoverMidBlurPx: 14,
+      hoverMidOpacity: 0.75,
+      hoverTightBlurPx: 3,
+      hoverTightSpreadPx: 0,
+      hoverInsetBlurPx: 22,
+      hoverInsetOpacity: 0.14,
+    },
   },
   hover: {
     selectedBrightness: 1.06,
     selectedContrast: 1.02,
     planetScale: 1.01,
-    planetGlowBlurPx: 18,
-    planetGlowRestBlurPx: 12,
+    planetGlowBlurPx: 24,
+    planetGlowRestBlurPx: 16,
     overlayOpacity: 0.06,
   },
   hoverBackdrop: {
@@ -376,6 +396,7 @@ export const gatewayHomeConfig = {
         hoverGradientClass: "from-green-600/40 to-cyan-500/0",
         glowColor: "rgba(38, 211, 80, 0.6)",
         borderColorClass: "border-green-500/50",
+        frameBg: "radial-gradient(ellipse at 50% 55%, rgba(0,255,136,0.09) 0%, rgba(0,50,25,0.55) 45%, rgba(0,0,0,0.88) 100%)",
       },
       planet: {
         ...makePortalPlanetLayout({ mobileRem: 7.75, viewport: 14.5, desktopRem: 16 }),
@@ -393,9 +414,9 @@ export const gatewayHomeConfig = {
         cloudSpeed: 0.5,
         bloom: {
           position: [0, 2.5, 3],
-          intensity: 0.6,
+          intensity: 1.2,
           color: "#ffffff",
-          hoverIntensity: 1.4,
+          hoverIntensity: 2.2,
         },
         techOverlay: {
           circuitColor: "#00ff88",
@@ -413,6 +434,7 @@ export const gatewayHomeConfig = {
         hoverGradientClass: "from-fuchsia-600/40 to-purple-600/0",
         glowColor: "rgba(192, 38, 211, 0.6)",
         borderColorClass: "border-fuchsia-500/50",
+        frameBg: "radial-gradient(ellipse at 50% 45%, rgba(192,38,211,0.10) 0%, rgba(50,0,70,0.58) 45%, rgba(0,0,0,0.88) 100%)",
       },
       planet: {
         ...makePortalPlanetLayout({ mobileRem: 7.75, viewport: 14.5, desktopRem: 16 }),
@@ -429,9 +451,9 @@ export const gatewayHomeConfig = {
         cloudSpeed: 0.5,
         bloom: {
           position: [0, 2.5, 3],
-          intensity: 0.6,
+          intensity: 1.2,
           color: "#ffffff",
-          hoverIntensity: 1.4,
+          hoverIntensity: 2.2,
         },
       },
       effects: [{ kind: "aurora" }],
@@ -445,6 +467,7 @@ export const gatewayHomeConfig = {
         hoverGradientClass: "from-slate-100/20 to-white/0",
         glowColor: "rgba(205, 220, 255, 0.92)",
         borderColorClass: "border-white/40",
+        frameBg: "radial-gradient(ellipse at 50% 50%, rgba(205,220,255,0.07) 0%, rgba(20,30,45,0.52) 45%, rgba(0,0,0,0.85) 100%)",
       },
       planet: {
         ...makePortalPlanetLayout({ mobileRem: 7.75, viewport: 14.5, desktopRem: 16 }),
@@ -462,9 +485,9 @@ export const gatewayHomeConfig = {
         cloudSpeed: 0.5,
         bloom: {
           position: [0, 2.5, 3],
-          intensity: 1.8,
+          intensity: 2.2,
           color: "#d0e8ff",
-          hoverIntensity: 2.6,
+          hoverIntensity: 3.2,
         },
       },
       effects: [

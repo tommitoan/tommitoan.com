@@ -26,6 +26,48 @@ import {
 } from "@/components/gateway/gatewayHomeConfig";
 import { Canvas } from "@react-three/fiber";
 
+function buildFrameGlow(
+  glowColor: string,
+  isActive: boolean,
+  cfg: typeof gatewayHomeConfig.frame.glow,
+): string {
+  const c = glowColor;
+  const alpha = (base: number) => c.replace(/[\d.]+\)$/, `${base})`);
+
+  if (isActive) {
+    return [
+      `0 0 ${cfg.hoverOuterBlurPx}px ${cfg.hoverOuterSpreadPx}px ${alpha(cfg.hoverOuterOpacity)}`,
+      `0 0 ${cfg.hoverMidBlurPx}px 0px ${alpha(cfg.hoverMidOpacity)}`,
+      `0 0 ${cfg.hoverTightBlurPx}px ${cfg.hoverTightSpreadPx}px ${alpha(0.7)}`,
+      `inset 0 0 ${cfg.hoverInsetBlurPx}px ${alpha(cfg.hoverInsetOpacity)}`,
+    ].join(', ');
+  }
+
+  return [
+    `0 0 ${cfg.restOuterBlurPx}px ${cfg.restOuterSpreadPx}px ${alpha(cfg.restOuterOpacity)}`,
+    `0 0 ${cfg.restMidBlurPx}px 0px ${alpha(cfg.restMidOpacity)}`,
+    `0 0 ${cfg.restTightBlurPx}px ${cfg.restTightSpreadPx}px ${alpha(0.6)}`,
+    `inset 0 0 ${cfg.restInsetBlurPx}px ${alpha(cfg.restInsetOpacity)}`,
+  ].join(', ');
+}
+
+function buildPlanetGlow(
+  glowColor: string,
+  isActive: boolean,
+  cfg: typeof gatewayHomeConfig.hover,
+): string {
+  const alpha = (base: number) => glowColor.replace(/[\d.]+\)$/, `${base})`);
+  const tight = isActive ? cfg.planetGlowBlurPx : cfg.planetGlowRestBlurPx;
+  const mid   = tight * 3.2;
+  const wide  = tight * 6.5;
+
+  return [
+    `drop-shadow(0 0 ${tight}px ${alpha(0.95)})`,
+    `drop-shadow(0 0 ${mid}px ${alpha(0.42)})`,
+    `drop-shadow(0 0 ${wide}px ${alpha(0.18)})`,
+  ].join(' ');
+}
+
 export function SpaceGatewayHome() {
   const router = useRouter();
   const reducedMotion = useReducedMotion();
@@ -233,9 +275,7 @@ export function SpaceGatewayHome() {
                     e.stopPropagation();
                     handleSelect(gateway);
                   }}
-                  className={`group relative overflow-hidden ${selected ? 'cursor-default pointer-events-none' : 'cursor-pointer'} flex flex-col items-center transition-all duration-500 ${
-                    debug.showFrames ? `border-2 ${isHovered || isSelected ? gateway.theme.borderColorClass : 'border-white/25'}` : 'border-0'
-                  }`}
+                  className={`group relative overflow-hidden ${selected ? 'cursor-default pointer-events-none' : 'cursor-pointer'} flex flex-col items-center transition-all duration-500`}
                   style={{
                     ...createFrameStyle({
                       width: gatewayHomeConfig.frame.width,
@@ -246,9 +286,14 @@ export function SpaceGatewayHome() {
                       },
                       radiusRem: gatewayHomeConfig.frame.radiusRem,
                     }),
-                    boxShadow: debug.showFrames && (isHovered || isSelected)
-                      ? `0 0 ${gatewayHomeConfig.frame.hoverGlowBlurPx}px ${gatewayHomeConfig.frame.hoverGlowSpreadPx}px ${gateway.theme.glowColor}`
-                      : '0 0 0px transparent',
+                    ...(debug.showFrames ? {
+                      borderWidth: `${gatewayHomeConfig.frame.borderWidthPx}px`,
+                      borderStyle: 'solid',
+                      borderColor: gateway.theme.glowColor,
+                      boxShadow: buildFrameGlow(gateway.theme.glowColor, isHovered || isSelected, gatewayHomeConfig.frame.glow),
+                      backgroundImage: gateway.theme.frameBg,
+                      backgroundColor: 'rgba(0,0,0,0.6)',
+                    } : {}),
                     zIndex: 50,
                   }}
                 >
@@ -258,6 +303,24 @@ export function SpaceGatewayHome() {
 
                   {debug.showPlanets ? (
                     <div className="pointer-events-none" style={createPlanetStageStyle(gatewayHomeConfig.planetStage)}>
+                      <motion.div
+                        className="absolute inset-0 pointer-events-none"
+                        animate={{
+                          scale: [1.28, 1.42, 1.28],
+                          opacity: [0.7, 1, 0.7],
+                        }}
+                        transition={{
+                          duration: 4.2,
+                          repeat: Infinity,
+                          ease: 'easeInOut',
+                        }}
+                        style={{
+                          background: `radial-gradient(circle at 50% 50%, ${gateway.theme.glowColor.replace(/[\d.]+\)$/, '0.28)')} 0%, ${gateway.theme.glowColor.replace(/[\d.]+\)$/, '0.12)')} 32%, transparent 64%)`,
+                          filter: 'blur(6px)',
+                          opacity: isHovered || isSelected ? 1 : 0.75,
+                          transformOrigin: 'center center',
+                        }}
+                      />
                       <div style={createAnchorStyle(gateway.planet.anchor)}>
                         <motion.div
                           animate={{
@@ -267,7 +330,7 @@ export function SpaceGatewayHome() {
                           transition={{ duration: 1.2, ease: "easeOut" }}
                           style={{
                             ...createSquareStyle(gateway.planet.size),
-                            filter: `drop-shadow(0 0 ${isHovered || isSelected ? gatewayHomeConfig.hover.planetGlowBlurPx : gatewayHomeConfig.hover.planetGlowRestBlurPx}px ${gateway.theme.glowColor})`,
+                            filter: buildPlanetGlow(gateway.theme.glowColor, isHovered || isSelected, gatewayHomeConfig.hover),
                             transition: 'filter 0.7s ease',
                           }}
                         >
