@@ -21,7 +21,7 @@ export const siteContent = {
     title: "Tommi Toan",
     domain: "https://tommitoan.com",
     description:
-      "Space gateway for Toan Ngo covering technology work, discovery routes, Feng Shui product experiments, and contact paths.",
+      "Personal space of Toan Ngo (tommitoan) — Go backend engineer, AWS Certified Solutions Architect, homelab operator, and builder of Feng Shui tools and digital products. Based in Ho Chi Minh City, Vietnam.",
     tagline: "Software engineer building backend systems, homelab platforms, and useful product worlds.",
   },
   navigation: [

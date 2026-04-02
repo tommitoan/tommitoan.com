@@ -5,8 +5,10 @@ import { PageShell } from "@/components/layout/page-shell";
 
 export const metadata = createMetadata({
   title: "Feng Shui",
-  description: "Coming soon.",
+  description: "Feng Shui tools and digital products by Toan Ngo — including bazica, an open-source Go library for Ba-zi Four Pillars of Destiny calculations.",
   path: "/fengshui/",
+  keywords: ["Feng Shui", "Ba-zi", "Four Pillars", "bazica", "Chinese astrology", "Toan Ngo", "tommitoan", "Go library"],
+  robots: { index: false, follow: true },
 });
 
 export default function FengShuiPage() {

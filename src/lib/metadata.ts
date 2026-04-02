@@ -5,43 +5,53 @@ type MetadataOptions = {
   title?: string;
   description?: string;
   path?: string;
+  keywords?: string[];
+  robots?: {
+    index?: boolean;
+    follow?: boolean;
+  };
 };
 
-const socialImage = `${siteContent.siteMeta.domain}/social-card.svg`;
+const BASE = siteContent.siteMeta.domain;
+const socialImage = `${BASE}/social-card.png`;
 
 export function createMetadata(options: MetadataOptions = {}): Metadata {
-  const { title, description, path = "/" } = options;
-  const pageTitle = title ?? siteContent.siteMeta.title;
-
+  const { title, description, path = "/", keywords, robots } = options;
   const pageDescription = description ?? siteContent.siteMeta.description;
-  const pageUrl = `${siteContent.siteMeta.domain}${path}`;
+  const pageUrl = `${BASE}${path}`;
+  const displayTitle = title ?? siteContent.siteMeta.title;
 
   return {
-    title: pageTitle,
+    title,
     description: pageDescription,
-    metadataBase: new URL(siteContent.siteMeta.domain),
+    metadataBase: new URL(BASE),
     alternates: {
       canonical: path,
     },
+    ...(keywords ? { keywords } : {}),
+    ...(robots ? { robots } : {}),
     openGraph: {
-      title: pageTitle,
+      title: displayTitle,
       description: pageDescription,
       url: pageUrl,
       siteName: siteContent.siteMeta.title,
       type: "website",
+      locale: "en_US",
       images: [
         {
           url: socialImage,
           width: 1200,
           height: 630,
-          alt: `${siteContent.siteMeta.title} social preview`,
+          alt: `${displayTitle} — Tommi Toan`,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: pageTitle,
+      title: displayTitle,
       description: pageDescription,
+      site: "@tommitoan",
+      creator: "@tommitoan",
       images: [socialImage],
     },
   };

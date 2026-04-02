@@ -5,8 +5,10 @@ import { PageShell } from "@/components/layout/page-shell";
 
 export const metadata = createMetadata({
   title: "Discover",
-  description: "Coming soon.",
+  description: "The personal operating system of Toan Ngo — homelab infrastructure, self-hosted services, open-source experiments, and the broader ecosystem behind the backend work.",
   path: "/discover/",
+  keywords: ["homelab", "k3s", "GitOps", "self-hosting", "Argo CD", "Prometheus", "Grafana", "Cloudflared", "Toan Ngo", "tommitoan"],
+  robots: { index: false, follow: true },
 });
 
 export default function DiscoverPage() {
