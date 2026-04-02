@@ -20,6 +20,12 @@ export const metadata = createMetadata({
     "microservices", "Kubernetes", "AWS Certified", "event-driven", "GitOps", "ArgoCD",
     "PostgreSQL", "Redis", "Kafka", "RabbitMQ", "software engineer", "Ho Chi Minh City",
   ],
+  image: {
+    url: "/social-card-tech.png",
+    width: 1536,
+    height: 1024,
+    alt: "Toan Ngo — Go Backend Engineer",
+  },
 });
 
 const webPageLd = {

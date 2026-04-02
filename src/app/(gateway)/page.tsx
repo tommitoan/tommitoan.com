@@ -6,5 +6,10 @@ export const metadata = createMetadata({
 });
 
 export default function HomePage() {
-  return <SpaceGatewayHome />;
+  return (
+    <>
+      <h1 className="sr-only">Toan Ngo — tommitoan</h1>
+      <SpaceGatewayHome />
+    </>
+  );
 }

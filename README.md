@@ -2,6 +2,14 @@
 
 Personal website for Toan Ngo, built as a static Next.js space gateway with three routes: `Tech`, `Discover`, and `Feng Shui`.
 
+<div align="center">
+  <img alt="Demo" src="./public/screenshot.png" />
+</div>
+
+<h3 align="center">
+  <a href="https://tommitoan.com/" target="_blank">Live Demo</a>
+</h3>
+
 ## Routes
 
 - `/` — gateway homepage with 3 interactive 3D portals
