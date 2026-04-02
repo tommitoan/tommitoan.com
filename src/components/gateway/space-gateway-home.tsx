@@ -354,12 +354,26 @@ export function SpaceGatewayHome() {
                       animate={{ opacity: selected ? 0 : 1 }}
                       className="relative z-10 w-full mt-auto p-4 pb-4 md:pb-6 text-center bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none"
                     >
-                      <h2 className="text-xl md:text-2xl font-extrabold mb-1 tracking-wider uppercase text-white/90 group-hover:text-white transition-colors drop-shadow-md">
+                      <motion.h2
+                        animate={{
+                          opacity: isHovered || isSelected ? 1 : 0,
+                          y: isHovered || isSelected ? 0 : 10,
+                        }}
+                        transition={{ duration: 0.28, ease: "easeOut" }}
+                        className="text-xl md:text-2xl font-extrabold mb-1 tracking-wider uppercase text-white drop-shadow-md"
+                      >
                         {gateway.label}
-                      </h2>
-                      <p className="text-xs md:text-sm text-white/60 group-hover:text-white/90 transition-colors opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 duration-300">
+                      </motion.h2>
+                      <motion.p
+                        animate={{
+                          opacity: isHovered || isSelected ? 1 : 0,
+                          y: isHovered || isSelected ? 0 : 8,
+                        }}
+                        transition={{ duration: 0.28, ease: "easeOut", delay: 0.04 }}
+                        className="text-xs md:text-sm text-white/80"
+                      >
                         {gateway.description}
-                      </p>
+                      </motion.p>
                     </motion.div>
                   ) : null}
 
