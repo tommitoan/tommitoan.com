@@ -9,6 +9,7 @@ import { TechExperienceSection } from "@/components/tech/sections/TechExperience
 import { TechEducationSection } from "@/components/tech/sections/TechEducationSection";
 import { TechProjectsSection } from "@/components/tech/sections/TechProjectsSection";
 import { TechContactSection } from "@/components/tech/sections/TechContactSection";
+import { TechTableOfContents } from "@/components/tech/TechTableOfContents";
 
 export const metadata = createMetadata({
   title: "Tech",
@@ -28,6 +29,7 @@ export default function TechPage() {
         }}
       />
       <StarsBackgroundClient gateway starsConfig={techPageStarsConfig} zIndex={-1} />
+      <TechTableOfContents />
       <PageShell className="space-y-24 pb-24 pt-10 md:space-y-32 md:pb-32 md:pt-14">
         <TechHeroSection />
         <TechAboutSection />
