@@ -54,7 +54,7 @@ export const fengshuiContent = {
     "Use engineering discipline even in unusual subject areas",
   ],
   links: {
-    demo: "https://bazica-web.tommitoan.com/",
+    demo: "https://bazica.onrender.com/",
     repo: "https://github.com/tommitoan/bazica",
   },
 };

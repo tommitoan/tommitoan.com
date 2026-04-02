@@ -146,7 +146,7 @@ export function SpaceGatewayHome() {
       setIsLoaderFinishing(true);
       const timeout = window.setTimeout(() => {
         setIsGatewayReady(true);
-      }, 520);
+      }, 350);
       return () => window.clearTimeout(timeout);
     }
   }, [readyPlanets, assetsReady, loadingProgress]);
@@ -170,9 +170,9 @@ export function SpaceGatewayHome() {
           return Math.min(current + 1, 99);
         }
 
-        return Math.min(current + 1, 100);
+        return Math.min(current + 4, 100);
       });
-    }, 30);
+    }, 16);
 
     return () => window.clearInterval(interval);
   }, [readyPlanets, assetsReady, loadingProgress, isGatewayReady]);

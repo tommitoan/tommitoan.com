@@ -281,7 +281,7 @@ export const gatewayHomeConfig = {
     glowStrength: 4.8,
   } satisfies GatewayLoaderConfig,
   transitions: {
-    routeDelayMs: 1800,
+    routeDelayMs: 2400,
     reducedMotionRouteDelayMs: 120,
     zoomDurationSeconds: 1.4,
     zoomScale: 3.5,
@@ -291,7 +291,7 @@ export const gatewayHomeConfig = {
       fengshui: "-40vw",
     } satisfies Record<GatewayHomeId, string>,
     zoomOffsetY: "30vh",
-    flashDelaySeconds: 1.4,
+    flashDelaySeconds: 2.0,
     flashDurationSeconds: 0.4,
   },
   row: {
@@ -377,13 +377,13 @@ export const gatewayHomeConfig = {
       poseTiltSpeedX: 0.4,
     },
     warp: {
-      progressDamping: 4,
+      progressDamping: 1.5,
       targetOffsetX: 2.5,
       endY: 1.5,
-      endZ: -2,
-      endScale: 0.1,
-      spinSpeedZ: 15,
-      spinSpeedX: 10,
+      endZ: -3.8,
+      endScale: 0.2,
+      spinSpeedZ: 5,
+      spinSpeedX: 3,
     },
   },
   portals: [
