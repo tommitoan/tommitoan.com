@@ -1,73 +1,75 @@
 # tommitoan.com
 
-Personal website for Toan Ngo, built with Next.js as a static-exported portfolio and product gateway.
+Personal website for Toan Ngo, built as a static Next.js space gateway with three routes: `Tech`, `Discover`, and `Feng Shui`.
 
-## What is in this repo
+## Routes
 
-- `/` is a sticker-based interactive landing page.
-- `/discover` explains the wider story: homelab, experiments, and channels.
-- `/products` lists public-facing tools and product directions.
-- `src/content/site-content.ts` holds most text and route content.
-- `src/content/home-scene.ts` holds homepage sticker positions, note content, and sticker asset config.
+- `/` gateway homepage with 3 interactive portals
+- `/tech` engineering profile and CV route
+- `/discover` homelab, experiments, and public channels
+- `/fengshui` Bazica and symbolic-product route
 
-## Stack
+## Repo Structure
 
-- Next.js 16 App Router
-- React 19
-- TypeScript 5
-- Tailwind CSS v4
-- Framer Motion
-- pnpm
+- `src/app/` route entry points, layouts, metadata, sitemap, robots, manifest
+- `src/components/gateway/` homepage scene, planet renderer, and gateway config
+- `src/components/tech/` tech route sections and shared motion helpers
+- `src/components/layout/` shared header, footer, and page shell
+- `src/content/` route copy and structured content
+- `src/lib/` metadata and small utilities
+- `public/gateway/` homepage background, astronaut, and planet textures
+- `public/profile/` profile imagery
+- `public/projects/` project previews
+- `public/discover/` discover-route imagery
 
-## Local development
+## Current Docs
+
+- `docs/README.md`
+- `docs/features.md`
+- `docs/implementation.md`
+- `docs/configuration.md`
+- `docs/gateway-config.md`
+- `docs/run-guide.md`
+- `docs/notes.md`
+
+## Commands
 
 ```bash
 pnpm install
 pnpm dev
 pnpm lint
 pnpm typecheck
+pnpm test:unit
 pnpm build
+pnpm start
 ```
 
-## Key files
+## Main Files
 
-- `src/app/page.tsx` - homepage scene renderer
-- `src/components/home/hero-sticker.tsx` - center sticker animation and CV link
-- `src/content/home-scene.ts` - editable sticker layout config
-- `src/content/site-content.ts` - typed content for the rest of the site
-- `src/app/discover/page.tsx` - Discover route
-- `src/app/products/page.tsx` - Products route
-- `next.config.ts` - static export config
+- `src/app/(gateway)/page.tsx`
+- `src/components/gateway/space-gateway-home.tsx`
+- `src/components/gateway/gatewayHomeConfig.ts`
+- `src/components/gateway/PlanetSphere.tsx`
+- `src/components/canvas/SpaceBackgroundAstronaut.tsx`
+- `src/app/(content)/tech/page.tsx`
+- `src/app/(content)/discover/page.tsx`
+- `src/app/(content)/fengshui/page.tsx`
 
-## Adjust sticker positions
+## Gateway Source Of Truth
 
-If a sticker looks too high, too low, too far left, or too far right, edit `src/content/home-scene.ts`.
+Homepage scene configuration lives in `src/components/gateway/gatewayHomeConfig.ts`.
 
-Example:
+That file controls:
 
-```ts
-{
-  id: "backend",
-  className:
-    "absolute top-[25%] right-[8%] z-10 group drop-shadow-lg transition-transform duration-300 hover:scale-110 hover:-rotate-3",
-}
-```
+- shared background and starfield settings
+- portal labels, routes, themes, and effects
+- frame size and row spacing
+- planet textures, size, hover motion, and alignment
+- astronaut asset, placement, idle motion, and warp motion
+- selection timing, zoom, and flash behavior
 
-Useful class changes:
+## Notes
 
-- move up: lower `top-[25%]` to something like `top-[20%]`
-- move down: increase `top-[25%]` to `top-[30%]`
-- move left: increase `right-[8%]` or lower `left-[45%]`
-- move right: lower `right-[8%]` or increase `left-[45%]`
-- resize: change `width` and `height`
-
-More beginner-friendly guidance is in `docs/sticker-positioning-guide.md`.
-
-## Docs
-
-- `docs/README.md` - docs index
-- `docs/project-overview.md` - current project map
-- `docs/development-guide.md` - run, build, and edit workflow
-- `docs/sticker-positioning-guide.md` - how to move homepage stickers safely
-
-Legacy planning docs are still kept in `docs/` for reference.
+- The app uses static export via `next.config.ts`.
+- There are currently no environment variables required for local development.
+- Canonical contact email is `tommitoan1995@gmail.com`.
