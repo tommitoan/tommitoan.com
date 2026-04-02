@@ -4,40 +4,43 @@ import { motion } from "framer-motion";
 import { Reveal } from "@/components/tech/Reveal";
 import { portfolio } from "@/content/portfolio";
 
-const LINK_META: Record<string, { icon: string; accent: string; accentBg: string; accentBorder: string; accentText: string }> = {
+const LINK_META: Record<string, { icon: string; label: string; pillBorder: string; pillBg: string; pillText: string; pillHoverBg: string }> = {
   Email: {
     icon: "✉",
-    accent: "from-violet-500/20 to-blue-500/20",
-    accentBg: "bg-violet-500/10",
-    accentBorder: "border-violet-500/30",
-    accentText: "text-violet-400",
+    label: "Email me",
+    pillBorder: "border-violet-500/40",
+    pillBg: "bg-violet-500/10",
+    pillText: "text-violet-300",
+    pillHoverBg: "hover:bg-violet-500/20",
   },
   GitHub: {
     icon: "⌥",
-    accent: "from-slate-500/20 to-slate-400/10",
-    accentBg: "bg-white/8",
-    accentBorder: "border-white/20",
-    accentText: "text-slate-300",
+    label: "GitHub",
+    pillBorder: "border-white/20",
+    pillBg: "bg-white/6",
+    pillText: "text-slate-300",
+    pillHoverBg: "hover:bg-white/12",
   },
   LinkedIn: {
     icon: "in",
-    accent: "from-blue-500/20 to-cyan-400/20",
-    accentBg: "bg-blue-500/10",
-    accentBorder: "border-blue-400/30",
-    accentText: "text-blue-400",
+    label: "LinkedIn",
+    pillBorder: "border-blue-400/40",
+    pillBg: "bg-blue-500/10",
+    pillText: "text-blue-300",
+    pillHoverBg: "hover:bg-blue-500/20",
   },
 };
 
 const containerVariants = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.12 }
+    transition: { staggerChildren: 0.1 }
   }
 };
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 32 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } }
+const pillVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } }
 };
 
 export function TechContactSection() {
@@ -52,7 +55,7 @@ export function TechContactSection() {
             <div className="absolute left-1/2 top-0 h-px w-3/4 -translate-x-1/2 bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
           </div>
 
-          <div className="relative mx-auto max-w-3xl">
+          <div className="relative mx-auto max-w-2xl">
             <div className="text-center">
               <span className="cv-eyebrow">Get in touch</span>
               <h2 className="cv-section-title mt-3">
@@ -66,7 +69,7 @@ export function TechContactSection() {
             </div>
 
             <motion.div
-              className="mt-10 grid gap-4 sm:grid-cols-3"
+              className="mt-10 flex flex-wrap justify-center gap-3"
               variants={containerVariants}
               initial="hidden"
               whileInView="visible"
@@ -82,30 +85,20 @@ export function TechContactSection() {
                     href={link.href}
                     target={isExternal ? "_blank" : undefined}
                     rel={isExternal ? "noreferrer" : undefined}
-                    variants={cardVariants}
-                    whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                    className={`group relative flex flex-col overflow-hidden rounded-2xl border ${meta.accentBorder} bg-gradient-to-br ${meta.accent} p-5 backdrop-blur-sm transition-shadow duration-300 hover:shadow-[0_0_32px_rgba(145,94,255,0.18)]`}
+                    variants={pillVariants}
+                    whileHover={{ scale: 1.04, transition: { duration: 0.18 } }}
+                    whileTap={{ scale: 0.97 }}
+                    className={`group flex items-center gap-2.5 rounded-full border ${meta.pillBorder} ${meta.pillBg} ${meta.pillHoverBg} px-5 py-2.5 backdrop-blur-sm transition-colors duration-200`}
                   >
-                    <div className="flex items-center justify-between">
-                      <span
-                        className={`flex h-9 w-9 items-center justify-center rounded-xl border ${meta.accentBorder} ${meta.accentBg} text-sm font-bold ${meta.accentText}`}
-                      >
-                        {meta.icon}
-                      </span>
-                      <span className="cv-soft-caption">{link.label}</span>
-                    </div>
-
-                    <p className="mt-4 break-all text-sm font-semibold leading-snug text-white md:text-base">
-                      {link.value}
-                    </p>
-
-                    <div className="mt-4 flex items-center gap-1.5">
-                      <span className={`text-xs font-medium ${meta.accentText} transition-transform duration-200 group-hover:translate-x-1`}>
-                        {link.href.startsWith("mailto") ? "Send email" : "Open profile"} →
-                      </span>
-                    </div>
-
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 origin-left scale-x-0 bg-gradient-to-r from-violet-500 via-blue-400 to-cyan-400 transition-transform duration-300 group-hover:scale-x-100" />
+                    <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${meta.pillText}`}>
+                      {meta.icon}
+                    </span>
+                    <span className={`text-sm font-semibold ${meta.pillText} whitespace-nowrap`}>
+                      {meta.label}
+                    </span>
+                    <span className={`text-xs ${meta.pillText} opacity-60 transition-transform duration-200 group-hover:translate-x-0.5`}>
+                      →
+                    </span>
                   </motion.a>
                 );
               })}
