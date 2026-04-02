@@ -5,44 +5,57 @@ type MetadataOptions = {
   title?: string;
   description?: string;
   path?: string;
+  keywords?: string[];
+  robots?: {
+    index?: boolean;
+    follow?: boolean;
+  };
+  image?: {
+    url: string;
+    width: number;
+    height: number;
+    alt: string;
+  };
 };
 
-const socialImage = `${siteContent.siteMeta.domain}/social-card.svg`;
+const BASE = siteContent.siteMeta.domain;
+const defaultSocialImage = `${BASE}/social-card.png`;
 
 export function createMetadata(options: MetadataOptions = {}): Metadata {
-  const { title, description, path = "/" } = options;
-  const pageTitle = title ?? siteContent.siteMeta.title;
-
+  const { title, description, path = "/", keywords, robots, image } = options;
   const pageDescription = description ?? siteContent.siteMeta.description;
-  const pageUrl = `${siteContent.siteMeta.domain}${path}`;
+  const pageUrl = `${BASE}${path}`;
+  const displayTitle = title ?? siteContent.siteMeta.title;
+
+  const ogImage = image
+    ? { url: `${BASE}${image.url}`, width: image.width, height: image.height, alt: image.alt }
+    : { url: defaultSocialImage, width: 1200, height: 630, alt: `${displayTitle} — Tommi Toan` };
 
   return {
-    title: pageTitle,
+    title,
     description: pageDescription,
-    metadataBase: new URL(siteContent.siteMeta.domain),
+    metadataBase: new URL(BASE),
     alternates: {
       canonical: path,
     },
+    ...(keywords ? { keywords } : {}),
+    ...(robots ? { robots } : {}),
     openGraph: {
-      title: pageTitle,
+      title: displayTitle,
       description: pageDescription,
       url: pageUrl,
       siteName: siteContent.siteMeta.title,
       type: "website",
-      images: [
-        {
-          url: socialImage,
-          width: 1200,
-          height: 630,
-          alt: `${siteContent.siteMeta.title} social preview`,
-        },
-      ],
+      locale: "en_US",
+      images: [ogImage],
     },
     twitter: {
       card: "summary_large_image",
-      title: pageTitle,
+      title: displayTitle,
       description: pageDescription,
-      images: [socialImage],
+      site: "@tommitoan",
+      creator: "@tommitoan",
+      images: [ogImage.url],
     },
   };
 }

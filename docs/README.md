@@ -8,3 +8,4 @@ Current project documentation.
 - `gateway-config.md` homepage gateway configuration reference
 - `run-guide.md` local setup, verification, and preview workflow
 - `notes.md` cleanup notes, conventions, and follow-up refactor ideas
+- `seo.md` metadata system, sitemap rules, OG images, structured data, analytics

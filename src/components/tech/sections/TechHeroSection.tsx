@@ -15,7 +15,7 @@ export function TechHeroSection() {
   const reducedMotion = useReducedMotion();
 
   return (
-    <section className="cv-section-shell relative">
+    <section id="intro" className="cv-section-shell relative">
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute left-[-10rem] top-16 hidden h-[32rem] w-[32rem] rounded-full bg-violet-500/6 blur-3xl lg:block" />
       </div>

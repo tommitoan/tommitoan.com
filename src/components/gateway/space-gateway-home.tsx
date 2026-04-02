@@ -208,9 +208,9 @@ export function SpaceGatewayHome() {
 
   return (
     <section className="space-gateway-shell relative w-full h-screen overflow-hidden text-white">
-      <div className="absolute inset-0 z-[var(--z-background)] pointer-events-none" style={spaceThemeBackgroundStyle} />
-      <div className="absolute inset-0 z-[var(--z-overlay)] pointer-events-none" style={spaceThemeOverlayStyle} />
-      <div className="absolute inset-0 z-[var(--z-stars)] pointer-events-none">
+      <div className="absolute inset-0 z-0 pointer-events-none" style={spaceThemeBackgroundStyle} />
+      <div className="absolute inset-0 z-[1] pointer-events-none" style={spaceThemeOverlayStyle} />
+      <div className="absolute inset-0 z-[2] pointer-events-none">
         <StarsBackgroundClient absolute gateway />
       </div>
 
@@ -221,7 +221,7 @@ export function SpaceGatewayHome() {
           y: selected ? gatewayHomeConfig.transitions.zoomOffsetY : "0vh",
         }}
         transition={{ duration: gatewayHomeConfig.transitions.zoomDurationSeconds, ease: "easeInOut" }}
-        className="absolute inset-0 w-full h-full z-[var(--z-content)]"
+        className="absolute inset-0 w-full h-full z-[3]"
       >
         {debug.showPortalEffects ? <div className="space-nebula space-nebula-left" /> : null}
         {debug.showPortalEffects ? <div className="space-nebula space-nebula-right" /> : null}
@@ -299,7 +299,7 @@ export function SpaceGatewayHome() {
                       backgroundPosition: gateway.theme.frameImageSrc ? 'auto, center' : 'auto',
                       backgroundColor: 'rgba(0,0,0,0.6)',
                     } : {}),
-                    zIndex: "var(--z-portal)",
+                    zIndex: 50,
                   }}
                 >
                   {debug.showPortalEffects ? gateway.effects.map((effect, effectIndex) => (
@@ -391,7 +391,7 @@ export function SpaceGatewayHome() {
       </motion.div>
 
       {debug.showAstronaut ? (
-        <div className="absolute inset-0 z-[var(--z-astronaut)] pointer-events-none">
+        <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 60 }}>
           <Canvas
             style={{ pointerEvents: "none" }}
             camera={{ position: gatewayHomeConfig.astronaut.camera.position, fov: gatewayHomeConfig.astronaut.camera.fov }}
@@ -413,7 +413,7 @@ export function SpaceGatewayHome() {
               delay: gatewayHomeConfig.transitions.flashDelaySeconds,
               duration: gatewayHomeConfig.transitions.flashDurationSeconds,
             }}
-            className="absolute inset-0 z-[var(--z-flash)] bg-white pointer-events-none"
+            className="absolute inset-0 z-[100] bg-white pointer-events-none"
           />
         )}
       </AnimatePresence>

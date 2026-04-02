@@ -128,9 +128,9 @@ export const portfolio = {
       title: "Languages",
       accent: "violet",
       items: [
-        { name: "Go", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg" },
-        { name: "TypeScript", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg" },
-        { name: "JavaScript", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg" },
+        { name: "Go", icon: "/skills/go.svg" },
+        { name: "TypeScript", icon: "/skills/typescript.svg" },
+        { name: "JavaScript", icon: "/skills/javascript.svg" },
         { name: "SQL" }
       ]
     },
@@ -138,12 +138,12 @@ export const portfolio = {
       title: "Backend & API",
       accent: "cyan",
       items: [
-        { name: "gRPC", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/grpc/grpc-plain.svg" },
+        { name: "gRPC", icon: "/skills/grpc.svg" },
         { name: "Protobuf" },
         { name: "gRPC-Gateway" },
         { name: "REST" },
-        { name: "Kafka", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/apachekafka/apachekafka-original.svg" },
-        { name: "RabbitMQ", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/rabbitmq/rabbitmq-original.svg" },
+        { name: "Kafka", icon: "/skills/kafka.svg" },
+        { name: "RabbitMQ", icon: "/skills/rabbitmq.svg" },
         { name: "JWT" },
         { name: "OAuth2" }
       ]
@@ -152,42 +152,42 @@ export const portfolio = {
       title: "Databases",
       accent: "pink",
       items: [
-        { name: "PostgreSQL", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original.svg" },
-        { name: "Redis", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redis/redis-original.svg" },
-        { name: "MongoDB", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original.svg" },
-        { name: "ArangoDB", icon: "https://cdn.simpleicons.org/arangodb/white" }
+        { name: "PostgreSQL", icon: "/skills/postgresql.svg" },
+        { name: "Redis", icon: "/skills/redis.svg" },
+        { name: "MongoDB", icon: "/skills/mongodb.svg" },
+        { name: "ArangoDB", icon: "/skills/arangodb.svg" }
       ]
     },
     {
       title: "Cloud & Infra",
       accent: "blue",
       items: [
-        { name: "AWS", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-original-wordmark.svg" },
-        { name: "GCP", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/googlecloud/googlecloud-original.svg" },
-        { name: "Kubernetes", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kubernetes/kubernetes-plain.svg" },
-        { name: "Docker", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg" }
+        { name: "AWS", icon: "/skills/aws.svg" },
+        { name: "GCP", icon: "/skills/gcp.svg" },
+        { name: "Kubernetes", icon: "/skills/kubernetes.svg" },
+        { name: "Docker", icon: "/skills/docker.svg" }
       ]
     },
     {
       title: "CI/CD & Obs.",
       accent: "amber",
       items: [
-        { name: "Jenkins", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jenkins/jenkins-original.svg" },
-        { name: "Argo CD", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/argocd/argocd-original.svg" },
-        { name: "GitHub Actions", icon: "https://cdn.simpleicons.org/githubactions/white" },
-        { name: "Helm", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/helm/helm-original.svg" },
+        { name: "Jenkins", icon: "/skills/jenkins.svg" },
+        { name: "Argo CD", icon: "/skills/argocd.svg" },
+        { name: "GitHub Actions", icon: "/skills/github-actions.svg" },
+        { name: "Helm", icon: "/skills/helm.svg" },
         { name: "Jaeger" },
-        { name: "Prometheus", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/prometheus/prometheus-original.svg" }
+        { name: "Prometheus", icon: "/skills/prometheus.svg" }
       ]
     },
     {
       title: "AI Tools",
       accent: "emerald",
       items: [
-        { name: "GitHub Copilot", icon: "https://cdn.simpleicons.org/githubcopilot/white" },
+        { name: "GitHub Copilot", icon: "/skills/github-copilot.svg" },
         { name: "OpenCode" },
         { name: "ChatGPT" },
-        { name: "Claude", icon: "https://cdn.simpleicons.org/claude/white" }
+        { name: "Claude", icon: "/skills/claude.svg" }
       ]
     }
   ] satisfies SkillGroup[],

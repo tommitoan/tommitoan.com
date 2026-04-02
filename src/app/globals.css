@@ -22,6 +22,7 @@
 
 @theme inline {
   --font-sans: var(--font-body);
+  --font-brand: var(--font-brand);
 }
 
 * {
