@@ -232,12 +232,12 @@ export const portfolio = {
           ]
         },
         {
-          name: "Trydome",
+          name: "Cloud Homelab",
           period: "Jun 2022 — Jun 2023",
           bullets: [
-            "Optimised critical PostgreSQL queries, integrated Stripe billing via REST API, and designed a FluxCD GitOps pipeline automating cloud database deployment for end customers.",
-            "Cleaned and validated legacy customer data to improve reporting accuracy and overall data reliability across the platform.",
-            "Collaborated on REST API design and infrastructure provisioning across AWS and GCP using FluxCD-based GitOps for automated customer database configuration management."
+            "Built and maintained internal CI/CD infrastructure for GTG using a self-hosted k3s cluster and GitOps via Argo CD — automating service deployment and eliminating manual release workflows across the engineering team.",
+            "Deployed a complete internal observability stack: Prometheus, Grafana, Jaeger, Loki, and Alertmanager, enabling engineers to monitor services and trace requests in real time.",
+            "Configured Nginx Ingress, Redis Cluster, and MinIO storage for internal service dependencies; secured external access via Cloudflared tunnel."
           ]
         },
         {
