@@ -158,8 +158,21 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
   const jsonLd = [personLd, websiteLd];
 
+  const themeScript = `(() => {
+    try {
+      const s = localStorage.getItem('tommitoan-theme');
+      const d = s || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      document.documentElement.setAttribute('data-theme', d);
+    } catch (_) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  })();`;
+
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className={`${displayFont.variable} ${bodyFont.variable} ${brandFont.variable} m-0 p-0 antialiased`}>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         {children}
