@@ -1,53 +1,49 @@
-import Image from "next/image";
-import Link from "next/link";
 import { createMetadata } from "@/lib/metadata";
 import { PageShell } from "@/components/layout/page-shell";
+import { StarsBackgroundClient } from "@/components/tech/StarsBackgroundClient";
+import { FengShuiHeroSection } from "@/components/fengshui/sections/FengShuiHeroSection";
+import { FengShuiIntroSection } from "@/components/fengshui/sections/FengShuiIntroSection";
+import { FengShuiPillarsSection } from "@/components/fengshui/sections/FengShuiPillarsSection";
+import { FengShuiLanesSection } from "@/components/fengshui/sections/FengShuiLanesSection";
+import { FengShuiPrinciplesSection } from "@/components/fengshui/sections/FengShuiPrinciplesSection";
+import { FengShuiLinksSection } from "@/components/fengshui/sections/FengShuiLinksSection";
 
 export const metadata = createMetadata({
   title: "Feng Shui",
-  description: "Feng Shui tools and digital products by Toan Ngo — including bazica, an open-source Go library for Ba-zi Four Pillars of Destiny calculations.",
+  description:
+    "Feng Shui tools and digital products by Toan Ngo — including Bazica, an open-source Go library for Ba-zi Four Pillars of Destiny calculations.",
   path: "/fengshui/",
-  keywords: ["Feng Shui", "Ba-zi", "Four Pillars", "bazica", "Chinese astrology", "Toan Ngo", "tommitoan", "Go library"],
-  robots: { index: false, follow: true },
+  keywords: [
+    "Feng Shui", "Ba-zi", "Four Pillars", "bazica",
+    "Chinese astrology", "Toan Ngo", "tommitoan", "Go library",
+  ],
 });
+
+const webPageLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: "Feng Shui — Tommi Toan",
+  description:
+    "Feng Shui tools and digital products — Ba-zi, calendar systems, and symbolic software.",
+  url: "https://tommitoan.com/fengshui/",
+};
 
 export default function FengShuiPage() {
   return (
-    <PageShell className="!py-0 flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center text-center">
-      <div className="flex flex-col items-center gap-0 max-w-lg mx-auto">
-        <div
-          className="relative overflow-hidden rounded-2xl border-2 border-black"
-          style={{
-            width: "clamp(18rem, 60vh, 44rem)",
-            height: "clamp(12rem, 42vh, 30rem)",
-            boxShadow: "0 8px 40px rgba(0,0,0,0.72), 0 2px 12px rgba(0,0,0,0.5)",
-          }}
-        >
-          <Image
-            src="/announcement/building.png"
-            alt="Planet under construction"
-            fill
-            className="object-cover object-bottom"
-            priority
-          />
-        </div>
-
-        <div className="space-y-2 mt-4">
-          <h1 className="font-[var(--font-display)] text-3xl md:text-4xl font-semibold tracking-[-0.05em] text-white">
-            This planet is being built
-          </h1>
-          <p className="text-base leading-8 text-white/60 max-w-sm mx-auto">
-            The Feng Shui section is under active construction and will be released soon. Please check back later.
-          </p>
-        </div>
-
-        <Link
-          href="/"
-          className="mt-5 inline-flex rounded-full border border-white/12 bg-white/4 px-6 py-3 text-sm font-medium text-white transition hover:bg-white/8"
-        >
-          Return to gateway
-        </Link>
-      </div>
-    </PageShell>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageLd) }}
+      />
+      <StarsBackgroundClient gateway={false} />
+      <PageShell className="space-y-24 pb-24 pt-10 md:space-y-32 md:pb-32 md:pt-14">
+        <FengShuiHeroSection />
+        <FengShuiIntroSection />
+        <FengShuiPillarsSection />
+        <FengShuiLanesSection />
+        <FengShuiPrinciplesSection />
+        <FengShuiLinksSection />
+      </PageShell>
+    </>
   );
 }
