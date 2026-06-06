@@ -1,53 +1,47 @@
-import Image from "next/image";
-import Link from "next/link";
 import { createMetadata } from "@/lib/metadata";
 import { PageShell } from "@/components/layout/page-shell";
+import { StarsBackgroundClient } from "@/components/tech/StarsBackgroundClient";
+import { DiscoverHeroSection } from "@/components/discover/sections/DiscoverHeroSection";
+import { DiscoverHomelabSection } from "@/components/discover/sections/DiscoverHomelabSection";
+import { DiscoverServicesGrid } from "@/components/discover/sections/DiscoverServicesGrid";
+import { DiscoverExperimentsSection } from "@/components/discover/sections/DiscoverExperimentsSection";
+import { DiscoverChannelsSection } from "@/components/discover/sections/DiscoverChannelsSection";
 
 export const metadata = createMetadata({
   title: "Discover",
-  description: "The personal operating system of Toan Ngo — homelab infrastructure, self-hosted services, open-source experiments, and the broader ecosystem behind the backend work.",
+  description:
+    "The personal operating system of Toan Ngo — homelab infrastructure, self-hosted services, open-source experiments, and the broader ecosystem behind the backend work.",
   path: "/discover/",
-  keywords: ["homelab", "k3s", "GitOps", "self-hosting", "Argo CD", "Prometheus", "Grafana", "Cloudflared", "Toan Ngo", "tommitoan"],
-  robots: { index: false, follow: true },
+  keywords: [
+    "homelab", "k3s", "GitOps", "self-hosting", "Argo CD",
+    "Prometheus", "Grafana", "Cloudflared", "Toan Ngo", "tommitoan",
+  ],
 });
+
+const webPageLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: "Discover — Tommi Toan",
+  description:
+    "Homelab infrastructure, self-hosted services, experiments, and channels.",
+  url: "https://tommitoan.com/discover/",
+};
 
 export default function DiscoverPage() {
   return (
-    <PageShell className="!py-0 flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center text-center">
-      <div className="flex flex-col items-center gap-0 max-w-lg mx-auto">
-        <div
-          className="relative overflow-hidden rounded-2xl border-2 border-black"
-          style={{
-            width: "clamp(18rem, 60vh, 44rem)",
-            height: "clamp(12rem, 42vh, 30rem)",
-            boxShadow: "0 8px 40px rgba(0,0,0,0.72), 0 2px 12px rgba(0,0,0,0.5)",
-          }}
-        >
-          <Image
-            src="/announcement/building.png"
-            alt="Planet under construction"
-            fill
-            className="object-cover object-bottom"
-            priority
-          />
-        </div>
-
-        <div className="space-y-2 mt-4">
-          <h1 className="font-[var(--font-display)] text-3xl md:text-4xl font-semibold tracking-[-0.05em] text-white">
-            This planet is being built
-          </h1>
-          <p className="text-base leading-8 text-white/60 max-w-sm mx-auto">
-            The Discover section is under active construction and will be released soon. Please check back later.
-          </p>
-        </div>
-
-        <Link
-          href="/"
-          className="mt-5 inline-flex rounded-full border border-white/12 bg-white/4 px-6 py-3 text-sm font-medium text-white transition hover:bg-white/8"
-        >
-          Return to gateway
-        </Link>
-      </div>
-    </PageShell>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageLd) }}
+      />
+      <StarsBackgroundClient gateway={false} />
+      <PageShell className="space-y-24 pb-24 pt-10 md:space-y-32 md:pb-32 md:pt-14">
+        <DiscoverHeroSection />
+        <DiscoverHomelabSection />
+        <DiscoverServicesGrid />
+        <DiscoverExperimentsSection />
+        <DiscoverChannelsSection />
+      </PageShell>
+    </>
   );
 }
