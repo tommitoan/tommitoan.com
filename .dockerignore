@@ -1,0 +1,13 @@
+.git
+.gitignore
+.next
+node_modules
+out
+.env
+.env.*
+.opencode
+docs
+ref
+README.md
+*.log
+tsconfig.tsbuildinfo
