@@ -47,15 +47,17 @@ export default function TechPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageLd) }} />
-      <div
-        className="pointer-events-none fixed inset-0 -z-30"
-        style={{
-          backgroundImage: "url('/gateway/backgrounds/tech-bg.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      />
-      <StarsBackgroundClient gateway starsConfig={techPageStarsConfig} zIndex={-1} />
+      <div className="tech-bg-layer">
+        <div
+          className="pointer-events-none fixed inset-0 -z-30"
+          style={{
+            backgroundImage: "url('/gateway/backgrounds/tech-bg.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        />
+        <StarsBackgroundClient gateway starsConfig={techPageStarsConfig} zIndex={-1} />
+      </div>
       <TechTableOfContents />
       <PageShell className="space-y-24 pb-24 pt-10 md:space-y-32 md:pb-32 md:pt-14">
         <TechHeroSection />
