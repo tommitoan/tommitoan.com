@@ -215,9 +215,8 @@ export const portfolio = {
     {
       company: "Mercury Studio",
       location: "HCMC, Vietnam",
-      period: "Jan 2025 — Present",
+      period: "Jan 2025 — Dec 2025",
       role: "Software Engineer — Slotty (B2B gaming backend, 120+ Go microservices)",
-      current: true,
       bullets: [
         "Migrated .NET/C# backend services to idiomatic Go across Edge, Integration, and Core layers; scaffolded new services where no Go counterpart existed; coordinated API contracts and gRPC-Gateway routing changes with the frontend team.",
         "Delivered CRUD, structured audit logging, and strict 1-level downline authorization for a 3-tier person hierarchy (agents, players, sub-accounts), giving operators a complete, queryable trail of every downline action.",
