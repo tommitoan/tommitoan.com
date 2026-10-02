@@ -78,7 +78,7 @@ export const portfolio = {
     handle: "@tommitoan",
     role: "Go engineer building production backend systems and cloud-native products.",
     description:
-      "5 years building and operating production backend systems across legal-tech SaaS, B2B gaming, and CRM — Go, REST/gRPC APIs, event-driven workflows with Temporal and Kafka, and legacy-to-Go service migrations. AWS Certified Solutions Architect.",
+      "~5 years building and operating production backend systems across legal-tech SaaS, B2B gaming, and CRM — Go, REST/gRPC APIs, concurrent and event-driven workloads with Temporal and Kafka, and legacy-to-Go service migrations. AWS Certified Solutions Architect.",
     highlights: ["Go and gRPC", "Temporal Workflows", "AWS Certified", "Kubernetes & GitOps"],
     ctas: [
       { label: "View Projects", href: "#projects", variant: "primary" },
@@ -99,7 +99,7 @@ export const portfolio = {
       "Go is my primary language across legal-tech SaaS, B2B gaming, and CRM — REST and gRPC APIs, event-driven workflows with Temporal, Kafka, and RabbitMQ, and PostgreSQL and Redis at the data layer.",
       "I modernise legacy services to Go — from TypeScript, .NET/C#, and Perl — preserving integration contracts while improving maintainability and test coverage.",
       "I work across AWS and GCP with Kubernetes, Docker, Jenkins, ArgoCD, and Helm — designing deployment pipelines and observability stacks (Jaeger, Prometheus, Loki, VictoriaMetrics) that teams can rely on.",
-      "I take features from design through production monitoring and incident response — root-causing hangs, tracing data ownership across services, and building internal tooling that eliminates manual toil."
+      "I own backend features from design and implementation through deployment, observability, and production troubleshooting — root-causing hangs, reviewing code for correctness and maintainability, and building internal tooling that eliminates manual toil."
     ],
     actions: [
       { label: "LinkedIn", href: "https://www.linkedin.com/in/tommitoan/", variant: "primary" },
@@ -206,10 +206,9 @@ export const portfolio = {
       bullets: [
         "Own end-to-end features across 5+ Go/TypeScript services for a legal-document platform producing demand letters, medical chronologies, and exhibits for personal injury firms.",
         "Root-caused a multi-hour hang in a production Temporal workflow by reproducing it with a synthetic 17k-page workload; identified a missing activity heartbeat timeout, added failure detection, and converted memory-heavy pipeline stages to streaming I/O.",
-        "Migrated provider API endpoints from TypeScript to Go, preserving integration contracts while improving maintainability and testing; resolved findings from an external code review before rollout.",
+        "Migrated provider API endpoints from TypeScript to Go, preserving integration contracts; wrote unit and integration tests and targeted E2E scripts to reproduce defects and verify feature behavior before rollout.",
         "Built cross-service cost and timing telemetry through six REST endpoints across two document-processing providers, using a non-fatal reporting path so observability failures cannot block the core workflow.",
-        "Fixed a production defect that silently omitted a required exhibit from generated documents by tracing data ownership across three services and correcting the workflow contract rather than patching the final output.",
-        "Caught a document orientation feature failing on all test inputs before merge; reproduced the issue, documented the evidence, and kept the change out of production until it was corrected."
+        "Review backend pull requests for correctness and maintainability, checking function and API clarity, unit/integration test cases, Docker-based local reproducibility, and end-to-end behavior before merge."
       ]
     },
     {
@@ -218,11 +217,9 @@ export const portfolio = {
       period: "Jan 2025 — Dec 2025",
       role: "Software Engineer — Slotty (B2B gaming backend, 120+ Go microservices)",
       bullets: [
-        "Migrated .NET/C# backend services to idiomatic Go across Edge, Integration, and Core layers; scaffolded new services where no Go counterpart existed; coordinated API contracts and gRPC-Gateway routing changes with the frontend team.",
-        "Delivered CRUD, structured audit logging, and strict 1-level downline authorization for a 3-tier person hierarchy (agents, players, sub-accounts), giving operators a complete, queryable trail of every downline action.",
-        "Added Jaeger end-to-end tracing and Redis Cluster caching with a structured key naming convention, cutting repeated downstream gRPC calls on hot read paths.",
-        "Maintained Jenkins CI/CD pipelines with parallel Docker builds and GitOps deployment via ArgoCD + Helm across development, staging, and production.",
-        "Built MyTools, an internal Go + React dashboard replacing manual PostgreSQL and Redis lookups for person lookup, API diffing, and cache cloning — compressing a ~5-minute support workflow to ~5 seconds, adopted by the whole team."
+        "Migrated .NET/C# services to idiomatic Go across Edge, Integration, and Core layers; used concurrent Go processing for monthly report generation/export while delivering backend workflows including audit logging and hierarchical authorization.",
+        "Added Jaeger tracing and Redis Cluster caching to hot read paths, reducing repeated downstream gRPC calls; maintained Jenkins, ArgoCD, and Helm delivery across development, staging, and production.",
+        "Built MyTools, an internal Go/React dashboard that replaced manual PostgreSQL and Redis lookups, reducing a common support workflow from about five minutes to five seconds and gaining team-wide adoption."
       ]
     },
     {
@@ -235,9 +232,9 @@ export const portfolio = {
           name: "GTG CRM",
           period: "Feb 2024 — Dec 2024",
           bullets: [
-            "Designed and built the real-time messaging core of a CRM platform in Go using gRPC, WebSocket, MongoDB, and OAuth2/Keycloak; deployed to AWS EKS and GCP GKE via GitHub Actions + ArgoCD with VictoriaMetrics, Loki, and Jaeger observability.",
-            "Designed the omni-channel messaging service as the platform's core feature, integrating across contact management, marketing, sales, and service hubs.",
-            "Contributed shared coding standards and architecture patterns for the microservice layer, and documented architecture and workflows to onboard new engineers."
+            "Designed and built the real-time messaging core of a CRM platform in Go using gRPC, WebSocket, MongoDB, and OAuth2/Keycloak; modeled MongoDB collections and queries to normalize conversation data across integrations including Facebook, Slack, Gmail, and Yahoo.",
+            "Implemented concurrent message-history retrieval in Go and deployed and operated services on AWS EKS, using VictoriaMetrics, Loki, and Jaeger for production monitoring and troubleshooting.",
+            "Contributed shared coding standards and architecture patterns for the microservice layer."
           ]
         },
         {
@@ -246,14 +243,6 @@ export const portfolio = {
           bullets: [
             "Rewrote a legacy Perl messaging service in Go for the Tokeet property-management platform, adding multi-channel conversation tracking and OAuth2 integrations behind a consistent service layer.",
             "Introduced Amazon SQS fan-out for parallel processing and wrote deployment docs enabling non-technical project managers to manage the app on AWS."
-          ]
-        },
-        {
-          name: "Cloud Homelab",
-          period: "Jun 2022 — Jun 2023",
-          bullets: [
-            "Built a k3s GitOps and observability stack with Argo CD, Prometheus/Grafana, Jaeger, and Loki; the team adopted it for internal CI/CD workflows, eliminating manual release steps.",
-            "Configured Nginx Ingress, Redis Cluster, and MinIO storage for internal service dependencies; secured external access via Cloudflared tunnel."
           ]
         },
         {
