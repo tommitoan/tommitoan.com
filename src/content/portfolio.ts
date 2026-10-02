@@ -37,6 +37,7 @@ type ExperienceItem = {
   location: string;
   period: string;
   role: string;
+  current?: boolean;
   bullets?: string[];
   subProjects?: SubProject[];
 };
@@ -75,17 +76,17 @@ export const portfolio = {
     lead: "Hi, I'm",
     name: "Toan Ngo",
     handle: "@tommitoan",
-    role: "Go Developer building scalable backend systems and cloud-native products.",
+    role: "Go engineer building production backend systems and cloud-native products.",
     description:
-      "4+ years building Go microservices across B2B gaming, CRM, and SaaS — specialising in event-driven architecture, service migration, and shipping internal tooling that compresses workflows from minutes to seconds. AWS Certified Solutions Architect.",
-    highlights: ["Go and gRPC", "AWS Certified", "Kubernetes & GitOps"],
+      "5 years building and operating production backend systems across legal-tech SaaS, B2B gaming, and CRM — Go, REST/gRPC APIs, event-driven workflows with Temporal and Kafka, and legacy-to-Go service migrations. AWS Certified Solutions Architect.",
+    highlights: ["Go and gRPC", "Temporal Workflows", "AWS Certified", "Kubernetes & GitOps"],
     ctas: [
       { label: "View Projects", href: "#projects", variant: "primary" },
       { label: "Download Resume", href: "/ToanNgo-resume.pdf", variant: "secondary" },
       { label: "Contact Me", href: "#contact", variant: "secondary" }
     ] satisfies ActionLink[],
     metrics: [
-      { value: "4+", label: "Years Experience" },
+      { value: "5", label: "Years Experience" },
       { value: "120+", label: "Microservices" },
       { value: "AWS", label: "Certified SAA" }
     ]
@@ -95,10 +96,10 @@ export const portfolio = {
     intro:
       "I build backend systems that are fast, observable, and built to last. My work spans Go microservices, event-driven architecture, cloud infrastructure, CI/CD, and the product thinking needed to turn technical foundations into usable software.",
     points: [
-      "I specialise in Go microservice architecture across B2B gaming, CRM, and SaaS — including .NET-to-Go service migration, gRPC API design, and event-driven patterns with Kafka and RabbitMQ.",
-      "I work across AWS and GCP with Kubernetes, Docker, Jenkins, ArgoCD, and Helm — designing deployment pipelines and observability stacks (Jaeger, Prometheus, Grafana) that teams can rely on.",
-      "I establish engineering standards and architecture patterns that keep codebases consistent as teams grow — and I build internal tooling that eliminates manual toil.",
-      "I contribute across the stack when needed: React + TypeScript frontends, product alignment with stakeholders, architecture docs, and cross-team API contract coordination."
+      "Go is my primary language across legal-tech SaaS, B2B gaming, and CRM — REST and gRPC APIs, event-driven workflows with Temporal, Kafka, and RabbitMQ, and PostgreSQL and Redis at the data layer.",
+      "I modernise legacy services to Go — from TypeScript, .NET/C#, and Perl — preserving integration contracts while improving maintainability and test coverage.",
+      "I work across AWS and GCP with Kubernetes, Docker, Jenkins, ArgoCD, and Helm — designing deployment pipelines and observability stacks (Jaeger, Prometheus, Loki, VictoriaMetrics) that teams can rely on.",
+      "I take features from design through production monitoring and incident response — root-causing hangs, tracing data ownership across services, and building internal tooling that eliminates manual toil."
     ],
     actions: [
       { label: "LinkedIn", href: "https://www.linkedin.com/in/tommitoan/", variant: "primary" },
@@ -108,7 +109,7 @@ export const portfolio = {
       {
         title: "Backend Engineering",
         description:
-          "Go microservices, gRPC, event-driven systems, and clean architecture form the core of my work. I care about correctness, observability, and maintainability at every layer."
+          "Go services, gRPC, Temporal workflows, event-driven systems, and clean architecture form the core of my work. I care about correctness, observability, and maintainability at every layer."
       },
       {
         title: "Cloud & Delivery",
@@ -140,8 +141,9 @@ export const portfolio = {
       items: [
         { name: "gRPC", icon: "/skills/grpc.svg" },
         { name: "Protobuf" },
-        { name: "gRPC-Gateway" },
         { name: "REST" },
+        { name: "Temporal" },
+        { name: "WebSocket" },
         { name: "Kafka", icon: "/skills/kafka.svg" },
         { name: "RabbitMQ", icon: "/skills/rabbitmq.svg" },
         { name: "JWT" },
@@ -177,66 +179,81 @@ export const portfolio = {
         { name: "GitHub Actions", icon: "/skills/github-actions.svg" },
         { name: "Helm", icon: "/skills/helm.svg" },
         { name: "Jaeger" },
-        { name: "Prometheus", icon: "/skills/prometheus.svg" }
+        { name: "Prometheus", icon: "/skills/prometheus.svg" },
+        { name: "Loki" },
+        { name: "VictoriaMetrics" }
       ]
     },
     {
       title: "AI Tools",
       accent: "emerald",
       items: [
-        { name: "GitHub Copilot", icon: "/skills/github-copilot.svg" },
+        { name: "Claude Code", icon: "/skills/claude.svg" },
         { name: "OpenCode" },
-        { name: "ChatGPT" },
-        { name: "Claude", icon: "/skills/claude.svg" }
+        { name: "GitHub Copilot", icon: "/skills/github-copilot.svg" },
+        { name: "Anthropic API" }
       ]
     }
   ] satisfies SkillGroup[],
 
   experience: [
     {
+      company: "Legal-Tech SaaS Startup",
+      location: "US (Remote)",
+      period: "Jan 2026 — Present",
+      role: "Software Engineer (Independent Contractor) — Legal-document platform for personal injury firms",
+      current: true,
+      bullets: [
+        "Own end-to-end features across 5+ Go/TypeScript services for a legal-document platform producing demand letters, medical chronologies, and exhibits for personal injury firms.",
+        "Root-caused a multi-hour hang in a production Temporal workflow by reproducing it with a synthetic 17k-page workload; identified a missing activity heartbeat timeout, added failure detection, and converted memory-heavy pipeline stages to streaming I/O.",
+        "Migrated provider API endpoints from TypeScript to Go, preserving integration contracts while improving maintainability and testing; resolved findings from an external code review before rollout.",
+        "Built cross-service cost and timing telemetry through six REST endpoints across two document-processing providers, using a non-fatal reporting path so observability failures cannot block the core workflow.",
+        "Fixed a production defect that silently omitted a required exhibit from generated documents by tracing data ownership across three services and correcting the workflow contract rather than patching the final output.",
+        "Caught a document orientation feature failing on all test inputs before merge; reproduced the issue, documented the evidence, and kept the change out of production until it was corrected."
+      ]
+    },
+    {
       company: "Mercury Studio",
       location: "HCMC, Vietnam",
-      period: "Jun 2025 — Present",
+      period: "Jan 2025 — Present",
       role: "Software Engineer — Slotty (B2B gaming backend, 120+ Go microservices)",
+      current: true,
       bullets: [
         "Migrated .NET/C# backend services to idiomatic Go across Edge, Integration, and Core layers; scaffolded new services where no Go counterpart existed; coordinated API contracts and gRPC-Gateway routing changes with the frontend team.",
-        "Delivered full CRUD for a 3-tier person hierarchy (agents, players, sub-accounts) — create, update, suspend/disable, delete — with strict 1-level downline permission checks enforced across integration/agent, integration/sub_account, and integration/supporter.",
-        "Implemented structured audit logging via core/audit covering all write operations, giving operators a complete, queryable trail of every downline action.",
-        "Instrumented migrated services with Jaeger end-to-end tracing and Redis Cluster caching with a structured key naming convention, cutting repeated downstream gRPC calls on hot read paths.",
-        "Maintained Jenkins CI/CD pipelines with parallel Docker builds and GitOps deployment via ArgoCD + Helm across dev, staging, and production environments.",
-        "Built MyTools, an internal Go + React developer dashboard replacing manual DB/Redis queries for person lookup, API diffing, and cache cloning — compressing a ~5-minute workflow to ~5 seconds, adopted by the whole team."
+        "Delivered CRUD, structured audit logging, and strict 1-level downline authorization for a 3-tier person hierarchy (agents, players, sub-accounts), giving operators a complete, queryable trail of every downline action.",
+        "Added Jaeger end-to-end tracing and Redis Cluster caching with a structured key naming convention, cutting repeated downstream gRPC calls on hot read paths.",
+        "Maintained Jenkins CI/CD pipelines with parallel Docker builds and GitOps deployment via ArgoCD + Helm across development, staging, and production.",
+        "Built MyTools, an internal Go + React dashboard replacing manual PostgreSQL and Redis lookups for person lookup, API diffing, and cache cloning — compressing a ~5-minute support workflow to ~5 seconds, adopted by the whole team."
       ]
     },
     {
       company: "GTG Software",
       location: "HCMC, Vietnam",
-      period: "Jan 2022 — Mar 2025",
+      period: "Jan 2022 — Dec 2024",
       role: "Software Engineer",
       subProjects: [
         {
           name: "GTG CRM",
-          period: "Feb 2024 — Mar 2025",
+          period: "Feb 2024 — Dec 2024",
           bullets: [
-            "Architected the real-time messaging core of a HubSpot-alternative CRM from scratch using Go, gRPC, and WebSocket with OAuth2 (Keycloak); deployed to AWS EKS via GitHub Actions + ArgoCD with full observability (VictoriaMetrics, Loki, Jaeger).",
-            "Designed the omni-channel messaging service as the platform's core feature, integrating across contact management, marketing, sales, and service hubs for a competitive launch.",
-            "Established team-wide coding standards and architecture patterns for the microservice layer.",
-            "Participated in Figma design reviews and aligned technical decisions with the CEO; documented architecture and workflows in Confluence to onboard new engineers."
+            "Designed and built the real-time messaging core of a CRM platform in Go using gRPC, WebSocket, MongoDB, and OAuth2/Keycloak; deployed to AWS EKS and GCP GKE via GitHub Actions + ArgoCD with VictoriaMetrics, Loki, and Jaeger observability.",
+            "Designed the omni-channel messaging service as the platform's core feature, integrating across contact management, marketing, sales, and service hubs.",
+            "Contributed shared coding standards and architecture patterns for the microservice layer, and documented architecture and workflows to onboard new engineers."
           ]
         },
         {
           name: "Tokeet",
           period: "Jun 2023 — Feb 2024",
           bullets: [
-            "Re-wrote a legacy Perl messaging system in Go; introduced multi-channel conversation tracking, OAuth2 cloud integrations, and Amazon SQS fan-out for parallel processing.",
-            "Built centralised conversation tracking with Go design patterns for maintainability; wrote deployment docs enabling non-technical project managers to manage the app on AWS."
+            "Rewrote a legacy Perl messaging service in Go for the Tokeet property-management platform, adding multi-channel conversation tracking and OAuth2 integrations behind a consistent service layer.",
+            "Introduced Amazon SQS fan-out for parallel processing and wrote deployment docs enabling non-technical project managers to manage the app on AWS."
           ]
         },
         {
           name: "Cloud Homelab",
           period: "Jun 2022 — Jun 2023",
           bullets: [
-            "Built and maintained internal CI/CD infrastructure for GTG using a self-hosted k3s cluster and GitOps via Argo CD — automating service deployment and eliminating manual release workflows across the engineering team.",
-            "Deployed a complete internal observability stack: Prometheus, Grafana, Jaeger, Loki, and Alertmanager, enabling engineers to monitor services and trace requests in real time.",
+            "Built a k3s GitOps and observability stack with Argo CD, Prometheus/Grafana, Jaeger, and Loki; the team adopted it for internal CI/CD workflows, eliminating manual release steps.",
             "Configured Nginx Ingress, Redis Cluster, and MinIO storage for internal service dependencies; secured external access via Cloudflared tunnel."
           ]
         },
@@ -245,7 +262,7 @@ export const portfolio = {
           period: "Jan 2022 — Jun 2022",
           isInternship: true,
           bullets: [
-            "Built and maintained Go microservices with PostgreSQL for business workflows — data modelling, CRUD, input validation, and endpoint integration; implemented Kafka-based async processing with an idempotency mechanism to prevent duplicate consumption."
+            "Built Go/PostgreSQL microservices for business workflows — data modelling, CRUD, input validation, and endpoint integration — with Kafka-based idempotent processing to prevent duplicate consumption."
           ]
         }
       ]

@@ -13,9 +13,9 @@ export function TechExperienceSection() {
           title={<span className="cv-gradient-text-purple-pink">Journey.</span>}
           description={
             <>
-              From internship to architecting{" "}
-              <span className="cv-gradient-text-cyan-blue">B2B gaming platforms</span> — four years
-              of Go, cloud infrastructure, and building systems that teams depend on.
+              From internship to owning production backends across{" "}
+              <span className="cv-gradient-text-cyan-blue">legal-tech, B2B gaming, and CRM</span> — five
+              years of Go, cloud infrastructure, and building systems that teams depend on.
             </>
           }
         />
@@ -23,18 +23,18 @@ export function TechExperienceSection() {
 
       <div className="mt-12 space-y-8">
         {portfolio.experience.map((job, jobIndex) => {
-          const isMercury = job.company === "Mercury Studio";
+          const isCurrent = job.current === true;
 
           return (
             <Reveal key={job.company} delay={0.08 * (jobIndex + 1)}>
               <div
                 className={`cv-panel rounded-[2rem] overflow-hidden ${
-                  isMercury ? "!border-violet-500/35" : ""
+                  isCurrent ? "!border-violet-500/35" : ""
                 }`}
               >
                 <div
                   className={`flex flex-col gap-3 px-6 py-5 md:flex-row md:items-center md:justify-between md:px-8 md:py-6 ${
-                    isMercury
+                    isCurrent
                       ? "border-b border-violet-500/20 bg-gradient-to-r from-violet-500/10 via-violet-500/5 to-transparent"
                       : "border-b border-white/8 bg-white/[0.025]"
                   }`}
@@ -42,12 +42,12 @@ export function TechExperienceSection() {
                   <div className="flex items-center gap-4">
                     <div
                       className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-base font-bold text-white ${
-                        isMercury
+                        isCurrent
                           ? "bg-gradient-to-br from-violet-500 to-blue-500"
                           : "bg-gradient-to-br from-slate-600 to-slate-700"
                       }`}
                       style={
-                        isMercury
+                        isCurrent
                           ? { boxShadow: "0 4px 16px rgba(145,94,255,0.4)" }
                           : {}
                       }
@@ -59,7 +59,7 @@ export function TechExperienceSection() {
                         <h3 className="text-lg font-bold text-white md:text-xl">
                           {job.company}
                         </h3>
-                        {isMercury && (
+                        {isCurrent && (
                           <span className="inline-flex items-center rounded-full border border-violet-500/35 bg-violet-500/15 px-2.5 py-0.5 text-xs font-semibold text-violet-400">
                             Current
                           </span>
@@ -75,7 +75,7 @@ export function TechExperienceSection() {
                   </div>
                 </div>
 
-                {isMercury && job.bullets && (
+                {job.bullets && (
                   <div className="px-6 py-6 md:px-8 md:py-7">
                     <p className="mb-5 text-sm font-semibold uppercase tracking-[0.2em] text-violet-400/80">
                       {job.role.includes("—") ? job.role.split("—")[1].trim() : job.role}
@@ -91,7 +91,7 @@ export function TechExperienceSection() {
                   </div>
                 )}
 
-                {!isMercury && job.subProjects && (
+                {job.subProjects && (
                   <div className="divide-y divide-white/[0.06]">
                     {job.subProjects.map((sub, subIndex) => (
                       <Reveal

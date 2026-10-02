@@ -13,12 +13,12 @@ import { TechTableOfContents } from "@/components/tech/TechTableOfContents";
 
 export const metadata = createMetadata({
   title: "Tech",
-  description: "Toan Ngo — Go backend engineer with 4+ years across B2B gaming, CRM, and SaaS. AWS Certified Solutions Architect. Microservices, gRPC, Kubernetes, GitOps, and event-driven architecture.",
+  description: "Toan Ngo — Go backend engineer with 5 years across legal-tech SaaS, B2B gaming, and CRM. AWS Certified Solutions Architect. Go, gRPC, Temporal, Kubernetes, GitOps, and event-driven architecture.",
   path: "/tech/",
   keywords: [
     "Toan Ngo", "tommitoan", "Go", "Golang", "gRPC", "Protobuf", "backend engineer",
     "microservices", "Kubernetes", "AWS Certified", "event-driven", "GitOps", "ArgoCD",
-    "PostgreSQL", "Redis", "Kafka", "RabbitMQ", "software engineer", "Ho Chi Minh City",
+    "PostgreSQL", "Redis", "Kafka", "RabbitMQ", "Temporal", "software engineer", "Ho Chi Minh City",
   ],
   image: {
     url: "/social-card-tech.png",
