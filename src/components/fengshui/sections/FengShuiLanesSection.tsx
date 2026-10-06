@@ -2,7 +2,7 @@
 
 import { Reveal } from "@/components/tech/Reveal";
 import { SectionHeading } from "@/components/tech/SectionHeading";
-import { fengshuiContent } from "@/content/fengshui-content";
+import { useFengShuiCopy } from "@/components/fengshui/FengShuiLanguage";
 
 const LANE_ACCENTS = [
   { border: "border-violet-500/25", dot: "bg-violet-400" },
@@ -11,22 +11,24 @@ const LANE_ACCENTS = [
 ];
 
 export function FengShuiLanesSection() {
+  const copy = useFengShuiCopy();
+
   return (
     <section className="cv-section-shell">
       <Reveal>
         <SectionHeading
-          eyebrow="Roadmap"
+          eyebrow={copy.lanesHeading.eyebrow}
           title={
             <>
-              Where this is{" "}
-              <span className="cv-gradient-text-cyan-blue">headed</span>
+              {copy.lanesHeading.title}{" "}
+              <span className="cv-gradient-text-cyan-blue">{copy.lanesHeading.accent}</span>
             </>
           }
         />
       </Reveal>
 
       <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {fengshuiContent.lanes.map((lane, index) => {
+        {copy.lanes.map((lane, index) => {
           const accent = LANE_ACCENTS[index % LANE_ACCENTS.length];
 
           return (

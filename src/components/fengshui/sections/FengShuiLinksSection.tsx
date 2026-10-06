@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 import { Reveal } from "@/components/tech/Reveal";
-import { fengshuiContent } from "@/content/fengshui-content";
+import { fengshuiLinks } from "@/content/fengshui-content";
+import { useFengShuiCopy } from "@/components/fengshui/FengShuiLanguage";
 
 const containerVariants = {
   hidden: {},
@@ -21,6 +22,8 @@ const pillVariants = {
 };
 
 export function FengShuiLinksSection() {
+  const copy = useFengShuiCopy().linksSection;
+
   return (
     <section className="cv-section-shell">
       <Reveal>
@@ -32,15 +35,12 @@ export function FengShuiLinksSection() {
           </div>
 
           <div className="relative mx-auto max-w-2xl text-center">
-            <span className="cv-eyebrow">Get started</span>
+            <span className="cv-eyebrow">{copy.eyebrow}</span>
             <h2 className="cv-section-title mt-3">
-              Try{" "}
-              <span className="cv-gradient-text-purple-pink">Bazica</span>
+              {copy.title}{" "}
+              <span className="cv-gradient-text-purple-pink">{copy.accent}</span>
             </h2>
-            <p className="cv-section-copy mt-5">
-              The first product from this lane — an open-source Go library
-              and live demo for Ba-zi Four Pillars calculations.
-            </p>
+            <p className="cv-section-copy mt-5">{copy.description}</p>
 
             <motion.div
               className="mt-10 flex flex-wrap justify-center gap-3"
@@ -50,19 +50,17 @@ export function FengShuiLinksSection() {
               viewport={{ once: true, amount: 0.3 }}
             >
               <motion.a
-                href={fengshuiContent.links.demo}
-                target="_blank"
-                rel="noreferrer"
+                href={fengshuiLinks.app}
                 variants={pillVariants}
                 whileHover={{ scale: 1.04, transition: { duration: 0.18 } }}
                 whileTap={{ scale: 0.97 }}
                 className="cv-gradient-button"
               >
-                Try Live Demo →
+                {copy.appCta}
               </motion.a>
 
               <motion.a
-                href={fengshuiContent.links.repo}
+                href={fengshuiLinks.repo}
                 target="_blank"
                 rel="noreferrer"
                 variants={pillVariants}
@@ -70,7 +68,7 @@ export function FengShuiLinksSection() {
                 whileTap={{ scale: 0.97 }}
                 className="cv-ghost-button"
               >
-                View on GitHub →
+                {copy.repoCta}
               </motion.a>
             </motion.div>
           </div>

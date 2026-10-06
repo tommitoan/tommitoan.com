@@ -120,7 +120,7 @@ export function TechProjectsSection() {
                       GitHub →
                     </a>
                     <a
-                      href="https://bazica.onrender.com/"
+                      href="https://bazi.tommitoan.com/"
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center gap-2 rounded-lg border border-cyan-400/25 bg-cyan-400/8 px-4 py-3 text-sm font-semibold text-cyan-300 transition hover:-translate-y-0.5 hover:border-cyan-400/45"
