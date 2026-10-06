@@ -64,45 +64,45 @@ export const fengshuiLinks = {
 const vi: FengShuiCopy = {
   language: { label: "Ngôn ngữ", vi: "VI", en: "EN" },
   eyebrow: "Phong thuỷ · Bát Tự",
-  title: "Nơi các hệ thống biểu tượng trở thành phần mềm dùng được.",
+  title: "Đưa Bát Tự và phong thuỷ vào phần mềm mà ai cũng dùng được.",
   description:
-    "Đây là nơi dành cho Bazica, Bát Tự (Ba-zi) và sự tò mò rộng hơn về phong thuỷ — thứ cứ liên tục biến thành code, giao diện và các thử nghiệm sản phẩm.",
+    "Góc này dành cho Bazica, Bát Tự và mảng phong thuỷ mà mình hay tò mò — làm mãi rồi thành code, giao diện và những sản phẩm thử nghiệm.",
   primaryCta: "Mở Bazica Web →",
   repoCta: "Xem trên GitHub →",
   intro: [
-    "Mình không coi mảng này là phần trang trí bên cạnh công việc kỹ thuật. Đây là một hướng sản phẩm thực sự, nơi nghiên cứu lĩnh vực, triển khai kỹ thuật và việc đơn giản hoá cẩn thận gặp nhau.",
-    "Bazica là bằng chứng nghiêm túc đầu tiên: một thư viện Go mã nguồn mở cùng trang web bazi.tommitoan.com, biến một hệ thống biểu tượng ít người biết thành thứ ai cũng có thể thử và dùng.",
+    "Với mình, đây không phải phần phụ bên cạnh công việc lập trình. Nó là một hướng sản phẩm thật: vừa tìm hiểu kiến thức nền, vừa viết code, vừa phải làm sao cho dễ hiểu và dễ dùng.",
+    "Bazica là sản phẩm đầu tiên mình làm đến nơi đến chốn: một thư viện Go mã nguồn mở và trang bazi.tommitoan.com, nơi bạn nhập ngày giờ sinh là xem được lá số ngay.",
   ],
   basics: {
     eyebrow: "Cơ sở",
     title: "Hiểu nhanh về",
     titleAccent: "Bát Tự và Bazica",
     description:
-      "Vài ý nền tảng để đọc lá số dễ hơn, và để biết trang web thực sự làm gì.",
+      "Vài ý cơ bản giúp bạn đọc lá số dễ hơn, và biết trang web này thực sự làm gì.",
     cards: [
       {
-        title: "Bát Tự (Ba-zi) là gì?",
+        title: "Bát Tự là gì?",
         paragraphs: [
-          "Bát Tự, hay Tứ Trụ, là cách lập lá số từ thời điểm sinh: năm, tháng, ngày và giờ. Mỗi trụ gồm một Thiên Can và một Địa Chi, nên có tổng cộng tám chữ — “bát tự”.",
-          "Thiên Can (10 can) và Địa Chi (12 chi) ghép thành chu kỳ sáu mươi Giáp Tý. Mỗi can chi mang một hành và một âm dương; đọc lá số là xem các hành, các can chi và các mối quan hệ giữa chúng.",
+          "Bát Tự (hay Tứ Trụ) là cách lập lá số từ thời điểm sinh: năm, tháng, ngày, giờ. Mỗi trụ gồm một Thiên Can và một Địa Chi, cộng lại là tám chữ — nên gọi là “bát tự”.",
+          "Có 10 Thiên Can và 12 Địa Chi, ghép lại thành vòng 60 Giáp Tý. Mỗi can chi thuộc một hành và một âm dương. Đọc lá số là xem các hành phân bố ra sao, các can chi nào xuất hiện và quan hệ giữa chúng.",
         ],
         points: [
-          "Nhật Chủ là Thiên Can của trụ ngày, dùng làm điểm quy chiếu khi đọc lá số.",
-          "Trụ tháng đổi theo tiết khí (mốc mặt trời), không theo tháng âm lịch.",
-          "Đại Vận là các giai đoạn khoảng mười năm; Lưu Niên là can chi của từng năm.",
+          "Nhật Chủ là Thiên Can của trụ ngày, là mốc để đọc cả lá số.",
+          "Trụ tháng đổi theo tiết khí (các mốc của mặt trời), không theo tháng âm lịch.",
+          "Đại Vận là các giai đoạn khoảng 10 năm; Lưu Niên là can chi của từng năm.",
         ],
       },
       {
         title: "Bazica Web làm gì?",
         paragraphs: [
-          "Bazica Web là trang web dùng thư viện mã nguồn mở Bazica (Go). Máy chủ chỉ kiểm tra dữ liệu nhập rồi gọi thư viện; toàn bộ logic Bát Tự nằm trong thư viện, nên cùng một kết quả có thể kiểm chứng và tái sử dụng.",
-          "Bạn nhập ngày giờ sinh, nơi sinh (múi giờ) và giới tính để nhận lá số bằng tiếng Việt hoặc tiếng Anh.",
+          "Bazica Web là trang web chạy trên thư viện mã nguồn mở Bazica (viết bằng Go). Máy chủ chỉ kiểm tra dữ liệu nhập rồi gọi thư viện; mọi phép tính Bát Tự nằm trong thư viện, nên có thể kiểm tra và dùng lại ở nơi khác.",
+          "Bạn nhập ngày giờ sinh, nơi sinh (múi giờ) và giới tính, rồi nhận lá số bằng tiếng Việt hoặc tiếng Anh.",
         ],
         points: [
           "Bốn trụ, Thập Thần, Tàng Can, Trường Sinh, Nạp Âm, các sao, Không Vong và xung.",
-          "Đại Vận, bảng Lưu Niên theo từng năm, Ngũ Hành, Cung Mệnh, Thai Nguyên và Thai Tức.",
-          "Liên kết chia sẻ lá số, xuất PDF, và phần phương pháp tính nêu rõ các mốc năm, tháng, ngày.",
-          "Phần phân tích chi tiết và PDF dùng credit; phần lá số cơ bản có thể xem miễn phí.",
+          "Đại Vận, bảng Lưu Niên theo từng năm, Ngũ Hành, Cung Mệnh, Thai Nguyên, Thai Tức.",
+          "Chia sẻ lá số bằng link, xuất PDF, kèm phần giải thích cách tính các mốc năm, tháng, ngày.",
+          "Lá số cơ bản xem miễn phí; phần phân tích chi tiết và PDF cần credit.",
         ],
       },
     ],
@@ -110,76 +110,76 @@ const vi: FengShuiCopy = {
     glossary: [
       {
         term: "Tứ Trụ",
-        description: "Bốn trụ năm, tháng, ngày, giờ — mỗi trụ là một cặp can chi.",
+        description: "Bốn trụ năm, tháng, ngày, giờ; mỗi trụ là một cặp can chi.",
       },
       {
         term: "Thiên Can · Địa Chi",
-        description: "10 can và 12 chi, ghép thành chu kỳ sáu mươi.",
+        description: "10 can và 12 chi, ghép thành vòng 60.",
       },
       {
         term: "Nhật Chủ",
-        description: "Can của trụ ngày, điểm quy chiếu khi phân tích.",
+        description: "Can của trụ ngày, là mốc để phân tích.",
       },
       {
         term: "Ngũ Hành",
-        description: "Mộc, Hoả, Thổ, Kim, Thuỷ — có quan hệ tương sinh và tương khắc.",
+        description: "Mộc, Hoả, Thổ, Kim, Thuỷ, có quan hệ tương sinh và tương khắc.",
       },
       {
         term: "Thập Thần",
-        description: "Mười vai trò của một can so với Nhật Chủ, theo hành và âm dương.",
+        description: "Mười mối quan hệ giữa một can với Nhật Chủ, xét theo hành và âm dương.",
       },
       {
         term: "Đại Vận · Lưu Niên",
-        description: "Vận mười năm và can chi của từng năm cụ thể.",
+        description: "Vận mười năm và can chi của từng năm.",
       },
     ],
-    note: "Đây là phần giới thiệu kiến thức nền, không phải lời khuyên cá nhân. Cách tính cụ thể (mốc đổi trụ, giờ sinh, múi giờ) được ghi ngay trên trang Bazica Web.",
+    note: "Đây là kiến thức nền, không phải lời khuyên cá nhân. Cách tính cụ thể (mốc đổi trụ, giờ sinh, múi giờ) được ghi ngay trên trang Bazica Web.",
   },
-  pillarsHeading: { eyebrow: "Trụ cột", title: "Vì sao", accent: "điều này quan trọng" },
+  pillarsHeading: { eyebrow: "Lý do", title: "Vì sao mình", accent: "làm điều này" },
   pillars: [
     {
       title: "Vì sao có trang này",
       description:
-        "Nó là nơi dành cho phần công việc nằm giữa kỹ thuật, diễn giải và thiết kế sản phẩm — nơi các lĩnh vực ít quen thuộc được biến thành phần mềm bền vững.",
+        "Đây là chỗ cho phần việc nằm giữa lập trình, diễn giải và thiết kế sản phẩm: lấy những lĩnh vực ít người làm phần mềm rồi biến chúng thành công cụ dùng được lâu dài.",
     },
     {
-      title: "Bazica chứng minh điều gì",
+      title: "Bazica cho thấy điều gì",
       description:
-        "Mình mã hoá được quy tắc của một lĩnh vực một cách rõ ràng, phát hành một sản phẩm công khai dùng được, và giữ một sản phẩm tập trung đi đến cùng thay vì dừng ở thử nghiệm.",
+        "Mình có thể chuyển quy tắc của một lĩnh vực thành code rõ ràng, đưa ra một sản phẩm công khai dùng được, và theo nó đến cùng thay vì bỏ dở ở mức thử nghiệm.",
     },
     {
-      title: "Tiếp theo là gì",
+      title: "Sắp tới",
       description:
-        "Thêm bài giải thích, kể chuyện sản phẩm phong phú hơn, và có thể là các công cụ khác quanh Bát Tự, lịch và phong thuỷ nếu giao diện vẫn đủ rõ ràng.",
+        "Thêm bài giải thích, kể rõ hơn về sản phẩm, và có thể có thêm công cụ về Bát Tự, lịch và phong thuỷ nếu giao diện vẫn giữ được sự gọn gàng.",
     },
   ],
-  lanesHeading: { eyebrow: "Lộ trình", title: "Hướng đi", accent: "sắp tới" },
+  lanesHeading: { eyebrow: "Lộ trình", title: "Hướng đi", accent: "tiếp theo" },
   lanes: [
     {
-      title: "Hiện có",
-      items: ["Thư viện Bazica (Go)", "Bazica Web — bazi.tommitoan.com", "Kho mã công khai trên GitHub"],
+      title: "Đã có",
+      items: ["Thư viện Bazica (Go)", "Bazica Web — bazi.tommitoan.com", "Mã nguồn công khai trên GitHub"],
     },
     {
-      title: "Lớp tiếp theo",
-      items: ["Bài giải thích có hướng dẫn", "Bản xuất đẹp hơn", "Ghi chú kiến thức công khai"],
+      title: "Tiếp theo",
+      items: ["Bài giải thích từng bước", "Bản xuất PDF đẹp hơn", "Ghi chú kiến thức công khai"],
     },
     {
-      title: "Tầm nhìn dài hạn",
-      items: ["Máy tính tương tác", "Giao diện phục vụ học tập", "Hệ sinh thái sản phẩm vững hơn"],
+      title: "Xa hơn",
+      items: ["Công cụ tính toán tương tác", "Giao diện hỗ trợ học Bát Tự", "Hệ sinh thái sản phẩm đầy đủ hơn"],
     },
   ],
-  principlesHeading: { eyebrow: "Nguyên tắc", title: "Cách mình", accent: "xây dựng" },
+  principlesHeading: { eyebrow: "Nguyên tắc", title: "Cách mình", accent: "làm" },
   principles: [
-    "Chuyển sự phức tạp của lĩnh vực thành phần mềm dễ hiểu",
-    "Giữ sản phẩm tôn trọng, rõ ràng và hữu ích",
-    "Áp dụng kỷ luật kỹ thuật ngay cả với những chủ đề khác thường",
+    "Biến kiến thức phức tạp thành phần mềm dễ hiểu",
+    "Giữ sản phẩm tôn trọng người dùng, rõ ràng và hữu ích",
+    "Làm cẩn thận như mọi dự án kỹ thuật khác, dù chủ đề có lạ",
   ],
   linksSection: {
     eyebrow: "Bắt đầu",
     title: "Thử",
     accent: "Bazica",
     description:
-      "Sản phẩm đầu tiên của mảng này — thư viện Go mã nguồn mở và trang Bazica Web để lập lá số Bát Tự.",
+      "Sản phẩm đầu tiên của mảng này: thư viện Go mã nguồn mở và trang Bazica Web để lập lá số Bát Tự.",
     appCta: "Mở Bazica Web →",
     repoCta: "Xem trên GitHub →",
   },
