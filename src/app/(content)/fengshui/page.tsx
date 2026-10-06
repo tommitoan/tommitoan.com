@@ -3,6 +3,7 @@ import { PageShell } from "@/components/layout/page-shell";
 import { StarsBackgroundClient } from "@/components/tech/StarsBackgroundClient";
 import { FengShuiHeroSection } from "@/components/fengshui/sections/FengShuiHeroSection";
 import { FengShuiIntroSection } from "@/components/fengshui/sections/FengShuiIntroSection";
+import { FengShuiBasicsSection } from "@/components/fengshui/sections/FengShuiBasicsSection";
 import { FengShuiPillarsSection } from "@/components/fengshui/sections/FengShuiPillarsSection";
 import { FengShuiLanesSection } from "@/components/fengshui/sections/FengShuiLanesSection";
 import { FengShuiPrinciplesSection } from "@/components/fengshui/sections/FengShuiPrinciplesSection";
@@ -11,7 +12,7 @@ import { FengShuiLinksSection } from "@/components/fengshui/sections/FengShuiLin
 export const metadata = createMetadata({
   title: "Feng Shui",
   description:
-    "Feng Shui tools and digital products by Toan Ngo — including Bazica, an open-source Go library for Ba-zi Four Pillars of Destiny calculations.",
+    "Feng Shui tools and digital products by Toan Ngo — including Bazica, an open-source Go library for Ba-zi Four Pillars of Destiny calculations, and the live Bazica Web app at bazi.tommitoan.com. / Công cụ phong thuỷ và Bát Tự: thư viện Bazica và trang Bazica Web.",
   path: "/fengshui/",
   keywords: [
     "Feng Shui", "Ba-zi", "Four Pillars", "bazica",
@@ -26,6 +27,8 @@ const webPageLd = {
   description:
     "Feng Shui tools and digital products — Ba-zi, calendar systems, and symbolic software.",
   url: "https://tommitoan.com/fengshui/",
+  inLanguage: ["vi", "en"],
+  significantLink: "https://bazi.tommitoan.com/",
 };
 
 export default function FengShuiPage() {
@@ -39,6 +42,7 @@ export default function FengShuiPage() {
       <PageShell className="space-y-24 pb-24 pt-10 md:space-y-32 md:pb-32 md:pt-14">
         <FengShuiHeroSection />
         <FengShuiIntroSection />
+        <FengShuiBasicsSection />
         <FengShuiPillarsSection />
         <FengShuiLanesSection />
         <FengShuiPrinciplesSection />
