@@ -58,6 +58,8 @@ export type FengShuiCopy = {
 /** The live Bazica Web app and the open-source library behind it. */
 export const fengshuiLinks = {
   app: "https://bazi.tommitoan.com/",
+  /** The calculator page; the hero button goes straight to it. */
+  chart: "https://bazi.tommitoan.com/chart",
   repo: "https://github.com/tommitoan/bazica",
 };
 

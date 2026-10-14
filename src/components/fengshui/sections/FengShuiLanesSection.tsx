@@ -1,56 +1,30 @@
 "use client";
 
 import { Reveal } from "@/components/tech/Reveal";
-import { SectionHeading } from "@/components/tech/SectionHeading";
 import { useFengShuiCopy } from "@/components/fengshui/FengShuiLanguage";
-
-const LANE_ACCENTS = [
-  { border: "border-violet-500/25", dot: "bg-violet-400" },
-  { border: "border-cyan-500/25", dot: "bg-cyan-400" },
-  { border: "border-blue-500/25", dot: "bg-blue-400" },
-];
+import { WorldHeading } from "@/components/fengshui/world/WorldHeading";
 
 export function FengShuiLanesSection() {
   const copy = useFengShuiCopy();
 
   return (
-    <section className="cv-section-shell">
-      <Reveal>
-        <SectionHeading
-          eyebrow={copy.lanesHeading.eyebrow}
-          title={
-            <>
-              {copy.lanesHeading.title}{" "}
-              <span className="cv-gradient-text-cyan-blue">{copy.lanesHeading.accent}</span>
-            </>
-          }
-        />
-      </Reveal>
-
-      <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {copy.lanes.map((lane, index) => {
-          const accent = LANE_ACCENTS[index % LANE_ACCENTS.length];
-
-          return (
+    <section className="fs-band fs-band-paper" data-kit-section="Lộ trình / Roadmap">
+      <div className="fs-wrap">
+        <WorldHeading eyebrow={copy.lanesHeading.eyebrow} title={`${copy.lanesHeading.title} ${copy.lanesHeading.accent}`} />
+        <div className="fs-grid fs-grid-3">
+          {copy.lanes.map((lane, index) => (
             <Reveal key={lane.title} delay={0.08 * (index + 1)}>
-              <div
-                className={`cv-panel flex h-full flex-col rounded-[1.75rem] p-6 md:p-8 ${accent.border}`}
-              >
-                <h3 className="text-xl font-semibold text-white">
-                  {lane.title}
-                </h3>
-                <ul className="mt-4 space-y-2">
+              <div className="fs-panel fs-card">
+                <h3>{lane.title}</h3>
+                <ul className="fs-points">
                   {lane.items.map((item) => (
-                    <li key={item} className="flex items-center gap-2 text-sm text-slate-300">
-                      <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${accent.dot}`} />
-                      {item}
-                    </li>
+                    <li key={item}>{item}</li>
                   ))}
                 </ul>
               </div>
             </Reveal>
-          );
-        })}
+          ))}
+        </div>
       </div>
     </section>
   );

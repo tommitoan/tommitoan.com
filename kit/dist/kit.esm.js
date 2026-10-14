@@ -1,4 +1,4 @@
-/* tommitoan kit 0.1.0 */
+/* tommitoan kit 0.2.0 */
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -185,8 +185,14 @@ function shouldCoverNavigation(click) {
   if (destination.protocol !== "http:" && destination.protocol !== "https:") return false;
   if (destination.hash !== "") return false;
   if (destination.origin === current.origin && destination.pathname === current.pathname && destination.search === current.search) return false;
-  const allowed = /* @__PURE__ */ new Set([current.origin.toLowerCase(), ...normalise(click.family)]);
-  return allowed.has(destination.origin.toLowerCase());
+  if (destination.origin.toLowerCase() === current.origin.toLowerCase()) {
+    return click.sameOriginPaths === void 0 || click.sameOriginPaths.some((prefix) => pathHasPrefix(destination.pathname, prefix));
+  }
+  return normalise(click.family).includes(destination.origin.toLowerCase());
+}
+function pathHasPrefix(pathname, prefix) {
+  const base = prefix.replace(/\/+$/, "");
+  return pathname === base || pathname === `${base}/` || pathname.startsWith(`${base}/`);
 }
 function shouldRevealArrival(arrival) {
   if (arrival.tier === "off") return false;
@@ -1496,6 +1502,7 @@ function createTransitions(options) {
       href: anchor.href,
       currentHref: window.location.href,
       family: options.family,
+      sameOriginPaths: options.sameOriginPaths,
       tier: options.tier,
       button: event.button,
       ctrl: event.ctrlKey,
@@ -1569,7 +1576,7 @@ function createTransitions(options) {
 }
 
 // kit/src/version.ts
-var KIT_VERSION = "0.1.0";
+var KIT_VERSION = "0.2.0";
 
 // kit/src/wash.ts
 function mountWash(tier) {
@@ -1706,7 +1713,7 @@ function init(options = {}) {
     if (mounted) cleanups.push(() => mounted.destroy());
   };
   const navType = performance.getEntriesByType("navigation")[0]?.type ?? "navigate";
-  const transitions = tier !== "off" && on("transition") ? createTransitions({ family, tier }) : null;
+  const transitions = tier !== "off" && on("transition") ? createTransitions({ family, tier, sameOriginPaths: options.transitionPaths }) : null;
   if (transitions) cleanups.push(() => transitions.destroy());
   const arrival = transitions?.prepareArrival() ?? null;
   const seal = !arrival?.plays && on("seal") && shouldPlaySeal(navType, tier, false) ? playSeal({ tier, glyph: options.seal?.glyph, tagline: options.seal?.tagline }) : null;

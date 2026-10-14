@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { dayState, luminance, seg, skyColor, smoothstep, textMix, NIGHT, PAPER } from "./color";
 import { resolveTier } from "./env";
 import { blendFrames } from "./keyframes";
-import { shouldCoverNavigation, shouldPlaySeal, shouldRevealArrival, originOf, type ClickInfo, type ArrivalInfo } from "./navigation";
+import { pathHasPrefix, shouldCoverNavigation, shouldPlaySeal, shouldRevealArrival, originOf, type ClickInfo, type ArrivalInfo } from "./navigation";
 import { shichen } from "./shichen";
 import { baziYear, ganzhiYear, monthBranch, solarLongitude, solarTerm } from "./solar";
 
@@ -191,6 +191,25 @@ describe("page transition rules", () => {
     expect(shouldCoverNavigation(click({ href: "https://github.com/tommitoan/bazica" }))).toBe(false);
     expect(shouldCoverNavigation(click({ href: "mailto:someone@example.com" }))).toBe(false);
     expect(shouldCoverNavigation(click({ href: "not a url" , currentHref: "also bad" }))).toBe(false);
+  });
+
+  it("with a path allow-list, same-origin links outside it are left alone but the sister site still covers", () => {
+    const paths = ["/fengshui"];
+    expect(shouldCoverNavigation(click({ href: "/fengshui/blog/", sameOriginPaths: paths }))).toBe(true);
+    expect(shouldCoverNavigation(click({ href: "/fengshui/other", currentHref: "https://tommitoan.com/fengshui/", sameOriginPaths: paths }))).toBe(true);
+    expect(shouldCoverNavigation(click({ href: "/tech/", sameOriginPaths: paths }))).toBe(false);
+    expect(shouldCoverNavigation(click({ href: "/", sameOriginPaths: paths }))).toBe(false);
+    expect(shouldCoverNavigation(click({ href: "/fengshuiX/", sameOriginPaths: paths }))).toBe(false);
+    expect(shouldCoverNavigation(click({ href: "https://bazi.tommitoan.com/chart", sameOriginPaths: paths }))).toBe(true);
+    expect(shouldCoverNavigation(click({ href: "/tech/", sameOriginPaths: [] }))).toBe(false);
+  });
+
+  it("path prefixes match whole segments only", () => {
+    expect(pathHasPrefix("/fengshui", "/fengshui")).toBe(true);
+    expect(pathHasPrefix("/fengshui/", "/fengshui/")).toBe(true);
+    expect(pathHasPrefix("/fengshui/blog/x", "/fengshui")).toBe(true);
+    expect(pathHasPrefix("/fengshuis", "/fengshui")).toBe(false);
+    expect(pathHasPrefix("/", "/fengshui")).toBe(false);
   });
 
   const arrival = (over: Partial<ArrivalInfo> = {}): ArrivalInfo => ({

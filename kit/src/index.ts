@@ -15,6 +15,11 @@ export type EffectName = "transition" | "seal" | "reveal" | "wash" | "clock" | "
 export interface KitOptions {
   /** Origins that share this look, for the cross-site transition. This site's own origin is always included. */
   family?: readonly string[];
+  /**
+   * Same-origin paths whose pages also run the kit, for example ["/fengshui"]. Only links to these (and to the
+   * sister origins in `family`) get the cover animation. Leave it out to cover every same-origin link.
+   */
+  transitionPaths?: readonly string[];
   /** Force a motion tier. By default it follows the visitor's settings and device. */
   tier?: Tier;
   locale?: Locale;
@@ -49,7 +54,7 @@ export function init(options: KitOptions = {}): Kit {
   };
 
   const navType = (performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined)?.type ?? "navigate";
-  const transitions = tier !== "off" && on("transition") ? createTransitions({ family, tier }) : null;
+  const transitions = tier !== "off" && on("transition") ? createTransitions({ family, tier, sameOriginPaths: options.transitionPaths }) : null;
   if (transitions) cleanups.push(() => transitions.destroy());
 
   // Arrival first: it decides synchronously and, when it plays, already covers the page.

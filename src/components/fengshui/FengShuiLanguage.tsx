@@ -7,7 +7,7 @@ import {
   type FengShuiCopy,
   type FengShuiLanguage,
 } from "@/content/fengshui-content";
-import { useTheme } from "@/lib/theme";
+import { worldContent, type WorldCopy } from "@/content/fengshui-world";
 
 const STORAGE_KEY = "fengshuiLanguage";
 
@@ -59,41 +59,23 @@ export function useFengShuiCopy(): FengShuiCopy {
   return fengshuiContent[useFengShuiLanguage()];
 }
 
+/** Copy of the scene, the story, the dial and the marquee, in the visitor's language. */
+export function useFengShuiWorldCopy(): WorldCopy {
+  return worldContent[useFengShuiLanguage()];
+}
+
 export function FengShuiLanguageToggle() {
   const language = useFengShuiLanguage();
   const copy = fengshuiContent[language].language;
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
 
-  const option = (value: FengShuiLanguage, label: string) => {
-    const active = language === value;
-    return (
-      <button
-        type="button"
-        lang={value}
-        aria-pressed={active}
-        onClick={() => setLanguage(value)}
-        className={`rounded-full px-3 py-1 text-xs font-semibold tracking-wide transition ${
-          active
-            ? "bg-violet-500/80 text-white shadow-[0_0_12px_rgba(139,92,246,0.45)]"
-            : isDark
-              ? "text-white/60 hover:text-white"
-              : "text-gray-500 hover:text-gray-900"
-        }`}
-      >
-        {label}
-      </button>
-    );
-  };
+  const option = (value: FengShuiLanguage, label: string) => (
+    <button type="button" lang={value} aria-pressed={language === value} onClick={() => setLanguage(value)} className="fs-lang-option">
+      {label}
+    </button>
+  );
 
   return (
-    <div
-      role="group"
-      aria-label={copy.label}
-      className={`inline-flex items-center gap-1 rounded-full border p-1 ${
-        isDark ? "border-white/12 bg-white/4" : "border-black/10 bg-black/4"
-      }`}
-    >
+    <div role="group" aria-label={copy.label} className="fs-lang">
       {option("vi", copy.vi)}
       {option("en", copy.en)}
     </div>

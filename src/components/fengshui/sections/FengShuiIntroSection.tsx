@@ -7,18 +7,18 @@ export function FengShuiIntroSection() {
   const copy = useFengShuiCopy();
 
   return (
-    <section className="cv-section-shell">
-      <Reveal>
-        <div className="cv-panel rounded-[1.75rem] p-6 md:p-8">
-          <div className="space-y-4">
+    <section className="fs-band fs-band-paper">
+      <div className="fs-wrap fs-narrow">
+        <Reveal>
+          <div className="fs-panel">
             {copy.intro.map((paragraph) => (
-              <p key={paragraph} className="text-base leading-7 text-slate-300">
+              <p key={paragraph} className="fs-lead">
                 {paragraph}
               </p>
             ))}
           </div>
-        </div>
-      </Reveal>
+        </Reveal>
+      </div>
     </section>
   );
 }

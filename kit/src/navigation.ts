@@ -25,6 +25,12 @@ export interface ClickInfo {
   meta: boolean;
   shift: boolean;
   alt: boolean;
+  /**
+   * Paths on this same origin whose pages also run the kit (prefix match, "/fengshui" covers "/fengshui/blog/").
+   * Links to other same-origin pages are left alone, because a page without the kit cannot reveal itself.
+   * Leave it undefined to treat every same-origin page as a kit page.
+   */
+  sameOriginPaths?: readonly string[];
   target?: string | null;
   download?: boolean;
   defaultPrevented?: boolean;
@@ -52,8 +58,16 @@ export function shouldCoverNavigation(click: ClickInfo): boolean {
   if (destination.protocol !== "http:" && destination.protocol !== "https:") return false;
   if (destination.hash !== "") return false;
   if (destination.origin === current.origin && destination.pathname === current.pathname && destination.search === current.search) return false;
-  const allowed = new Set([current.origin.toLowerCase(), ...normalise(click.family)]);
-  return allowed.has(destination.origin.toLowerCase());
+  if (destination.origin.toLowerCase() === current.origin.toLowerCase()) {
+    return click.sameOriginPaths === undefined || click.sameOriginPaths.some((prefix) => pathHasPrefix(destination.pathname, prefix));
+  }
+  return normalise(click.family).includes(destination.origin.toLowerCase());
+}
+
+/** True when `pathname` is the prefix itself or lies below it ("/a" matches "/a" and "/a/b", not "/ab"). */
+export function pathHasPrefix(pathname: string, prefix: string): boolean {
+  const base = prefix.replace(/\/+$/, "");
+  return pathname === base || pathname === `${base}/` || pathname.startsWith(`${base}/`);
 }
 
 export interface ArrivalInfo {
