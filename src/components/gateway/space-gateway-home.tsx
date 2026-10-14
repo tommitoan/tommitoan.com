@@ -9,6 +9,8 @@ import { PlanetSphereClient } from "@/components/gateway/PlanetSphereClient";
 import { GatewayLoadingScreen } from "@/components/gateway/GatewayLoadingScreen";
 import { MatrixRainCanvas } from "@/components/gateway/MatrixRainCanvas";
 import { AuroraCanvas } from "@/components/gateway/AuroraCanvas";
+import { PaperGate } from "@/components/gateway/PaperGate";
+import { PAPER_GATE_FALLBACK_MS, gateDestination, usesPaperGate, type GateBox } from "@/components/gateway/paperGate";
 import {
   createAnchorStyle,
   createFrameStyle,
@@ -77,12 +79,14 @@ export function SpaceGatewayHome() {
   const [isGatewayReady, setIsGatewayReady] = useState(false);
   const [assetsReady, setAssetsReady] = useState(false);
   const [isLoaderFinishing, setIsLoaderFinishing] = useState(false);
+  const [gate, setGate] = useState<{ box: GateBox; href: string } | null>(null);
   const [readyPlanets, setReadyPlanets] = useState<Record<GatewayHomeId, boolean>>({
     tech: false,
     discover: false,
     fengshui: false,
   });
   const timeoutRef = useRef<number | null>(null);
+  const gateOpenedRef = useRef(false);
 
   const activePortal = selected
     ? gatewayHomeConfig.portals.find((item) => item.id === selected) ?? null
@@ -102,19 +106,12 @@ export function SpaceGatewayHome() {
   useEffect(() => {
     let cancelled = false;
 
+    // Only what the first screen needs gates the loader: the sky and the astronaut. Planet textures and the
+    // Tech frame image load afterwards, so the gateway opens before the planets are ready.
     const assetUrls = new Set<string>([
       gatewayHomeConfig.spaceTheme.background.imageSrc,
       gatewayHomeConfig.astronaut.assetSrc,
     ]);
-
-    for (const portal of gatewayHomeConfig.portals) {
-      assetUrls.add(portal.planet.diffuse);
-      if (portal.planet.normal) assetUrls.add(portal.planet.normal);
-      if (portal.planet.specular) assetUrls.add(portal.planet.specular);
-      if (portal.planet.clouds) assetUrls.add(portal.planet.clouds);
-      if ("lights" in portal.planet && portal.planet.lights) assetUrls.add(portal.planet.lights);
-      if (portal.theme.frameImageSrc) assetUrls.add(portal.theme.frameImageSrc);
-    }
 
     const preloadImage = (src: string) =>
       new Promise<void>((resolve) => {
@@ -125,7 +122,6 @@ export function SpaceGatewayHome() {
       });
 
     const tasks: Array<Promise<void>> = [
-      import("@/components/gateway/PlanetSphere").then(() => undefined),
       import("@/components/tech/StarsBackground").then(() => undefined),
       Promise.all(Array.from(assetUrls).map(preloadImage)).then(() => undefined),
     ];
@@ -141,16 +137,14 @@ export function SpaceGatewayHome() {
   }, []);
 
   useEffect(() => {
-    const totalPlanets = gatewayHomeConfig.portals.length;
-    const loadedPlanets = Object.values(readyPlanets).filter(Boolean).length;
-    if (loadedPlanets === totalPlanets && assetsReady && loadingProgress >= 100) {
+    if (assetsReady && loadingProgress >= 100) {
       setIsLoaderFinishing(true);
       const timeout = window.setTimeout(() => {
         setIsGatewayReady(true);
       }, 350);
       return () => window.clearTimeout(timeout);
     }
-  }, [readyPlanets, assetsReady, loadingProgress]);
+  }, [assetsReady, loadingProgress]);
 
   useEffect(() => {
     if (isGatewayReady || loadingProgress >= 100) {
@@ -159,15 +153,11 @@ export function SpaceGatewayHome() {
 
     const interval = window.setInterval(() => {
       setLoadingProgress((current) => {
-        const totalPlanets = gatewayHomeConfig.portals.length;
-        const loadedPlanets = Object.values(readyPlanets).filter(Boolean).length;
-        const systemReady = assetsReady && loadedPlanets === totalPlanets;
-
         if (current >= 100) {
           return 100;
         }
 
-        if (!systemReady) {
+        if (!assetsReady) {
           return Math.min(current + 1, 99);
         }
 
@@ -176,7 +166,7 @@ export function SpaceGatewayHome() {
     }, 16);
 
     return () => window.clearInterval(interval);
-  }, [readyPlanets, assetsReady, loadingProgress, isGatewayReady]);
+  }, [assetsReady, loadingProgress, isGatewayReady]);
 
   const handlePlanetReady = (portalId: GatewayHomeId) => {
     setReadyPlanets((current) => {
@@ -190,8 +180,31 @@ export function SpaceGatewayHome() {
     });
   };
 
-  const handleSelect = (item: GatewayHomePortal) => {
-    if (selected) return;
+  const openGate = (href: string) => {
+    if (gateOpenedRef.current) return;
+    gateOpenedRef.current = true;
+    // A full page load lets the Feng Shui world paint its paper cover before first paint and play its seal.
+    window.location.assign(gateDestination(href));
+  };
+
+  // A page restored from the back/forward cache must not keep the paper over the gateway.
+  useEffect(() => {
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (!event.persisted) return;
+      gateOpenedRef.current = false;
+      setGate(null);
+    };
+    window.addEventListener("pageshow", onPageShow);
+    return () => window.removeEventListener("pageshow", onPageShow);
+  }, []);
+
+  const handleSelect = (item: GatewayHomePortal, box: GateBox) => {
+    if (selected || gate) return;
+    if (usesPaperGate(item.id, !!reducedMotion)) {
+      setGate({ box, href: item.href });
+      timeoutRef.current = window.setTimeout(() => openGate(item.href), PAPER_GATE_FALLBACK_MS);
+      return;
+    }
     setSelected(item.id);
     const delay = reducedMotion
       ? gatewayHomeConfig.transitions.reducedMotionRouteDelayMs
@@ -270,13 +283,14 @@ export function SpaceGatewayHome() {
                       : "brightness(1) contrast(1)",
                   }}
                   transition={{ duration: 0.8, delay: selected ? 0 : 0.2 + i * 0.15 }}
-                  onHoverStart={() => !selected && setHoveredPortal(gateway.id)}
-                  onHoverEnd={() => !selected && setHoveredPortal(null)}
+                  onHoverStart={() => !selected && !gate && setHoveredPortal(gateway.id)}
+                  onHoverEnd={() => !selected && !gate && setHoveredPortal(null)}
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleSelect(gateway);
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    handleSelect(gateway, { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom });
                   }}
-                  className={`group relative overflow-hidden ${selected ? 'cursor-default pointer-events-none' : 'cursor-pointer'} flex flex-col items-center transition-all duration-500`}
+                  className={`group relative overflow-hidden ${selected || gate ? 'cursor-default pointer-events-none' : 'cursor-pointer'} flex flex-col items-center transition-all duration-500`}
                   style={{
                     ...createFrameStyle({
                       width: gatewayHomeConfig.frame.width,
@@ -306,7 +320,7 @@ export function SpaceGatewayHome() {
                     <GatewayEffectLayer key={`${gateway.id}-${effect.kind}-${effectIndex}`} effect={effect} />
                   )) : null}
 
-                  {debug.showPlanets ? (
+                  {debug.showPlanets && assetsReady ? (
                     <div className="pointer-events-none" style={createPlanetStageStyle(gatewayHomeConfig.planetStage)}>
                       <motion.div
                         className="absolute inset-0 pointer-events-none"
@@ -326,7 +340,7 @@ export function SpaceGatewayHome() {
                           transformOrigin: 'center center',
                         }}
                       />
-                      <div style={createAnchorStyle(gateway.planet.anchor)}>
+                      <div style={{ ...createAnchorStyle(gateway.planet.anchor), opacity: readyPlanets[gateway.id] ? 1 : 0, transition: 'opacity 0.9s ease' }}>
                         <motion.div
                           animate={{
                             y: isHovered || isSelected ? -gateway.planet.hoverLiftPx : 0,
@@ -417,6 +431,8 @@ export function SpaceGatewayHome() {
           />
         )}
       </AnimatePresence>
+
+      {gate ? <PaperGate box={gate.box} radiusPx={gatewayHomeConfig.frame.radiusRem * 16} onOpen={() => openGate(gate.href)} /> : null}
 
       <GatewayLoadingScreen
         loadingProgress={loadingProgress}

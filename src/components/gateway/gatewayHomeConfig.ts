@@ -154,7 +154,7 @@ const FENG_SHUI_WIND_PALETTE: WindBandPalette[] = [
 export const gatewayHomeConfig = {
   spaceTheme: {
     background: {
-      imageSrc: "/gateway/backgrounds/space-bg.png",
+      imageSrc: "/gateway/backgrounds/space-bg.webp",
       overlayImage:
         "radial-gradient(circle_at_top,rgba(77,150,255,0.10),transparent_28%),radial-gradient(circle_at_80%_20%,rgba(176,87,255,0.08),transparent_24%),linear-gradient(180deg,rgba(3,7,17,0.45)_0%,rgba(7,16,28,0.45)_100%)",
       vignetteImage: "radial-gradient(ellipse_at_center,transparent_0%,#000_100%)",
@@ -351,7 +351,7 @@ export const gatewayHomeConfig = {
     heightPercent: 75,
   } satisfies PlanetStageConfig,
   astronaut: {
-    assetSrc: "/gateway/characters/astronaut.png",
+    assetSrc: "/gateway/characters/astronaut.webp",
     camera: {
       position: [0, 0, 5] as [number, number, number],
       fov: 50,
@@ -398,15 +398,15 @@ export const gatewayHomeConfig = {
         glowColor: "rgba(192, 38, 211, 0.6)",
         borderColorClass: "border-fuchsia-500/50",
         frameBg: "radial-gradient(ellipse at 50% 55%, rgba(192,38,211,0.10) 0%, rgba(50,0,70,0.55) 45%, rgba(0,0,0,0.88) 100%)",
-        frameImageSrc: "/gateway/backgrounds/tech-bg.png",
+        frameImageSrc: "/gateway/backgrounds/tech-bg.webp",
       },
       planet: {
         ...makePortalPlanetLayout({ mobileRem: 7.75, viewport: 14.5, desktopRem: 16 }),
-        diffuse: "/gateway/textures/planets/earth-atmosphere.jpg",
-        normal: "/gateway/textures/planets/earth-normal.jpg",
-        specular: "/gateway/textures/planets/earth-specular.jpg",
-        clouds: "/gateway/textures/planets/earth-clouds.png",
-        lights: "/gateway/textures/planets/earth-lights.png",
+        diffuse: "/gateway/textures/planets/earth-atmosphere.webp",
+        normal: "/gateway/textures/planets/earth-normal.webp",
+        specular: "/gateway/textures/planets/earth-specular.webp",
+        clouds: "/gateway/textures/planets/earth-clouds.webp",
+        lights: "/gateway/textures/planets/earth-lights.webp",
         colorTint: "#dd88ff",
         atmosphereColor: "#9933dd",
         ambientIntensity: 4.4,
@@ -440,10 +440,10 @@ export const gatewayHomeConfig = {
       },
       planet: {
         ...makePortalPlanetLayout({ mobileRem: 7.75, viewport: 14.5, desktopRem: 16 }),
-        diffuse: "/gateway/textures/planets/earth-atmosphere.jpg",
-        normal: "/gateway/textures/planets/earth-normal.jpg",
-        specular: "/gateway/textures/planets/earth-specular.jpg",
-        clouds: "/gateway/textures/planets/earth-clouds.png",
+        diffuse: "/gateway/textures/planets/earth-atmosphere.webp",
+        normal: "/gateway/textures/planets/earth-normal.webp",
+        specular: "/gateway/textures/planets/earth-specular.webp",
+        clouds: "/gateway/textures/planets/earth-clouds.webp",
         colorTint: "#66eeff",
         atmosphereColor: "#0099cc",
         ambientIntensity: 4.4,
@@ -473,10 +473,10 @@ export const gatewayHomeConfig = {
       },
       planet: {
         ...makePortalPlanetLayout({ mobileRem: 7.75, viewport: 14.5, desktopRem: 16 }),
-        diffuse: "/gateway/textures/planets/earth-atmosphere.jpg",
-        normal: "/gateway/textures/planets/earth-normal.jpg",
-        specular: "/gateway/textures/planets/earth-specular.jpg",
-        clouds: "/gateway/textures/planets/earth-clouds-hires.jpg",
+        diffuse: "/gateway/textures/planets/earth-atmosphere.webp",
+        normal: "/gateway/textures/planets/earth-normal.webp",
+        specular: "/gateway/textures/planets/earth-specular.webp",
+        clouds: "/gateway/textures/planets/earth-clouds-hires.webp",
         crystalBall: true,
         colorTint: "#c8ddf4",
         atmosphereColor: "#b8ccee",

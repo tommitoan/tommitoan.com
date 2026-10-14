@@ -110,7 +110,7 @@ const WOOD_FRAG = `
 `;
 
 function CrystalBallBase() {
-  const tex = useLoader(TextureLoader, '/gateway/textures/pedestals/wood-base.png');
+  const tex = useLoader(TextureLoader, '/gateway/textures/pedestals/wood-base.webp');
 
   const mat = useMemo(
     () =>
