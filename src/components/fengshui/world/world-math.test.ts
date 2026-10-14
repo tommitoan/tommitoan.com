@@ -1,0 +1,218 @@
+import { describe, expect, it } from "vitest";
+import { NIGHT, PAPER } from "@kit/color";
+import { SOLAR_TERMS_VI } from "@kit/solar";
+import { dayIndexOf, daysInYear, dialState, JIE_INDEXES, ringPoint, SOLAR_TERMS_HAN } from "./dial-math";
+import { marqueeAdvance, marqueeSkew, sixtyCycle, smoothVelocity } from "./marquee-math";
+import { bezier, easeToward, LIFE_SPAN, luckMarkX, LUCK_PILLARS, pinProgress, sceneFrame, sceneGeometry, starCurve } from "./scene-math";
+import { ringRotation, storyStep } from "./story-math";
+
+const g = sceneGeometry(1200, 760);
+
+describe("birth scene frame", () => {
+  it("starts at night with the star in the sky and nobody on the ground", () => {
+    const f = sceneFrame(0, g);
+    expect(f.day.sky).toEqual(NIGHT);
+    expect(f.star.point).toEqual(starCurve(g)[0]);
+    expect(f.star.alpha).toBe(1);
+    expect(f.figureVisible).toBe(0);
+    expect(f.age).toBe(0);
+    expect(f.blend).toEqual({ from: 0, to: 0, t: 0 });
+    expect(f.texts.first).toBe(1);
+    expect(f.sun.opacity).toBe(0);
+    expect(f.marksReached.every((reached) => !reached)).toBe(true);
+  });
+
+  it("ends on paper with the elder at the end of the road", () => {
+    const f = sceneFrame(1, g);
+    expect(f.day.sky).toEqual(PAPER);
+    expect(f.age).toBe(LIFE_SPAN);
+    expect(f.figureX).toBeCloseTo(g.endX, 5);
+    expect(f.blend).toEqual({ from: 5, to: 5, t: 0 });
+    expect(f.texts.third).toBe(1);
+    expect(f.texts.first).toBe(0);
+    expect(f.nebulaOpacity).toBe(0);
+    expect(f.inkWashOpacity).toBeCloseTo(0.16, 5);
+    expect(f.marksReached.every(Boolean)).toBe(true);
+  });
+
+  it("the star lands where the figure starts, then melts into the newborn", () => {
+    const landing = sceneFrame(0.44, g).star.point;
+    expect(landing.x).toBeCloseTo(g.startX, 3);
+    expect(landing.y).toBeCloseTo(g.groundY - 80, 3);
+    expect(sceneFrame(0.53, g).star.alpha).toBe(0);
+    expect(sceneFrame(0.46, g).figureVisible).toBe(0);
+    expect(sceneFrame(0.56, g).figureVisible).toBe(1);
+    expect(sceneFrame(0.5, g).star.halo).toBeGreaterThan(0);
+  });
+
+  it("clamps progress outside 0..1", () => {
+    expect(sceneFrame(-3, g).progress).toBe(0);
+    expect(sceneFrame(9, g).progress).toBe(1);
+  });
+
+  it("age and position only ever grow with progress, and the figure stays at the start until the walk begins", () => {
+    let age = -1;
+    let x = -1;
+    for (let p = 0; p <= 1.0001; p += 0.01) {
+      const f = sceneFrame(p, g);
+      expect(f.age).toBeGreaterThanOrEqual(age);
+      expect(f.figureX).toBeGreaterThanOrEqual(x - 1e-9);
+      age = f.age;
+      x = f.figureX;
+    }
+    expect(sceneFrame(0.62, g).age).toBe(0);
+    expect(sceneFrame(0.62, g).figureX).toBeCloseTo(g.startX, 5);
+  });
+
+  it("the three captions do not overlap", () => {
+    for (let p = 0; p <= 1.0001; p += 0.01) {
+      const { first, second, third } = sceneFrame(p, g).texts;
+      expect(Math.min(first, second)).toBeLessThan(0.5);
+      expect(Math.min(second, third)).toBeLessThan(0.5);
+      expect(Math.min(first, third)).toBeLessThan(0.5);
+    }
+  });
+
+  it("luck pillar ticks light up as the figure reaches them", () => {
+    const early = sceneFrame(0.7, g);
+    const late = sceneFrame(0.95, g);
+    const reached = (f: ReturnType<typeof sceneFrame>) => f.marksReached.filter(Boolean).length;
+    expect(reached(late)).toBeGreaterThan(reached(early));
+    expect(luckMarkX(g, LUCK_PILLARS[0].from)).toBeGreaterThan(g.startX);
+    expect(luckMarkX(g, LIFE_SPAN)).toBeCloseTo(g.endX, 5);
+  });
+
+  it("bezier hits its end points and stays between them in x", () => {
+    const curve = starCurve(g);
+    expect(bezier(curve, 0)).toEqual(curve[0]);
+    expect(bezier(curve, 1)).toEqual(curve[3]);
+    expect(bezier(curve, -1)).toEqual(curve[0]);
+  });
+});
+
+describe("pinned scroll helpers", () => {
+  it("progress runs from 0 to 1 across the pinned range", () => {
+    expect(pinProgress(500, 3000, 800)).toBe(0);
+    expect(pinProgress(0, 3000, 800)).toBe(0);
+    expect(pinProgress(-1100, 3000, 800)).toBeCloseTo(0.5, 6);
+    expect(pinProgress(-2200, 3000, 800)).toBe(1);
+    expect(pinProgress(-9000, 3000, 800)).toBe(1);
+    expect(pinProgress(-10, 500, 800)).toBe(0);
+  });
+
+  it("easing approaches the target and snaps when close", () => {
+    const first = easeToward(0, 1);
+    expect(first).toBeGreaterThan(0);
+    expect(first).toBeLessThan(1);
+    expect(easeToward(0.9998, 1)).toBe(1);
+    let v = 0;
+    for (let i = 0; i < 200; i++) v = easeToward(v, 1);
+    expect(v).toBe(1);
+  });
+
+  it("the story picks one of four steps and rotates the ring", () => {
+    expect(storyStep(0, 4)).toBe(0);
+    expect(storyStep(0.24, 4)).toBe(0);
+    expect(storyStep(0.26, 4)).toBe(1);
+    expect(storyStep(0.5, 4)).toBe(2);
+    expect(storyStep(0.99, 4)).toBe(3);
+    expect(storyStep(1, 4)).toBe(3);
+    expect(storyStep(-1, 4)).toBe(0);
+    expect(storyStep(0.5, 0)).toBe(0);
+    expect(ringRotation(1)).toBe(270);
+    expect(ringRotation(2)).toBe(270);
+    expect(ringRotation(-1)).toBe(0);
+  });
+});
+
+describe("solar-terms dial", () => {
+  it("reads the term, month and year for 14 October 2026", () => {
+    const s = dialState(2026, dayIndexOf(2026, 10, 14));
+    expect(s.term).toEqual({ index: 13, name: "Hàn Lộ", han: "寒露" });
+    expect(s.month.name).toBe("Tuất");
+    expect(s.baziYear).toBe(2026);
+    expect(s.pillar.han).toBe("丙午");
+    expect(s.beforeLichun).toBe(false);
+    expect(s.calendar).toEqual({ month: 10, day: 14 });
+    expect(s.longitude).toBeGreaterThan(200);
+    expect(s.longitude).toBeLessThan(202);
+  });
+
+  it("the year pillar is still last year's before Lichun", () => {
+    const january = dialState(2026, dayIndexOf(2026, 1, 11));
+    expect(january.baziYear).toBe(2025);
+    expect(january.pillar.han).toBe("乙巳");
+    expect(january.beforeLichun).toBe(true);
+    expect(dialState(2026, dayIndexOf(2026, 2, 3)).beforeLichun).toBe(true);
+    expect(dialState(2026, dayIndexOf(2026, 2, 4)).beforeLichun).toBe(false);
+  });
+
+  it("handles leap years and clamps the day index", () => {
+    expect(daysInYear(2024)).toBe(366);
+    expect(daysInYear(2026)).toBe(365);
+    expect(daysInYear(2000)).toBe(366);
+    expect(daysInYear(2100)).toBe(365);
+    expect(dialState(2026, -5).dayIndex).toBe(0);
+    expect(dialState(2026, 999).dayIndex).toBe(364);
+    expect(dayIndexOf(2024, 12, 31)).toBe(365);
+  });
+
+  it("the ring has 24 Han names matching the Vietnamese ones and the 12 month-opening terms", () => {
+    expect(SOLAR_TERMS_HAN).toHaveLength(24);
+    expect(SOLAR_TERMS_VI).toHaveLength(24);
+    expect(JIE_INDEXES.map((i) => SOLAR_TERMS_VI[i])).toEqual(["Lập Xuân", "Kinh Trập", "Thanh Minh", "Lập Hạ", "Mang Chủng", "Tiểu Thử", "Lập Thu", "Bạch Lộ", "Hàn Lộ", "Lập Đông", "Đại Tuyết", "Tiểu Hàn"]);
+    expect(SOLAR_TERMS_HAN[21]).toBe("立春");
+  });
+
+  it("places longitudes on the ring counter-clockwise from the right", () => {
+    const c = { x: 100, y: 100 };
+    expect(ringPoint(0, 50, c)).toEqual({ x: 150, y: 100 });
+    const top = ringPoint(90, 50, c);
+    expect(top.x).toBeCloseTo(100, 6);
+    expect(top.y).toBeCloseTo(50, 6);
+    const left = ringPoint(180, 50, c);
+    expect(left.x).toBeCloseTo(50, 6);
+  });
+});
+
+describe("marquee", () => {
+  it("lists sixty distinct pairs from Jia Zi to Gui Hai", () => {
+    const cycle = sixtyCycle();
+    expect(cycle).toHaveLength(60);
+    expect(new Set(cycle).size).toBe(60);
+    expect(cycle[0]).toBe("甲子");
+    expect(cycle[59]).toBe("癸亥");
+  });
+
+  it("loops inside (-half, 0] in both directions", () => {
+    let left = 0;
+    let right = -100;
+    for (let i = 0; i < 5000; i++) {
+      left = marqueeAdvance(left, 1000, -1, 16, 0, false);
+      right = marqueeAdvance(right, 1000, 1, 16, 0, false);
+      expect(left).toBeLessThanOrEqual(0);
+      expect(left).toBeGreaterThan(-1000);
+      expect(right).toBeLessThanOrEqual(0);
+      expect(right).toBeGreaterThan(-1000);
+    }
+    expect(marqueeAdvance(-10, 1000, -1, 16, 0, false)).toBeLessThan(-10);
+    expect(marqueeAdvance(-500, 0, 1, 16, 0, true)).toBe(0);
+  });
+
+  it("scrolling speeds it up only on the full tier", () => {
+    const calm = marqueeAdvance(-500, 1000, -1, 16, 0, true);
+    const fast = marqueeAdvance(-500, 1000, -1, 16, 30, true);
+    const subtle = marqueeAdvance(-500, 1000, -1, 16, 30, false);
+    expect(fast).toBeLessThan(calm);
+    expect(subtle).toBeCloseTo(marqueeAdvance(-500, 1000, -1, 16, 0, false), 9);
+  });
+
+  it("the slant follows the scroll speed, opposite per row, clamped, and is off outside the full tier", () => {
+    expect(marqueeSkew(10, -1, true)).toBeGreaterThan(0);
+    expect(marqueeSkew(10, 1, true)).toBeLessThan(0);
+    expect(marqueeSkew(1000, -1, true)).toBe(14);
+    expect(marqueeSkew(-1000, -1, true)).toBe(-14);
+    expect(marqueeSkew(10, -1, false)).toBe(0);
+    expect(smoothVelocity(0, 100)).toBeCloseTo(12, 6);
+  });
+});

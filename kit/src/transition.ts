@@ -30,6 +30,8 @@ export interface Arrival {
 
 export interface TransitionOptions {
   family: readonly string[];
+  /** Same-origin paths that run the kit; see ClickInfo.sameOriginPaths. */
+  sameOriginPaths?: readonly string[];
   tier: Tier;
   /** Storage for the same-site flag. Defaults to sessionStorage; falls back silently when it is blocked. */
   storage?: Pick<Storage, "getItem" | "setItem" | "removeItem">;
@@ -99,6 +101,7 @@ export function createTransitions(options: TransitionOptions): Transitions {
       href: anchor.href,
       currentHref: window.location.href,
       family: options.family,
+      sameOriginPaths: options.sameOriginPaths,
       tier: options.tier,
       button: event.button,
       ctrl: event.ctrlKey,

@@ -1,6 +1,4 @@
 import { createMetadata } from "@/lib/metadata";
-import { PageShell } from "@/components/layout/page-shell";
-import { StarsBackgroundClient } from "@/components/tech/StarsBackgroundClient";
 import { FengShuiHeroSection } from "@/components/fengshui/sections/FengShuiHeroSection";
 import { FengShuiIntroSection } from "@/components/fengshui/sections/FengShuiIntroSection";
 import { FengShuiBasicsSection } from "@/components/fengshui/sections/FengShuiBasicsSection";
@@ -8,6 +6,10 @@ import { FengShuiPillarsSection } from "@/components/fengshui/sections/FengShuiP
 import { FengShuiLanesSection } from "@/components/fengshui/sections/FengShuiLanesSection";
 import { FengShuiPrinciplesSection } from "@/components/fengshui/sections/FengShuiPrinciplesSection";
 import { FengShuiLinksSection } from "@/components/fengshui/sections/FengShuiLinksSection";
+import { BirthScene } from "@/components/fengshui/world/BirthScene";
+import { Marquee } from "@/components/fengshui/world/Marquee";
+import { SolarDial } from "@/components/fengshui/world/SolarDial";
+import { StorySection } from "@/components/fengshui/world/StorySection";
 
 export const metadata = createMetadata({
   title: "Feng Shui",
@@ -38,16 +40,17 @@ export default function FengShuiPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageLd) }}
       />
-      <StarsBackgroundClient gateway={false} />
-      <PageShell className="space-y-24 pb-24 pt-10 md:space-y-32 md:pb-32 md:pt-14">
-        <FengShuiHeroSection />
-        <FengShuiIntroSection />
-        <FengShuiBasicsSection />
-        <FengShuiPillarsSection />
-        <FengShuiLanesSection />
-        <FengShuiPrinciplesSection />
-        <FengShuiLinksSection />
-      </PageShell>
+      <FengShuiHeroSection />
+      <BirthScene />
+      <FengShuiIntroSection />
+      <StorySection />
+      <SolarDial />
+      <FengShuiBasicsSection />
+      <FengShuiPillarsSection />
+      <FengShuiLanesSection />
+      <FengShuiPrinciplesSection />
+      <Marquee />
+      <FengShuiLinksSection />
     </>
   );
 }
