@@ -1,0 +1,235 @@
+import { describe, expect, it } from "vitest";
+import { dayState, luminance, seg, skyColor, smoothstep, textMix, NIGHT, PAPER } from "./color";
+import { resolveTier } from "./env";
+import { blendFrames } from "./keyframes";
+import { shouldCoverNavigation, shouldPlaySeal, shouldRevealArrival, originOf, type ClickInfo, type ArrivalInfo } from "./navigation";
+import { shichen } from "./shichen";
+import { baziYear, ganzhiYear, monthBranch, solarLongitude, solarTerm } from "./solar";
+
+describe("colour math", () => {
+  it("smoothstep and seg clamp and ease", () => {
+    expect(smoothstep(-1)).toBe(0);
+    expect(smoothstep(2)).toBe(1);
+    expect(smoothstep(0.5)).toBeCloseTo(0.5, 6);
+    expect(seg(5, 0, 10)).toBe(0.5);
+    expect(seg(-3, 0, 10)).toBe(0);
+    expect(seg(30, 0, 10)).toBe(1);
+  });
+
+  it("the sky starts at night, ends at paper and brightens monotonically", () => {
+    expect(skyColor(0)).toEqual(NIGHT);
+    expect(skyColor(1)).toEqual(PAPER);
+    let previous = -1;
+    for (let p = 0; p <= 1.0001; p += 0.02) {
+      const lum = luminance(skyColor(p));
+      expect(lum).toBeGreaterThanOrEqual(previous - 1e-9);
+      previous = lum;
+    }
+  });
+
+  it("out-of-range progress is clamped", () => {
+    expect(skyColor(-5)).toEqual(NIGHT);
+    expect(skyColor(7)).toEqual(PAPER);
+  });
+
+  it("text is light on night and ink on paper, and switches by brightness", () => {
+    const night = dayState(0);
+    const day = dayState(1);
+    expect(night.textMix).toBe(0);
+    expect(day.textMix).toBe(1);
+    expect(night.fg[0]).toBeGreaterThan(200);
+    expect(day.fg[0]).toBeLessThan(80);
+    expect(textMix(80)).toBe(0);
+    expect(textMix(160)).toBe(1);
+    expect(textMix(120)).toBeGreaterThan(0);
+    expect(textMix(120)).toBeLessThan(1);
+  });
+});
+
+describe("solar position", () => {
+  it("matches the equinoxes and solstices of 2026 within a tenth of a degree", () => {
+    const near = (actual: number, expected: number) => {
+      const diff = Math.abs(((actual - expected + 540) % 360) - 180);
+      expect(diff).toBeLessThan(0.1);
+    };
+    near(solarLongitude(Date.UTC(2026, 2, 20, 14, 0)), 0);
+    near(solarLongitude(Date.UTC(2026, 5, 21, 8, 0)), 90);
+    near(solarLongitude(Date.UTC(2026, 11, 21, 20, 0)), 270);
+  });
+
+  it("crosses 315 degrees (Lichun) between 3 and 4 February 2026", () => {
+    expect(solarLongitude(Date.UTC(2026, 1, 3, 12))).toBeLessThan(315);
+    expect(solarLongitude(Date.UTC(2026, 1, 4, 12))).toBeGreaterThan(315);
+  });
+
+  it("names the term and the month branch for 14 October 2026", () => {
+    const longitude = solarLongitude(Date.UTC(2026, 9, 14, 12));
+    expect(longitude).toBeGreaterThan(200);
+    expect(longitude).toBeLessThan(202);
+    expect(solarTerm(longitude).name).toBe("Hàn Lộ");
+    expect(monthBranch(longitude).name).toBe("Tuất");
+  });
+
+  it("month branches run from Tiger at Lichun every 30 degrees", () => {
+    expect(monthBranch(315).name).toBe("Dần");
+    expect(monthBranch(344.9).name).toBe("Dần");
+    expect(monthBranch(345).name).toBe("Mão");
+    expect(monthBranch(270).name).toBe("Tý");
+    expect(monthBranch(300).name).toBe("Sửu");
+    expect(monthBranch(314.9).name).toBe("Sửu");
+  });
+
+  it("the Ba-zi year changes at Lichun, not on 1 January", () => {
+    expect(baziYear(new Date(Date.UTC(2026, 0, 15)))).toBe(2025);
+    expect(baziYear(new Date(Date.UTC(2026, 1, 3, 12)))).toBe(2025);
+    expect(baziYear(new Date(Date.UTC(2026, 1, 5)))).toBe(2026);
+    expect(baziYear(new Date(Date.UTC(2026, 9, 14)))).toBe(2026);
+    expect(baziYear(new Date(Date.UTC(2026, 11, 31)))).toBe(2026);
+  });
+
+  it("stem and branch of known years", () => {
+    expect(ganzhiYear(1984).han).toBe("甲子");
+    expect(ganzhiYear(1995).han).toBe("乙亥");
+    expect(ganzhiYear(2026).han).toBe("丙午");
+    expect(ganzhiYear(4).han).toBe("甲子");
+  });
+});
+
+describe("double-hours", () => {
+  it("finds the branch and minutes left", () => {
+    expect(shichen(12, 0)).toMatchObject({ name: "Ngọ", han: "午", minutesLeft: 60 });
+    expect(shichen(23, 30)).toMatchObject({ name: "Tý", minutesLeft: 90 });
+    expect(shichen(0, 0)).toMatchObject({ name: "Tý", minutesLeft: 60 });
+    expect(shichen(1, 0)).toMatchObject({ name: "Sửu", minutesLeft: 120 });
+    expect(shichen(13, 0)).toMatchObject({ name: "Mùi", minutesLeft: 120 });
+    expect(shichen(22, 59)).toMatchObject({ name: "Hợi", minutesLeft: 1 });
+  });
+});
+
+describe("keyframe blending", () => {
+  const ages = [0, 12, 22, 45, 62, 80];
+
+  it("holds the first and last frame outside the range", () => {
+    expect(blendFrames(-5, ages)).toEqual({ from: 0, to: 0, t: 0 });
+    expect(blendFrames(0, ages)).toEqual({ from: 0, to: 0, t: 0 });
+    expect(blendFrames(80, ages)).toEqual({ from: 5, to: 5, t: 0 });
+    expect(blendFrames(99, ages)).toEqual({ from: 5, to: 5, t: 0 });
+  });
+
+  it("does not crossfade near the ends of an interval and crosses in the middle", () => {
+    const early = blendFrames(12 + 0.2 * 10, ages);
+    expect(early).toMatchObject({ from: 1, to: 2, t: 0 });
+    const middle = blendFrames(12 + 0.5 * 10, ages);
+    expect(middle.t).toBeCloseTo(0.5, 5);
+    const late = blendFrames(12 + 0.8 * 10, ages);
+    expect(late.t).toBe(1);
+  });
+
+  it("picks the right pair for each interval", () => {
+    expect(blendFrames(30, ages)).toMatchObject({ from: 2, to: 3 });
+    expect(blendFrames(50, ages)).toMatchObject({ from: 3, to: 4 });
+    expect(blendFrames(70, ages)).toMatchObject({ from: 4, to: 5 });
+  });
+
+  it("rejects an empty list", () => {
+    expect(() => blendFrames(10, [])).toThrow();
+  });
+});
+
+describe("motion tier", () => {
+  it("reduced motion turns everything off", () => {
+    expect(resolveTier({ reducedMotion: true })).toBe("off");
+    expect(resolveTier({ reducedMotion: true, cores: 16, memory: 8 })).toBe("off");
+  });
+
+  it("weak devices and data saving drop to subtle", () => {
+    expect(resolveTier({ reducedMotion: false, saveData: true })).toBe("subtle");
+    expect(resolveTier({ reducedMotion: false, memory: 2 })).toBe("subtle");
+    expect(resolveTier({ reducedMotion: false, cores: 2 })).toBe("subtle");
+  });
+
+  it("a normal device gets the full tier, including when nothing is reported", () => {
+    expect(resolveTier({ reducedMotion: false, cores: 8, memory: 8 })).toBe("full");
+    expect(resolveTier({ reducedMotion: false })).toBe("full");
+  });
+});
+
+describe("page transition rules", () => {
+  const family = ["https://tommitoan.com", "https://bazi.tommitoan.com/"];
+  const click = (over: Partial<ClickInfo> = {}): ClickInfo => ({
+    href: "https://bazi.tommitoan.com/chart",
+    currentHref: "https://tommitoan.com/fengshui/",
+    family,
+    tier: "full",
+    button: 0,
+    ctrl: false,
+    meta: false,
+    shift: false,
+    alt: false,
+    ...over,
+  });
+
+  it("covers a link to the sister site and to another page of the same site", () => {
+    expect(shouldCoverNavigation(click())).toBe(true);
+    expect(shouldCoverNavigation(click({ href: "/blog/" }))).toBe(true);
+  });
+
+  it("skips reduced motion, modified clicks, new tabs, downloads and prevented clicks", () => {
+    expect(shouldCoverNavigation(click({ tier: "off" }))).toBe(false);
+    expect(shouldCoverNavigation(click({ button: 1 }))).toBe(false);
+    expect(shouldCoverNavigation(click({ ctrl: true }))).toBe(false);
+    expect(shouldCoverNavigation(click({ meta: true }))).toBe(false);
+    expect(shouldCoverNavigation(click({ target: "_blank" }))).toBe(false);
+    expect(shouldCoverNavigation(click({ download: true }))).toBe(false);
+    expect(shouldCoverNavigation(click({ defaultPrevented: true }))).toBe(false);
+  });
+
+  it("skips share links with a fragment, the same page, and unrelated origins", () => {
+    expect(shouldCoverNavigation(click({ href: "https://bazi.tommitoan.com/chart#d=1995-12-15T12:00&tz=Asia/Ho_Chi_Minh&g=1" }))).toBe(false);
+    expect(shouldCoverNavigation(click({ href: "#section" }))).toBe(false);
+    expect(shouldCoverNavigation(click({ href: "/fengshui/" }))).toBe(false);
+    expect(shouldCoverNavigation(click({ href: "https://github.com/tommitoan/bazica" }))).toBe(false);
+    expect(shouldCoverNavigation(click({ href: "mailto:someone@example.com" }))).toBe(false);
+    expect(shouldCoverNavigation(click({ href: "not a url" , currentHref: "also bad" }))).toBe(false);
+  });
+
+  const arrival = (over: Partial<ArrivalInfo> = {}): ArrivalInfo => ({
+    referrer: "https://tommitoan.com/fengshui/",
+    currentHref: "https://bazi.tommitoan.com/chart",
+    family,
+    navType: "navigate",
+    tier: "full",
+    startedHere: false,
+    ...over,
+  });
+
+  it("reveals when arriving from the sister site or after its own cover", () => {
+    expect(shouldRevealArrival(arrival())).toBe(true);
+    expect(shouldRevealArrival(arrival({ referrer: "", startedHere: true }))).toBe(true);
+  });
+
+  it("does not reveal on reload, back/forward, a fragment, reduced motion or a stranger", () => {
+    expect(shouldRevealArrival(arrival({ navType: "reload" }))).toBe(false);
+    expect(shouldRevealArrival(arrival({ navType: "back_forward" }))).toBe(false);
+    expect(shouldRevealArrival(arrival({ currentHref: "https://bazi.tommitoan.com/chart#d=1995" }))).toBe(false);
+    expect(shouldRevealArrival(arrival({ tier: "off" }))).toBe(false);
+    expect(shouldRevealArrival(arrival({ referrer: "https://www.google.com/" }))).toBe(false);
+    expect(shouldRevealArrival(arrival({ referrer: "https://bazi.tommitoan.com/profile" }))).toBe(false);
+    expect(shouldRevealArrival(arrival({ referrer: "" }))).toBe(false);
+  });
+
+  it("the opening seal plays on a fresh load or reload, never with a reveal", () => {
+    expect(shouldPlaySeal("navigate", "full", false)).toBe(true);
+    expect(shouldPlaySeal("reload", "subtle", false)).toBe(true);
+    expect(shouldPlaySeal("back_forward", "full", false)).toBe(false);
+    expect(shouldPlaySeal("navigate", "off", false)).toBe(false);
+    expect(shouldPlaySeal("navigate", "full", true)).toBe(false);
+  });
+
+  it("origins are parsed safely", () => {
+    expect(originOf("https://Bazi.TommiToan.com/chart?x=1")).toBe("https://bazi.tommitoan.com");
+    expect(originOf("/relative", "https://tommitoan.com/a")).toBe("https://tommitoan.com");
+    expect(originOf("mailto:a@b.c")).toBeNull();
+    expect(originOf("::::")).toBeNull();
+  });
+});

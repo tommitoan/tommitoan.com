@@ -1,0 +1,30 @@
+{
+  "version": "0.1.0",
+  "files": {
+    "VERSION": {
+      "bytes": 6,
+      "gzip": 26,
+      "sha256": "e9dd8507f4bf0c6f42458e41aea833ad0bd3f6127272335eee9bf4d58541ed67"
+    },
+    "kit-boot.js": {
+      "bytes": 242,
+      "gzip": 204,
+      "sha256": "de4a9ffac84747ef0b5cd890cfd11029cc58823248fda61c0de76af6af29a984"
+    },
+    "kit.css": {
+      "bytes": 3783,
+      "gzip": 1456,
+      "sha256": "0694583e25a97e724d35e389788589c287b20218275d9c8478f556ddadb8fb3a"
+    },
+    "kit.esm.js": {
+      "bytes": 63191,
+      "gzip": 16199,
+      "sha256": "333732a5b0f672acc4d9bcdb34c316aa5194088bd5c212a19cc156d7fb40e2b7"
+    },
+    "kit.iife.js": {
+      "bytes": 36752,
+      "gzip": 12038,
+      "sha256": "b98f354a2a84634f4d5d6ff1eb15ebe7b23f2cea559307bcaf17adaaf2f22619"
+    }
+  }
+}
