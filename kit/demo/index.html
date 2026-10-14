@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kit demo</title>
+<link rel="stylesheet" href="../dist/kit.css">
+<script src="../dist/kit-boot.js"></script>
+<style>
+  html { background: var(--kit-paper); }
+  body { margin: 0; color: var(--kit-ink); font: 16px/1.7 system-ui, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 120px; }
+  header.bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: .5px solid var(--kit-line); }
+  section { padding: 120px 0; min-height: 70vh; }
+  h1, h2 { font: 400 clamp(2rem, 6vw, 3.4rem)/1.1 Georgia, serif; margin: 0 0 16px; }
+  a.btn, button.btn { display: inline-block; border: 0; background: var(--kit-seal); color: var(--kit-paper); padding: 12px 26px; border-radius: 6px; font: inherit; text-decoration: none; cursor: pointer; }
+  .hint { color: var(--kit-muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<header class="bar">
+  <strong>Kit demo <span id="who"></span></strong>
+  <span data-kit-clock></span>
+</header>
+<main>
+  <section data-kit-section="Mở đầu">
+    <h1 data-kit-reveal>Đọc lá số của bạn, từng trụ một.</h1>
+    <p class="hint">Cuộn xuống: thanh tiến trình ở mép trên, các chấm mục ở mép phải, vệt mực trôi ở nền. Rê chuột lên nút để nó hút theo con trỏ.</p>
+    <p><button class="btn" type="button" data-kit-magnetic id="magnet">Nút hút con trỏ</button></p>
+    <p><a class="btn" id="to-other" href="#" data-kit-magnetic>Sang site anh em</a>
+       <a class="btn" id="to-hash" href="#" style="background:var(--kit-muted)">Link có # (không chạy hiệu ứng)</a></p>
+  </section>
+  <section data-kit-section="Giữa trang">
+    <h2 data-kit-reveal>Mỗi đại vận là một chặng đường</h2>
+    <p class="hint">Tiêu đề này trồi lên từng từ khi vào khung nhìn.</p>
+  </section>
+  <section data-kit-section="Cuối trang">
+    <h2 data-kit-reveal>Hai site, một giao diện</h2>
+    <dialog id="dlg"><p>Hộp thoại mở: cuộn mượt tạm dừng.</p><button class="btn" type="button" id="dlg-close">Đóng</button></dialog>
+    <p><button class="btn" type="button" id="dlg-open">Mở hộp thoại</button></p>
+  </section>
+</main>
+<script src="../dist/kit.iife.js"></script>
+<script>
+  // Two copies of this page run on different ports to test the hop between sites:
+  //   python3 -m http.server 4173 (in kit/) and python3 -m http.server 4174 (in kit/)
+  var here = location.port, other = here === "4173" ? "4174" : "4173";
+  var otherOrigin = location.protocol + "//" + location.hostname + ":" + other;
+  document.getElementById("who").textContent = "(cổng " + here + ")";
+  document.getElementById("to-other").href = otherOrigin + "/demo/";
+  document.getElementById("to-hash").href = otherOrigin + "/demo/#d=1995-12-15T12:00";
+  window.kit = TommiKit.init({ family: [otherOrigin], seal: { tagline: "Bazica · demo" } });
+  // What the page looked like the moment the kit started (used to check the arrival path by hand).
+  var slats = document.querySelector(".kit-slats");
+  window.__arrival = { covered: !!slats && !slats.hidden, seal: !!document.querySelector(".kit-seal"), referrer: document.referrer, at: Math.round(performance.now()) };
+  document.getElementById("dlg-open").onclick = function () { document.getElementById("dlg").showModal(); };
+  document.getElementById("dlg-close").onclick = function () { document.getElementById("dlg").close(); };
+</script>
+</body>
+</html>

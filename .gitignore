@@ -7,4 +7,6 @@ tsconfig.tsbuildinfo
 ref
 
 dist/
+# The shared kit's build output is committed so the Go site can sync a reviewed, pinned copy.
+!/kit/dist/
 build/

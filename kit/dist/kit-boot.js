@@ -1,0 +1,1 @@
+(function(){try{var e=performance.getEntriesByType("navigation")[0],r=e?e.type:"navigate";if(r==="back_forward"||matchMedia("(prefers-reduced-motion: reduce)").matches)return;document.documentElement.classList.add("kit-pending")}catch{}})();

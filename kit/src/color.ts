@@ -1,0 +1,78 @@
+/** Colour and easing math shared by the day cycle and the effects. Pure functions, no DOM. */
+
+export type RGB = readonly [number, number, number];
+
+export const clamp = (x: number, min: number, max: number): number => Math.max(min, Math.min(max, x));
+
+export const lerp = (a: number, b: number, t: number): number => a + (b - a) * t;
+
+/** Smooth ease between 0 and 1 (zero slope at both ends). */
+export const smoothstep = (t: number): number => {
+  const x = clamp(t, 0, 1);
+  return x * x * (3 - 2 * x);
+};
+
+/** Share of `p` that lies between `a` and `b`, clamped to 0..1. */
+export const seg = (p: number, a: number, b: number): number => clamp((p - a) / (b - a), 0, 1);
+
+export const lerpColor = (a: RGB, b: RGB, t: number): RGB => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
+
+/** Perceived brightness, 0 (black) to 255 (white). */
+export const luminance = (c: RGB): number => 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2];
+
+export const rgbString = (c: RGB): string => `rgb(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])})`;
+
+export const NIGHT: RGB = [12, 16, 36];
+export const PAPER: RGB = [243, 234, 215];
+export const INK: RGB = [59, 47, 32];
+export const MOON: RGB = [238, 232, 255];
+export const MUTED_NIGHT: RGB = [167, 159, 196];
+export const MUTED_DAY: RGB = [102, 85, 63];
+
+/** Sky colour at a progress value: night, dusk, dawn, golden morning, paper. */
+export const DAY_STOPS: ReadonlyArray<readonly [number, RGB]> = [
+  [0, NIGHT],
+  [0.28, [28, 28, 74]],
+  [0.42, [84, 64, 124]],
+  [0.5, [226, 140, 120]],
+  [0.6, [248, 208, 152]],
+  [0.72, PAPER],
+];
+
+export function skyColor(progress: number): RGB {
+  const p = clamp(progress, 0, 1);
+  for (let i = 0; i < DAY_STOPS.length - 1; i++) {
+    const [p0, c0] = DAY_STOPS[i];
+    const [p1, c1] = DAY_STOPS[i + 1];
+    if (p <= p1) return lerpColor(c0, c1, smoothstep(seg(p, p0, p1)));
+  }
+  return DAY_STOPS[DAY_STOPS.length - 1][1];
+}
+
+/** 0 when text must be light, 1 when it must be dark ink, switching around mid brightness. */
+export const textMix = (lum: number): number => smoothstep(seg(lum, 100, 140));
+
+export interface DayState {
+  progress: number;
+  sky: RGB;
+  luminance: number;
+  textMix: number;
+  fg: RGB;
+  muted: RGB;
+}
+
+/** Everything the page needs for one position of the day cycle (0 night, 1 paper). */
+export function dayState(progress: number): DayState {
+  const p = clamp(progress, 0, 1);
+  const sky = skyColor(p);
+  const lum = luminance(sky);
+  const mix = textMix(lum);
+  return {
+    progress: p,
+    sky,
+    luminance: lum,
+    textMix: mix,
+    fg: lerpColor(MOON, INK, mix),
+    muted: lerpColor(MUTED_NIGHT, MUTED_DAY, mix),
+  };
+}
