@@ -51,7 +51,7 @@ export default function TechPage() {
         <div
           className="pointer-events-none fixed inset-0 -z-30"
           style={{
-            backgroundImage: "url('/gateway/backgrounds/tech-bg.png')",
+            backgroundImage: "url('/gateway/backgrounds/tech-bg.webp')",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}

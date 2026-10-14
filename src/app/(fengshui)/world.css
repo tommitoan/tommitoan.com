@@ -80,9 +80,14 @@
   background: rgba(238, 232, 255, 0.08);
   color: #fff;
 }
-.fs-nav a[aria-current="page"] {
-  background: rgba(238, 232, 255, 0.14);
-  color: #fff;
+/* The site-wide light-theme rule for the current link lives in the utilities layer and is !important.
+   Among important declarations an earlier layer wins, so this one sits in the components layer. */
+@layer theme, base, components, utilities;
+@layer components {
+  .fs-world .fs-nav a[aria-current="page"] {
+    background: rgba(238, 232, 255, 0.14) !important;
+    color: #fff !important;
+  }
 }
 .fs-lang {
   display: inline-flex;

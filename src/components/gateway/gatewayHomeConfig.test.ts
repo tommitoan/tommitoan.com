@@ -45,8 +45,8 @@ describe("gatewayHomeConfig", () => {
   });
 
   it("uses the reorganized gateway asset directories", () => {
-    expect(gatewayHomeConfig.spaceTheme.background.imageSrc).toBe("/gateway/backgrounds/space-bg.png");
-    expect(gatewayHomeConfig.astronaut.assetSrc).toBe("/gateway/characters/astronaut.png");
+    expect(gatewayHomeConfig.spaceTheme.background.imageSrc).toBe("/gateway/backgrounds/space-bg.webp");
+    expect(gatewayHomeConfig.astronaut.assetSrc).toBe("/gateway/characters/astronaut.webp");
 
     for (const portal of gatewayHomeConfig.portals) {
       expect(portal.planet.diffuse.startsWith("/gateway/textures/")).toBe(true);
