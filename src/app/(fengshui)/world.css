@@ -910,3 +910,77 @@
     width: 100%;
   }
 }
+
+/* Blog and About pages */
+.fs-hero-compact { min-height: 0; padding: 7.5rem 0 3.5rem; }
+.fs-hero-compact .fs-hero-title { font-size: clamp(1.9rem, 4.6vw, 3rem); }
+.fs-hero-compact .fs-hero-copy { max-width: 60ch; }
+.fs-back { display: inline-block; margin-bottom: .8rem; color: var(--kit-gold); font-size: .85rem; }
+.fs-post-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .8rem; color: var(--kit-muted); font-size: .85rem; }
+.fs-post-meta-hero { margin: 0 0 .5rem; color: rgba(238, 232, 255, 0.65); }
+.fs-post-lead { font-size: 1.1rem; }
+.fs-badge { padding: .05rem .5rem; border: 1px solid var(--kit-line); border-radius: 999px; font-size: .72rem; }
+.fs-notice { margin: 0 0 1.6rem; padding: .7rem .9rem; border-left: 3px solid var(--kit-seal); background: var(--kit-surface); font-size: .92rem; }
+.fs-band-alt { background: var(--kit-surface); }
+
+.fs-posts { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.fs-post-item { border-bottom: 0.5px solid var(--kit-line); }
+.fs-post-item:first-child { border-top: 0.5px solid var(--kit-line); }
+.fs-post-link { display: grid; gap: .25rem; padding: 1.3rem .2rem; transition: background .2s, padding .2s; }
+.fs-post-link:hover { background: var(--kit-surface); padding-inline: .8rem; }
+.fs-post-date { color: var(--kit-seal); font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; }
+.fs-post-title { font: 400 1.5rem/1.3 var(--fs-serif); }
+
+.fs-prose { font-size: 1.08rem; line-height: 1.85; }
+.fs-prose h2 { margin: 2.2rem 0 .7rem; font: 400 1.6rem/1.3 var(--fs-serif); }
+.fs-prose h3 { margin: 1.6rem 0 .5rem; font: 400 1.25rem/1.3 var(--fs-serif); }
+.fs-prose p { margin: 0 0 1.1rem; }
+.fs-prose ul, .fs-prose ol { margin: 0 0 1.2rem; padding-left: 1.3rem; }
+.fs-prose li { margin-bottom: .5rem; }
+.fs-prose a { color: var(--kit-seal); text-decoration: underline; text-underline-offset: 3px; }
+.fs-prose code { padding: .05rem .3rem; background: var(--kit-surface); border: 0.5px solid var(--kit-line); border-radius: 3px; font-size: .92em; }
+.fs-prose pre { overflow-x: auto; padding: 1rem; background: var(--kit-surface); border: 0.5px solid var(--kit-line); border-radius: 6px; }
+.fs-prose pre code { padding: 0; border: 0; background: none; }
+.fs-prose blockquote { margin: 1.4rem 0; padding: .2rem 1.1rem; border-left: 3px solid var(--kit-seal); color: var(--kit-muted); }
+.fs-prose img { max-width: 100%; height: auto; }
+
+.fs-narrow > .fs-about-lead { margin-bottom: 3rem; font-size: 1.2rem; }
+.fs-narrow > .fs-about-lead:last-child { margin-bottom: 3rem; }
+.fs-about-title { margin-top: 0; }
+.fs-channels { display: grid; gap: .6rem; margin: 1.4rem 0 0; padding: 0; list-style: none; }
+.fs-channels a { display: grid; gap: .1rem; padding: .8rem 1rem; background: var(--kit-surface); border: 0.5px solid var(--kit-line); border-radius: 6px; }
+.fs-channels span { color: var(--kit-muted); font-size: .9rem; }
+.fs-channels a:hover { border-color: var(--kit-seal); }
+
+/* Effect 18: words take their full colour as the reader scrolls past. Without script they are all in full colour. */
+.fs-fill { --fill-on: var(--kit-ink); --fill-off: rgba(59, 47, 32, 0.26); }
+.fs-fill[data-fill="on"] .fs-fill-word { color: var(--fill-off); transition: color .3s; }
+.fs-fill[data-fill="on"] .fs-fill-word[data-on] { color: var(--fill-on); }
+
+/* Effect 17: a summary that follows the mouse over a post (mouse and full motion only). Elsewhere the summary stays under the title. */
+.fs-post-desc { color: var(--kit-muted); font-size: .95rem; }
+.has-preview .fs-post-desc { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.fs-preview {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 60;
+  width: min(20rem, 80vw);
+  padding: .8rem 1rem;
+  background: var(--kit-surface);
+  border: 0.5px solid var(--kit-line);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(59, 47, 32, 0.18);
+  color: var(--kit-ink);
+  font-size: .9rem;
+  line-height: 1.5;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s;
+  will-change: transform;
+}
+.fs-preview[data-active="true"] { opacity: 1; }
+.fs-preview p { margin: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .fs-fill[data-fill="on"] .fs-fill-word, .fs-preview { transition: none; }
+}
