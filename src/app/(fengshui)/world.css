@@ -16,6 +16,25 @@
   color: inherit;
   text-decoration: none;
 }
+/* The text of this world is not for selecting or dragging (a visitor still gets the page's links and buttons). */
+.fs-world,
+.fs-world * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.fs-world img,
+.fs-world a,
+.fs-world svg,
+.fs-world canvas {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+.fs-world input,
+.fs-world textarea {
+  -webkit-user-select: auto;
+  user-select: auto;
+}
 .fs-world :focus-visible {
   outline: 2px solid var(--kit-gold);
   outline-offset: 2px;
@@ -128,13 +147,78 @@
   margin: 0;
 }
 .fs-clock {
-  display: inline-flex;
-  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
   gap: 0.5rem;
 }
-.fs-clock .fs-han {
-  font-size: 1.3rem;
+.fs-clock-hour {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 0.55rem;
+  padding: 0.4rem 0.75rem;
+  border: 0.5px solid rgba(138, 122, 90, 0.5);
+  border-radius: 8px;
+  color: var(--kit-muted);
+  line-height: 1.25;
+}
+.fs-clock-hour .fs-han {
+  grid-row: 1 / span 2;
+  color: var(--kit-muted);
+  font-size: 1.5rem;
+}
+.fs-clock-hour small {
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+}
+.fs-clock-hour span {
+  font-size: 0.85rem;
+}
+.fs-clock-hour em {
+  display: none;
+}
+/* The current double-hour: brighter, with the countdown and a thin bar for how far through it we are. */
+.fs-clock-hour[data-now="true"] {
+  overflow: hidden;
+  padding-bottom: 0.55rem;
+  border-color: var(--kit-seal);
+  background: color-mix(in srgb, var(--kit-seal) 7%, transparent);
+  color: var(--kit-ink);
+}
+.fs-clock-hour[data-now="true"] .fs-han {
   color: var(--kit-seal);
+  font-size: 2rem;
+}
+.fs-clock-count {
+  color: var(--kit-seal);
+  font-size: 1.3rem !important;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  line-height: 1.1;
+}
+.fs-clock-count em {
+  display: inline;
+  color: var(--kit-muted);
+  font-size: 0.7rem;
+  font-style: normal;
+  font-weight: 400;
+}
+.fs-clock-bar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--kit-seal);
+  transform-origin: 0 50%;
+}
+@media (max-width: 760px) {
+  .fs-clock-hour:not([data-now="true"]) {
+    flex: 1 1 8rem;
+  }
 }
 
 /* Shared text and buttons */
@@ -424,8 +508,97 @@
   font-size: 0.82rem;
   opacity: 0.8;
 }
-.fs-scene-note {
-  font-style: italic;
+.fs-scene-cue {
+  left: 50%;
+  bottom: 2.2rem;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+/* Scroll cue: a mouse whose wheel runs down, and chevrons that fall after it. */
+.fs-cue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  color: rgba(238, 243, 255, 0.85);
+  pointer-events: none;
+}
+.fs-cue-static {
+  margin-top: 1.6rem;
+}
+.fs-cue-mouse {
+  position: relative;
+  width: 26px;
+  height: 42px;
+  border: 1.5px solid currentColor;
+  border-radius: 14px;
+}
+.fs-cue-mouse i {
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  width: 3px;
+  height: 8px;
+  margin-left: -1.5px;
+  border-radius: 2px;
+  background: currentColor;
+  animation: fs-cue-wheel 1.8s ease-in-out infinite;
+}
+.fs-cue-chevrons {
+  display: grid;
+  justify-items: center;
+}
+.fs-cue-chevrons i {
+  width: 11px;
+  height: 11px;
+  margin-top: -4px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  opacity: 0;
+  transform: rotate(45deg);
+  animation: fs-cue-fall 1.8s ease-in-out infinite;
+}
+.fs-cue-chevrons i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.fs-cue-chevrons i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes fs-cue-wheel {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  25% {
+    opacity: 1;
+  }
+  80%,
+  100% {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+}
+@keyframes fs-cue-fall {
+  0% {
+    opacity: 0;
+    transform: translateY(-5px) rotate(45deg);
+  }
+  45% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(6px) rotate(45deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fs-cue-mouse i {
+    animation: none;
+  }
+  .fs-cue-chevrons i {
+    opacity: 0.7;
+    animation: none;
+  }
 }
 .fs-scene-starlabel {
   color: var(--kit-gold);
@@ -481,10 +654,6 @@
 .fs-static-label {
   color: var(--kit-gold);
   font-size: 0.8rem;
-}
-.fs-static-note {
-  font-size: 0.8rem;
-  font-style: italic;
 }
 .fs-static-figure {
   width: min(200px, 50vw);
@@ -625,12 +794,164 @@
   font-size: 1.1rem;
   line-height: 1.7;
 }
-.fs-links-panel {
-  padding: 3rem 1.5rem;
+/* The call to try Bazica Web: a night card, a light running round its edge, a pulsing badge and a gold button. */
+.fs-cta {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 3.4rem 1.5rem 3.2rem;
+  border-radius: 20px;
   text-align: center;
+  color: #eee8ff;
+  box-shadow: 0 24px 60px rgba(7, 11, 29, 0.35);
 }
-.fs-links-panel .fs-copy {
+.fs-cta::before {
+  content: "";
+  position: absolute;
+  inset: -80%;
+  z-index: -2;
+  background: conic-gradient(from 0deg, transparent 0 72%, rgba(242, 211, 145, 0.95) 86%, transparent 100%);
+  animation: fs-cta-spin 7s linear infinite;
+}
+.fs-cta::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  z-index: -1;
+  border-radius: 18px;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 0%, rgba(205, 220, 255, 0.24), rgba(205, 220, 255, 0) 70%),
+    radial-gradient(1.4px 1.4px at 14% 30%, rgba(236, 243, 255, 0.9), transparent 60%),
+    radial-gradient(1.2px 1.2px at 82% 22%, rgba(236, 243, 255, 0.8), transparent 60%),
+    radial-gradient(1.6px 1.6px at 70% 78%, rgba(236, 243, 255, 0.85), transparent 60%),
+    radial-gradient(1.2px 1.2px at 26% 74%, rgba(236, 243, 255, 0.7), transparent 60%),
+    linear-gradient(160deg, #0d1230, #070b1d);
+}
+@keyframes fs-cta-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.fs-cta .fs-eyebrow {
+  color: var(--kit-gold);
+}
+.fs-cta .fs-copy {
   margin-inline: auto;
+  color: rgba(238, 232, 255, 0.82);
+}
+.fs-cta-title {
+  margin: 0.4rem 0 0.8rem;
+  color: #fff;
+  font-size: clamp(2.4rem, 6vw, 3.6rem);
+}
+.fs-cta-accent {
+  color: var(--kit-gold);
+}
+.fs-cta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 1.1rem;
+  padding: 0.35rem 0.9rem;
+  border: 1px solid rgba(242, 211, 145, 0.55);
+  border-radius: 999px;
+  background: rgba(242, 211, 145, 0.12);
+  color: var(--kit-gold);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.fs-cta-badge i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--kit-gold);
+  animation: fs-cta-dot 1.6s ease-out infinite;
+}
+@keyframes fs-cta-dot {
+  0% {
+    box-shadow: 0 0 0 0 rgba(242, 211, 145, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 0 10px rgba(242, 211, 145, 0);
+  }
+}
+.fs-cta-free {
+  margin: 0.6rem 0 0;
+  color: var(--kit-gold);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.fs-cta .fs-actions {
+  margin-top: 1.8rem;
+  align-items: center;
+}
+/* The main button: gold, larger, pulsing, with a light sweeping across it and an arrow that nudges. */
+.fs-btn-cta {
+  position: relative;
+  overflow: hidden;
+  gap: 0.5rem;
+  padding: 1rem 2.3rem;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #f8dfa0, #e6b455);
+  color: #2a1d0b;
+  font-size: 1.12rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  box-shadow: 0 0 28px rgba(242, 211, 145, 0.45);
+  animation: fs-cta-pulse 2.2s ease-out infinite;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.fs-btn-cta::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -40%;
+  width: 30%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+  transform: skewX(-20deg);
+  animation: fs-cta-shine 3.2s ease-in-out infinite;
+}
+.fs-world .fs-btn-cta {
+  color: #2a1d0b;
+}
+.fs-btn-cta:hover,
+.fs-btn-cta:focus-visible {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 0 44px rgba(242, 211, 145, 0.75);
+}
+.fs-cta .fs-btn-ghost {
+  border-color: rgba(238, 232, 255, 0.55);
+  color: #eee8ff;
+}
+@keyframes fs-cta-pulse {
+  0% {
+    box-shadow: 0 0 28px rgba(242, 211, 145, 0.45), 0 0 0 0 rgba(242, 211, 145, 0.55);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 28px rgba(242, 211, 145, 0.45), 0 0 0 20px rgba(242, 211, 145, 0);
+  }
+}
+@keyframes fs-cta-shine {
+  0%,
+  55% {
+    left: -40%;
+  }
+  100% {
+    left: 140%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fs-cta::before,
+  .fs-cta-badge i,
+  .fs-btn-cta,
+  .fs-btn-cta::after {
+    animation: none;
+  }
 }
 
 /* Story (pinned) */
@@ -766,8 +1087,45 @@
 }
 .fs-dial-term {
   fill: var(--kit-muted);
-  font-size: 11px;
+  font-size: 9.5px;
   text-anchor: middle;
+  transition: fill 0.25s;
+}
+.fs-dial-term[data-opens="true"] {
+  fill: var(--kit-ink);
+}
+/* The term the Sun is in: larger and in seal red. */
+.fs-dial-term[data-current="true"] {
+  fill: var(--kit-seal);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+/* Pinned dial: the Sun turns once round the ring while the section scrolls. */
+.fs-dial-scroll {
+  position: relative;
+  height: 480svh;
+}
+.fs-dial-stage {
+  position: sticky;
+  top: 0;
+  display: grid;
+  align-items: center;
+  height: 100svh;
+  min-height: 560px;
+  background: var(--kit-paper);
+  color: var(--kit-ink);
+}
+.fs-dial-progress {
+  height: 2px;
+  margin-top: 0.7rem;
+  background: rgba(138, 122, 90, 0.3);
+}
+.fs-dial-progress u {
+  display: block;
+  height: 100%;
+  background: var(--kit-seal);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
 }
 .fs-dial-earth {
   fill: var(--kit-ink);

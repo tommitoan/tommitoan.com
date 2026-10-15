@@ -7,6 +7,7 @@ import { useFengShuiWorldCopy } from "@/components/fengshui/FengShuiLanguage";
 import { elementColor } from "./elements";
 import { drawGuidingStar, drawStarfield, makeStars } from "./scene-canvas";
 import { easeToward, FRAME_AGES, LUCK_PILLARS, luckMarkX, pinProgress, SAMPLE_PILLARS, sceneFrame, sceneGeometry, starCurve, type SceneGeometry } from "./scene-math";
+import { ScrollCue } from "./ScrollCue";
 import { StaticLife } from "./StaticLife";
 import { useWorldMode } from "./use-world-mode";
 
@@ -33,6 +34,7 @@ function ScrollScene() {
   const figureARef = useRef<HTMLImageElement>(null);
   const figureBRef = useRef<HTMLImageElement>(null);
   const starLabelRef = useRef<HTMLSpanElement>(null);
+  const cueRef = useRef<HTMLDivElement>(null);
   const textRefs = useRef<Array<HTMLDivElement | null>>([]);
   const sealRefs = useRef<Array<HTMLDivElement | null>>([]);
   const markRefs = useRef<Array<HTMLDivElement | null>>([]);
@@ -52,8 +54,9 @@ function ScrollScene() {
     const figureA = figureARef.current;
     const figureB = figureBRef.current;
     const starLabel = starLabelRef.current;
+    const cue = cueRef.current;
     const ctx = canvas?.getContext("2d");
-    if (!wrapper || !stage || !canvas || !ctx || !haze || !ink || !vignette || !glow || !sun || !base || !trail || !shadow || !figureA || !figureB || !starLabel) return;
+    if (!wrapper || !stage || !canvas || !ctx || !haze || !ink || !vignette || !glow || !sun || !base || !trail || !shadow || !figureA || !figureB || !starLabel || !cue) return;
 
     const dayCycle = createDayCycle({ paintBody: false, root: wrapper });
     const stars = makeStars(340);
@@ -108,6 +111,8 @@ function ScrollScene() {
         first.style.opacity = String(frame.texts.first);
         first.style.transform = `translateY(${(-14 * (1 - frame.texts.first)).toFixed(1)}px)`;
       }
+      // The cue leaves with the first line: once the star starts to fall the visitor has found out how to scroll.
+      cue.style.opacity = String(frame.texts.first);
       if (second) second.style.opacity = String(frame.texts.second);
       if (third) third.style.opacity = String(frame.texts.third);
       frame.sealOpacity.forEach((opacity, index) => {
@@ -260,7 +265,9 @@ function ScrollScene() {
           className="fs-scene-text fs-scene-text-first"
         >
           <p>{copy.first}</p>
-          <small>{copy.firstSmall}</small>
+        </div>
+        <div ref={cueRef} className="fs-scene-cue">
+          <ScrollCue />
         </div>
         <div
           ref={(element) => {
@@ -279,7 +286,6 @@ function ScrollScene() {
         >
           <p>{copy.third}</p>
           <small>{copy.thirdSmall}</small>
-          <small className="fs-scene-note">{copy.sampleNote}</small>
         </div>
         <span ref={starLabelRef} className="fs-scene-starlabel">
           {copy.starLabel}

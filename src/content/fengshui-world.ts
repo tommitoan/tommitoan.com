@@ -10,10 +10,13 @@ export type WorldStep = {
 
 /** Copy of the Feng Shui world that is not part of the original page: the scene, the story, the dial, the marquee. */
 export type WorldCopy = {
+  /** The footer clock: the double-hour that has just passed, the current one with its countdown, and the next. */
+  clock: { hour: string; previous: string; next: string; left: string };
+  /** The call to try Bazica Web at the end of the page. */
+  cta: { badge: string; free: string };
   scene: {
     label: string;
     first: string;
-    firstSmall: string;
     starLabel: string;
     second: string;
     secondSmall: string;
@@ -21,7 +24,6 @@ export type WorldCopy = {
     thirdSmall: string;
     pillarLabels: [string, string, string, string];
     ageUnit: string;
-    sampleNote: string;
     frameAlts: [string, string, string];
   };
   story: { eyebrow: string; title: string; label: string; steps: [WorldStep, WorldStep, WorldStep, WorldStep] };
@@ -45,10 +47,11 @@ export type WorldCopy = {
 };
 
 const vi: WorldCopy = {
+  clock: { hour: "Giờ", previous: "Vừa qua", next: "Sắp tới", left: "còn lại" },
+  cta: { badge: "Thử ngay hôm nay", free: "Miễn phí tạo lá số" },
   scene: {
     label: "Một lá số lớn lên cùng thời gian: từ đêm sao đến bình minh, từ đứa trẻ sơ sinh đến cụ già",
     first: "Trước khi bạn ra đời, chỉ có bầu trời",
-    firstSmall: "Cuộn xuống, một vì sao bắt đầu rơi",
     starLabel: "Sao chiếu mệnh của bạn",
     second: "Lúc bạn cất tiếng khóc chào đời, bầu trời được ghi lại",
     secondSmall: "Giờ Ngọ · 15/12/1995 · bốn trụ ra đời cùng bạn",
@@ -56,7 +59,6 @@ const vi: WorldCopy = {
     thirdSmall: "Cứ mười năm, người trong lá số lại lớn thêm một chặng",
     pillarLabels: ["Năm", "Tháng", "Ngày", "Giờ"],
     ageUnit: "tuổi",
-    sampleNote: "Đây là lá số minh họa, không phải của ai.",
     frameAlts: ["Em bé sơ sinh quấn khăn, nằm trong ánh sáng ấm", "Chàng trai hai mươi hai tuổi đeo túi, sải bước", "Cụ già tám mươi tuổi chống gậy, vẫn quàng khăn đỏ"],
   },
   story: {
@@ -73,7 +75,7 @@ const vi: WorldCopy = {
   dial: {
     eyebrow: "Tiết khí",
     title: "Tiết khí là vị trí thật của Mặt Trời",
-    description: "Năm Bát Tự đổi khi Mặt Trời đi tới 315° hoàng kinh (Lập Xuân), rồi cứ mỗi 30° tiếp theo lại sang một tháng mới. Kéo thanh ngày để xem.",
+    description: "Năm Bát Tự đổi khi Mặt Trời đi tới 315° hoàng kinh (Lập Xuân), rồi cứ mỗi 30° tiếp theo lại sang một tháng mới.",
     dateLabel: "Ngày trong năm",
     sunAt: "Mặt Trời ở khoảng",
     degreesUnit: "° hoàng kinh",
@@ -90,10 +92,11 @@ const vi: WorldCopy = {
 };
 
 const en: WorldCopy = {
+  clock: { hour: "Hour of the", previous: "Just passed", next: "Up next", left: "left" },
+  cta: { badge: "Try it today", free: "Making a chart is free" },
   scene: {
     label: "A chart grows up over time: from the night sky to dawn, from a newborn to an elder",
     first: "Before you were born, there was only the sky",
-    firstSmall: "Scroll on. A star begins to fall",
     starLabel: "The star that watches over you",
     second: "The moment you first cried, the sky was written down",
     secondSmall: "Hour of the Horse · 15 Dec 1995 · your four pillars are born with you",
@@ -101,7 +104,6 @@ const en: WorldCopy = {
     thirdSmall: "The person in the chart grows up, ten years at a time",
     pillarLabels: ["Year", "Month", "Day", "Hour"],
     ageUnit: "yrs",
-    sampleNote: "A sample chart, not anyone's own.",
     frameAlts: ["A newborn wrapped in cloth, resting in a warm glow", "A young man of twenty-two walking with a shoulder bag", "An elder of eighty leaning on a cane, still wearing the red scarf"],
   },
   story: {
@@ -118,7 +120,7 @@ const en: WorldCopy = {
   dial: {
     eyebrow: "Solar terms",
     title: "The solar terms are the Sun's real position",
-    description: "The Ba-zi year turns when the Sun reaches 315° of ecliptic longitude (Lichun), and a new month begins every 30° after that. Drag the date to see it.",
+    description: "The Ba-zi year turns when the Sun reaches 315° of ecliptic longitude (Lichun), and a new month begins every 30° after that.",
     dateLabel: "Day of the year",
     sunAt: "The Sun is at about",
     degreesUnit: "° ecliptic longitude",
