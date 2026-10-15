@@ -1498,3 +1498,15 @@
 @media (max-width: 760px) {
   .fs-hero-compact { padding-top: 9.5rem; }
 }
+
+
+/* Section by section scrolling (KitMount switches it on with a wide window and no request for less motion; section-pager.ts moves
+   the page). Each band fills the window, so a move shows one section and nothing of the next. A pinned scene or a band taller
+   than the window scrolls freely inside. */
+html.fs-pager .fs-world > main > .fs-band {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100svh;
+  padding-top: 5rem;
+}
