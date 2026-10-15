@@ -953,13 +953,16 @@
 .fs-channels a:hover { border-color: var(--kit-seal); }
 
 /* Effect 18: words take their full colour as the reader scrolls past. Without script they are all in full colour. */
-.fs-fill { --fill-on: var(--kit-ink); --fill-off: rgba(59, 47, 32, 0.26); }
+/* The dimmed colour still has at least 4.5:1 on the paper, so the unread words stay readable. */
+.fs-fill { --fill-on: var(--kit-ink); --fill-off: #74644d; }
 .fs-fill[data-fill="on"] .fs-fill-word { color: var(--fill-off); transition: color .3s; }
 .fs-fill[data-fill="on"] .fs-fill-word[data-on] { color: var(--fill-on); }
 
 /* Effect 17: a summary that follows the mouse over a post (mouse and full motion only). Elsewhere the summary stays under the title. */
 .fs-post-desc { color: var(--kit-muted); font-size: .95rem; }
 .has-preview .fs-post-desc { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* A keyboard user has no pointer to trigger the floating preview, so the summary shows under the focused title. */
+.has-preview .fs-post-link:focus-visible .fs-post-desc { position: static; width: auto; height: auto; overflow: visible; clip-path: none; white-space: normal; }
 .fs-preview {
   position: fixed;
   left: 0;
@@ -984,3 +987,9 @@
 @media (prefers-reduced-motion: reduce) {
   .fs-fill[data-fill="on"] .fs-fill-word, .fs-preview { transition: none; }
 }
+
+/* Skip link and the error page */
+.fs-skip { position: fixed; left: .8rem; top: -4rem; z-index: 120; padding: .6rem 1rem; background: var(--kit-paper); color: var(--kit-ink); border: 2px solid var(--kit-seal); border-radius: 6px; font-size: .9rem; transition: top .15s; }
+.fs-skip:focus { top: .6rem; }
+.fs-world main:focus { outline: none; }
+.fs-error { min-height: 70vh; display: flex; align-items: center; }

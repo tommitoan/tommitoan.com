@@ -1,4 +1,4 @@
-import type { BlogLanguage } from "./posts";
+import type { BlogLanguage } from "./entries";
 
 const LOCALE: Record<BlogLanguage, string> = { vi: "vi-VN", en: "en-GB" };
 

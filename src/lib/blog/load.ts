@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { groupEntries, parsePostFile, type BlogLanguage, type Post, type PostEntry } from "./posts";
+import { groupEntries, type BlogLanguage, type Post, type PostEntry } from "./entries";
+import { parsePostFile } from "./posts";
 
 const DIRECTORY = path.join(process.cwd(), "content", "blog");
 

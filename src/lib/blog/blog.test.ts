@@ -5,7 +5,8 @@ import { describe, expect, it } from "vitest";
 import { FrontMatterError, parseFrontMatter } from "./front-matter";
 import { countWords, readingMinutes, renderMarkdown } from "./markdown";
 import { formatPostDate } from "./format";
-import { groupEntries, parsePostFile, postPath, summaryFor, toSummaryEntry, translationOf, versionFor, PostError } from "./posts";
+import { groupEntries, postPath, summaryFor, toSummaryEntry, translationOf, versionFor, PostError } from "./entries";
+import { parsePostFile } from "./posts";
 import { loadPosts } from "./load";
 
 const post = (extra = "", body = "Hello **world**.") => `---\ntitle: A title\ndate: 2026-10-15\ndescription: A short description\n${extra}---\n\n${body}\n`;

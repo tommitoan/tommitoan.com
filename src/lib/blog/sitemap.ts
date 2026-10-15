@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { BLOG_LANGUAGES, postPath, type PostEntry } from "./posts";
+import { BLOG_LANGUAGES, postPath, type PostEntry } from "./entries";
 
 /** Sitemap rows for the blog: the list, then every post version. A post that exists in both languages names the other one. */
 export function blogSitemap(entries: readonly PostEntry[], baseUrl: string): MetadataRoute.Sitemap {

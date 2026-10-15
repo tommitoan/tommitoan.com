@@ -11,6 +11,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test:unit": "vitest run",
+    "check:budgets": "node scripts/check-budgets.mjs",
     "kit:build": "node kit/build.mjs",
     "kit:sync": "node scripts/sync-kit.mjs"
   },

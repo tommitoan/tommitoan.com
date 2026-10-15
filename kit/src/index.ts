@@ -1,5 +1,6 @@
 import { mountClock, type Locale } from "./clock";
 import { detectTier, hasFinePointer, watchReducedMotion, type Tier } from "./env";
+import { mountCursor } from "./cursor";
 import { mountMagnetic } from "./magnetic";
 import { shouldPlaySeal } from "./navigation";
 import { mountDots, mountProgress, type Mounted } from "./progress";
@@ -10,7 +11,7 @@ import { createTransitions, type Transitions } from "./transition";
 import { KIT_VERSION } from "./version";
 import { mountWash } from "./wash";
 
-export type EffectName = "transition" | "seal" | "reveal" | "wash" | "clock" | "progress" | "dots" | "magnetic" | "smooth";
+export type EffectName = "transition" | "seal" | "reveal" | "wash" | "clock" | "progress" | "dots" | "magnetic" | "smooth" | "cursor";
 
 export interface KitOptions {
   /** Origins that share this look, for the cross-site transition. This site's own origin is always included. */
@@ -25,7 +26,7 @@ export interface KitOptions {
   locale?: Locale;
   /** Text and glyph of the opening seal. */
   seal?: { glyph?: string; tagline?: string };
-  /** Turn single effects off with `false`. Everything is on by default. */
+  /** Turn single effects off with `false`. Everything is on by default except `cursor`, which a page must switch on with `true`. */
   effects?: Partial<Record<EffectName, boolean>>;
 }
 
@@ -80,6 +81,8 @@ export function init(options: KitOptions = {}): Kit {
   if (on("progress")) track(mountProgress());
   if (on("dots")) track(mountDots({ tier, smooth: smooth ?? undefined }));
   if (on("magnetic")) track(mountMagnetic(tier, finePointer));
+  // The pointer ring is opt-in: only a page that sets effects.cursor to true gets it.
+  track(mountCursor(tier, finePointer, options.effects?.cursor === true));
 
   let destroyed = false;
   const destroy = (): void => {

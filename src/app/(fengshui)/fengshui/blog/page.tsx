@@ -1,6 +1,6 @@
 import { BlogListView } from "@/components/fengshui/blog/BlogListView";
 import { loadEntries } from "@/lib/blog/load";
-import { toSummaryEntry } from "@/lib/blog/posts";
+import { toSummaryEntry } from "@/lib/blog/entries";
 import { createMetadata } from "@/lib/metadata";
 
 export const metadata = createMetadata({

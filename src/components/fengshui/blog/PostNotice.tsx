@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useFengShuiLanguage } from "@/components/fengshui/FengShuiLanguage";
 import { blogContent } from "@/content/fengshui-blog";
-import type { BlogLanguage } from "@/lib/blog/posts";
+import type { BlogLanguage } from "@/lib/blog/entries";
 
 type Props = { lang: BlogLanguage; translation: { href: string; lang: BlogLanguage } | null };
 

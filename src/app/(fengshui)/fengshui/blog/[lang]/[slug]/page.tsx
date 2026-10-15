@@ -5,7 +5,7 @@ import { PostNotice } from "@/components/fengshui/blog/PostNotice";
 import { blogContent } from "@/content/fengshui-blog";
 import { formatPostDate } from "@/lib/blog/format";
 import { findPost, loadPosts } from "@/lib/blog/load";
-import { BLOG_LANGUAGES, postPath, translationOf, type BlogLanguage } from "@/lib/blog/posts";
+import { BLOG_LANGUAGES, postPath, translationOf, type BlogLanguage } from "@/lib/blog/entries";
 import { createMetadata } from "@/lib/metadata";
 import { siteContent } from "@/content/site-content";
 
