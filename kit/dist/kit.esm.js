@@ -1,4 +1,4 @@
-/* tommitoan kit 0.3.0 */
+/* tommitoan kit 0.4.0 */
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -281,6 +281,294 @@ function mountCursor(tier, finePointer, enabled) {
       document.querySelectorAll(".kit-splash").forEach((splash) => splash.remove());
     }
   };
+}
+
+// kit/src/drift.ts
+var DEFAULT_DRIFT = [-22, -8, -34, -14];
+var TILT = [-6, 4, -3, 5];
+function parseDrift(value, count) {
+  const parsed = (value ?? "").split(",").map((part) => Number.parseFloat(part)).filter((amount) => Number.isFinite(amount));
+  const source = parsed.length > 0 ? parsed : [...DEFAULT_DRIFT];
+  return Array.from({ length: count }, (_, index) => source[index % source.length] ?? 0);
+}
+function driftProgress(top, height, viewport) {
+  const range = Math.max(1, height + viewport * 0.2);
+  return clamp(-top / range, 0, 1);
+}
+function shouldMountDrift(tier) {
+  return tier === "full";
+}
+function mountDrift(tier, after = Promise.resolve(), root = document) {
+  if (!shouldMountDrift(tier)) return { destroy: () => void 0 };
+  const cleanups = [];
+  for (const host of Array.from(root.querySelectorAll("[data-kit-drift]"))) {
+    const cards = Array.from(host.children);
+    if (cards.length === 0) continue;
+    const amounts = parseDrift(host.getAttribute("data-kit-drift"), cards.length);
+    const entrances = [];
+    let cancelled = false;
+    void after.then(() => {
+      if (cancelled) return;
+      cards.forEach((card, index) => {
+        entrances.push(
+          card.animate([{ opacity: 0, transform: `translateY(60px) rotate(${TILT[index % TILT.length]}deg)` }, { opacity: 1, transform: "none" }], {
+            duration: 900,
+            delay: 150 + index * 120,
+            easing: "cubic-bezier(0.22, 1, 0.3, 1)",
+            fill: "backwards"
+          })
+        );
+      });
+    });
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const box = host.getBoundingClientRect();
+      if (box.height === 0) return;
+      const progress = driftProgress(box.top, box.height, window.innerHeight);
+      cards.forEach((card, index) => {
+        card.style.translate = `0 ${((amounts[index] ?? 0) * progress).toFixed(2)}%`;
+      });
+    };
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    cleanups.push(() => {
+      cancelled = true;
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+      entrances.forEach((animation) => animation.cancel());
+      cards.forEach((card) => {
+        card.style.translate = "";
+      });
+    });
+  }
+  return { destroy: () => cleanups.forEach((cleanup) => cleanup()) };
+}
+
+// kit/src/dust.ts
+var DUST_SIZE = 340;
+var DUST_STEP = 5;
+var PUSH_RADIUS = 90;
+function sampleTargets(rgba, size, step, threshold = 140) {
+  const targets = [];
+  for (let y = 0; y < size; y += step) {
+    for (let x = 0; x < size; x += step) {
+      if ((rgba[(y * size + x) * 4 + 3] ?? 0) > threshold) targets.push([x, y]);
+    }
+  }
+  return targets;
+}
+function stepParticle(p, pointer) {
+  p.vx += (p.tx - p.x) * 0.022;
+  p.vy += (p.ty - p.y) * 0.022;
+  if (pointer) {
+    const dx = p.x - pointer.x;
+    const dy = p.y - pointer.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    if (distance < PUSH_RADIUS && distance > 0.1) {
+      const push = (PUSH_RADIUS - distance) / PUSH_RADIUS;
+      p.vx += dx / distance * push * 5;
+      p.vy += dy / distance * push * 5;
+    }
+  }
+  p.vx *= 0.86;
+  p.vy *= 0.86;
+  p.x += p.vx;
+  p.y += p.vy;
+}
+function shouldMountDust(tier) {
+  return tier === "full";
+}
+function mountDust(tier, root = document) {
+  if (!shouldMountDust(tier)) return { destroy: () => void 0 };
+  const cleanups = [];
+  for (const host of Array.from(root.querySelectorAll("[data-kit-dust]"))) {
+    const glyph = host.getAttribute("data-kit-dust") ?? "";
+    if (!glyph) continue;
+    const canvas = document.createElement("canvas");
+    canvas.width = DUST_SIZE;
+    canvas.height = DUST_SIZE;
+    canvas.className = "kit-dust-canvas";
+    canvas.setAttribute("aria-hidden", "true");
+    const ctx = canvas.getContext("2d");
+    if (!ctx) continue;
+    host.appendChild(canvas);
+    let particles = [];
+    let pointer = null;
+    let frame = 0;
+    let visible = false;
+    let disposed = false;
+    const color = host.getAttribute("data-kit-dust-color") || "rgba(139, 46, 31, 0.8)";
+    const font = getComputedStyle(host).getPropertyValue("--kit-han").trim() || "serif";
+    const sample = () => {
+      const offscreen = document.createElement("canvas");
+      offscreen.width = DUST_SIZE;
+      offscreen.height = DUST_SIZE;
+      const paint = offscreen.getContext("2d");
+      if (!paint) return;
+      paint.fillStyle = "#000";
+      paint.font = `290px ${font}`;
+      paint.textAlign = "center";
+      paint.textBaseline = "middle";
+      paint.fillText(glyph, DUST_SIZE / 2, DUST_SIZE / 2 + 10);
+      const targets = sampleTargets(paint.getImageData(0, 0, DUST_SIZE, DUST_SIZE).data, DUST_SIZE, DUST_STEP);
+      particles = targets.map(([tx, ty]) => ({ tx, ty, x: Math.random() * DUST_SIZE, y: Math.random() * DUST_SIZE, vx: 0, vy: 0 }));
+    };
+    const draw = () => {
+      if (!visible || disposed) {
+        frame = 0;
+        return;
+      }
+      const box = canvas.getBoundingClientRect();
+      const scale = box.width > 0 ? DUST_SIZE / box.width : 1;
+      const local = pointer ? { x: (pointer.x - box.left) * scale, y: (pointer.y - box.top) * scale } : null;
+      ctx.clearRect(0, 0, DUST_SIZE, DUST_SIZE);
+      ctx.fillStyle = color;
+      for (const p of particles) {
+        stepParticle(p, local);
+        ctx.fillRect(p.x, p.y, 2.4, 2.4);
+      }
+      frame = window.requestAnimationFrame(draw);
+    };
+    const onMove = (event) => {
+      pointer = { x: event.clientX, y: event.clientY };
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    const observer = new IntersectionObserver((entries) => {
+      visible = entries[0]?.isIntersecting ?? false;
+      if (visible && !frame && particles.length > 0) frame = window.requestAnimationFrame(draw);
+    });
+    observer.observe(canvas);
+    const start = () => {
+      if (disposed) return;
+      sample();
+      if (particles.length === 0) return;
+      host.classList.add("kit-dust-on");
+      if (visible && !frame) frame = window.requestAnimationFrame(draw);
+    };
+    if (document.fonts?.load) void document.fonts.load(`290px ${font}`, glyph).then(start, start);
+    else start();
+    cleanups.push(() => {
+      disposed = true;
+      observer.disconnect();
+      window.removeEventListener("pointermove", onMove);
+      if (frame) window.cancelAnimationFrame(frame);
+      host.classList.remove("kit-dust-on");
+      canvas.remove();
+    });
+  }
+  return { destroy: () => cleanups.forEach((cleanup) => cleanup()) };
+}
+
+// kit/src/life.ts
+var LIFE_FRAME_MS = 2200;
+var LIFE_REST_MS = 1800;
+function parseLifeFrames(value) {
+  const frames = [];
+  for (const entry of (value ?? "").split(";")) {
+    const cut = entry.indexOf("=");
+    if (cut < 0) continue;
+    const age = entry.slice(0, cut).trim();
+    const src = entry.slice(cut + 1).trim();
+    if (age && src) frames.push({ age, src });
+  }
+  return frames;
+}
+function nextFrame(index, count) {
+  if (count <= 0) return { index: 0, restarted: false };
+  const next = index + 1;
+  return next >= count ? { index: 0, restarted: true } : { index: next, restarted: false };
+}
+function shouldMountLife(tier) {
+  return tier === "full";
+}
+function mountLife(tier, after = Promise.resolve(), root = document) {
+  if (!shouldMountLife(tier)) return { destroy: () => void 0 };
+  const cleanups = [];
+  for (const host of Array.from(root.querySelectorAll("[data-kit-life]"))) {
+    const first = host.querySelector("img[data-age]");
+    const extra = parseLifeFrames(host.getAttribute("data-kit-life-frames"));
+    if (!first || extra.length === 0) continue;
+    const star = host.querySelector("[data-kit-life-star]");
+    const counter = host.querySelector("[data-kit-life-age]");
+    const frames = [first];
+    const created = [];
+    let current = 0;
+    let timer = 0;
+    let visible = false;
+    let started = false;
+    let disposed = false;
+    const show = (index) => {
+      frames.forEach((frame, i) => frame.classList.toggle("is-active", i === index));
+      if (counter) counter.textContent = frames[index]?.getAttribute("data-age") ?? "";
+    };
+    const fall = () => {
+      star?.animate(
+        [
+          { transform: "translate(70px, -150px) scale(0.6)", opacity: 0 },
+          { opacity: 1, offset: 0.25 },
+          { transform: "translate(0, 0) scale(1)", opacity: 0 }
+        ],
+        { duration: 1100, easing: "cubic-bezier(0.55, 0, 0.8, 0.4)" }
+      );
+    };
+    const tick = () => {
+      timer = 0;
+      if (!visible || disposed) return;
+      const step = nextFrame(current, frames.length);
+      current = step.index;
+      show(current);
+      if (step.restarted) fall();
+      const last = current === frames.length - 1;
+      timer = window.setTimeout(tick, last ? LIFE_REST_MS + LIFE_FRAME_MS : LIFE_FRAME_MS);
+    };
+    const begin = () => {
+      if (started || disposed) return;
+      started = true;
+      host.classList.add("kit-life-playing");
+      for (const { age, src } of extra) {
+        const image = document.createElement("img");
+        image.alt = "";
+        image.decoding = "async";
+        image.width = first.width || 400;
+        image.height = first.height || 600;
+        image.setAttribute("data-age", age);
+        image.src = src;
+        host.insertBefore(image, star);
+        frames.push(image);
+        created.push(image);
+      }
+      fall();
+      show(0);
+      timer = window.setTimeout(tick, LIFE_FRAME_MS);
+    };
+    const observer = new IntersectionObserver((entries) => {
+      visible = entries[0]?.isIntersecting ?? false;
+      if (!visible) {
+        if (timer) window.clearTimeout(timer);
+        timer = 0;
+        return;
+      }
+      if (!started) void after.then(begin);
+      else if (!timer) timer = window.setTimeout(tick, LIFE_FRAME_MS);
+    });
+    observer.observe(host);
+    cleanups.push(() => {
+      disposed = true;
+      observer.disconnect();
+      if (timer) window.clearTimeout(timer);
+      host.classList.remove("kit-life-playing");
+      created.forEach((image) => image.remove());
+      first.classList.remove("is-active");
+      if (counter) counter.textContent = first.getAttribute("data-age") ?? "";
+    });
+  }
+  return { destroy: () => cleanups.forEach((cleanup) => cleanup()) };
 }
 
 // kit/src/magnetic.ts
@@ -1731,7 +2019,7 @@ function createTransitions(options) {
 }
 
 // kit/src/version.ts
-var KIT_VERSION = "0.3.0";
+var KIT_VERSION = "0.4.0";
 
 // kit/src/wash.ts
 function mountWash(tier) {
@@ -1837,8 +2125,17 @@ function init(options = {}) {
   if (on("reveal")) track(mountReveal({ tier, after: ready }));
   if (on("clock")) track(mountClock(options.locale ?? "vi"));
   if (on("progress")) track(mountProgress());
-  if (on("dots")) track(mountDots({ tier, smooth: smooth ?? void 0 }));
+  let dots = null;
+  const mountSectionDots = () => {
+    dots?.destroy();
+    dots = on("dots") ? mountDots({ tier, smooth: smooth ?? void 0 }) : null;
+  };
+  mountSectionDots();
+  cleanups.push(() => dots?.destroy());
   if (on("magnetic")) track(mountMagnetic(tier, finePointer));
+  if (on("dust")) track(mountDust(tier));
+  if (on("drift")) track(mountDrift(tier, ready));
+  if (on("life")) track(mountLife(tier, ready));
   track(mountCursor(tier, finePointer, options.effects?.cursor === true));
   let destroyed = false;
   const destroy = () => {
@@ -1850,7 +2147,10 @@ function init(options = {}) {
   const stopWatching = watchReducedMotion(() => {
     if (detectTier() === "off") destroy();
   });
-  return { version: KIT_VERSION, tier, ready, smooth, transitions, destroy };
+  const refresh = () => {
+    if (!destroyed) mountSectionDots();
+  };
+  return { version: KIT_VERSION, tier, ready, smooth, transitions, refresh, destroy };
 }
 export {
   baziYear,

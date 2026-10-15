@@ -1,5 +1,8 @@
 import { FIELD_SELECTOR, INTERACTIVE_SELECTOR, SPLASH_FRAMES, easeStep, ringTarget, shouldMountCursor } from "./cursor";
 import { describe, expect, it } from "vitest";
+import { DEFAULT_DRIFT, driftProgress, parseDrift, shouldMountDrift } from "./drift";
+import { sampleTargets, shouldMountDust, stepParticle, type Particle } from "./dust";
+import { nextFrame, parseLifeFrames, shouldMountLife } from "./life";
 import { dayState, luminance, seg, skyColor, smoothstep, textMix, NIGHT, PAPER } from "./color";
 import { resolveTier } from "./env";
 import { blendFrames } from "./keyframes";
@@ -294,5 +297,97 @@ describe("pointer ring (effect 20)", () => {
   it("splashes outward and fades away", () => {
     expect(SPLASH_FRAMES[0]).toMatchObject({ opacity: 0.35 });
     expect(SPLASH_FRAMES[SPLASH_FRAMES.length - 1]).toMatchObject({ opacity: 0 });
+  });
+});
+
+describe("ink dust (effect 2)", () => {
+  it("samples the grid points whose pixel is dark enough", () => {
+    const size = 8;
+    const rgba = new Uint8ClampedArray(size * size * 4);
+    const paint = (x: number, y: number, alpha: number) => {
+      rgba[(y * size + x) * 4 + 3] = alpha;
+    };
+    paint(0, 0, 255);
+    paint(4, 0, 140);
+    paint(0, 4, 141);
+    paint(4, 4, 200);
+    expect(sampleTargets(rgba, size, 4)).toEqual([
+      [0, 0],
+      [0, 4],
+      [4, 4],
+    ]);
+    expect(sampleTargets(rgba, size, 4, 0)).toHaveLength(4);
+  });
+
+  it("pulls a particle to its target and settles there", () => {
+    const p: Particle = { tx: 100, ty: 50, x: 0, y: 0, vx: 0, vy: 0 };
+    for (let i = 0; i < 400; i++) stepParticle(p, null);
+    expect(p.x).toBeCloseTo(100, 1);
+    expect(p.y).toBeCloseTo(50, 1);
+  });
+
+  it("pushes a particle away from a pointer that is close and ignores one that is far", () => {
+    const near: Particle = { tx: 50, ty: 50, x: 50, y: 50, vx: 0, vy: 0 };
+    stepParticle(near, { x: 40, y: 50 });
+    expect(near.x).toBeGreaterThan(50);
+    const far: Particle = { tx: 50, ty: 50, x: 50, y: 50, vx: 0, vy: 0 };
+    stepParticle(far, { x: 400, y: 400 });
+    expect(far.x).toBe(50);
+    expect(far.y).toBe(50);
+  });
+
+  it("runs on the full tier only", () => {
+    expect(shouldMountDust("full")).toBe(true);
+    expect(shouldMountDust("subtle")).toBe(false);
+    expect(shouldMountDust("off")).toBe(false);
+  });
+});
+
+describe("drifting cards (effect 4)", () => {
+  it("reads the percentages, falls back to the defaults and cycles", () => {
+    expect(parseDrift("-10,5", 2)).toEqual([-10, 5]);
+    expect(parseDrift("-10,5", 4)).toEqual([-10, 5, -10, 5]);
+    expect(parseDrift(null, 4)).toEqual([...DEFAULT_DRIFT]);
+    expect(parseDrift("x,,y", 2)).toEqual([DEFAULT_DRIFT[0], DEFAULT_DRIFT[1]]);
+  });
+
+  it("is 0 at the start, grows as the container leaves the window and stops at 1", () => {
+    expect(driftProgress(100, 300, 800)).toBe(0);
+    expect(driftProgress(0, 300, 800)).toBe(0);
+    expect(driftProgress(-230, 300, 800)).toBeCloseTo(0.5, 5);
+    expect(driftProgress(-5000, 300, 800)).toBe(1);
+  });
+
+  it("runs on the full tier only", () => {
+    expect(shouldMountDrift("full")).toBe(true);
+    expect(shouldMountDrift("subtle")).toBe(false);
+    expect(shouldMountDrift("off")).toBe(false);
+  });
+});
+
+describe("life strip (effect 25, light)", () => {
+  it("steps through the frames and says when the loop starts again", () => {
+    expect(nextFrame(0, 6)).toEqual({ index: 1, restarted: false });
+    expect(nextFrame(4, 6)).toEqual({ index: 5, restarted: false });
+    expect(nextFrame(5, 6)).toEqual({ index: 0, restarted: true });
+  });
+
+  it("reads the frame list and skips broken entries", () => {
+    expect(parseLifeFrames("12=/a.webp; 22 = /b.webp")).toEqual([
+      { age: "12", src: "/a.webp" },
+      { age: "22", src: "/b.webp" },
+    ]);
+    expect(parseLifeFrames("=/a.webp;12=;nonsense;45=/c.webp")).toEqual([{ age: "45", src: "/c.webp" }]);
+    expect(parseLifeFrames(null)).toEqual([]);
+  });
+
+  it("copes with no frames", () => {
+    expect(nextFrame(0, 0)).toEqual({ index: 0, restarted: false });
+  });
+
+  it("plays on the full tier only", () => {
+    expect(shouldMountLife("full")).toBe(true);
+    expect(shouldMountLife("subtle")).toBe(false);
+    expect(shouldMountLife("off")).toBe(false);
   });
 });
