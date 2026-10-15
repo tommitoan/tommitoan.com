@@ -8,8 +8,9 @@ import { WorldHeading } from "@/components/fengshui/world/WorldHeading";
 export function FengShuiBasicsSection() {
   const copy = useFengShuiCopy().basics;
 
+  // From this section down the page scrolls normally: the section-by-section pager stops at the Day Master.
   return (
-    <section className="fs-band fs-band-paper" data-kit-section="Cơ sở / Basics">
+    <section className="fs-band fs-band-paper" data-kit-section="Cơ sở / Basics" data-pager-free="">
       <div className="fs-wrap">
         <WorldHeading eyebrow={copy.eyebrow} title={`${copy.title} ${copy.titleAccent}`} description={copy.description} />
 

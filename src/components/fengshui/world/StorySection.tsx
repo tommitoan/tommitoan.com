@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { useFengShuiWorldCopy } from "@/components/fengshui/FengShuiLanguage";
 import { RevealHeading } from "./RevealHeading";
 import { easeToward, pinProgress } from "./scene-math";
-import { ringRotation, storyStep } from "./story-math";
+import { PillarCard } from "./PillarCards";
+import { SAMPLE_PILLARS } from "./scene-math";
+import { ringRotation, storyView, type StoryView } from "./story-math";
 import { useWorldMode } from "./use-world-mode";
 
 /** The four steps of reading a chart. Pinned and driven by scroll on wide screens, a plain grid elsewhere. */
@@ -29,11 +31,14 @@ function Ring({ glyph, spinRef }: { glyph: string; spinRef?: React.Ref<SVGSVGEle
 }
 
 function ScrollStory() {
-  const copy = useFengShuiWorldCopy().story;
+  const world = useFengShuiWorldCopy();
+  const copy = world.story;
+  const labels = world.scene.pillarLabels;
   const wrapperRef = useRef<HTMLElement>(null);
   const spinRef = useRef<SVGSVGElement>(null);
   const barRef = useRef<HTMLElement>(null);
-  const [step, setStep] = useState(0);
+  const [view, setView] = useState<StoryView>({ step: 0, cards: 0 });
+  const { step, cards } = view;
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -52,7 +57,8 @@ function ScrollStory() {
       current = easeToward(current, pinProgress(box.top, box.height, window.innerHeight));
       spin.style.transform = `rotate(${ringRotation(current).toFixed(1)}deg)`;
       bar.style.transform = `scaleX(${current.toFixed(3)})`;
-      setStep(storyStep(current, 4));
+      const next = storyView(current, 4);
+      setView((previous) => (previous.step === next.step && previous.cards === next.cards ? previous : next));
       handle = window.requestAnimationFrame(loop);
     };
     const observer = new IntersectionObserver(
@@ -84,6 +90,13 @@ function ScrollStory() {
                   <h3>{item.title}</h3>
                   <p>{item.text}</p>
                 </article>
+              ))}
+            </div>
+            <div className="fs-story-cards" aria-hidden="true">
+              {SAMPLE_PILLARS.map((han, index) => (
+                <div key={han} className="fs-story-slot" data-shown={index < cards ? "true" : "false"}>
+                  <PillarCard han={han} label={labels[index]} />
+                </div>
               ))}
             </div>
             <div className="fs-story-count" aria-hidden="true">
