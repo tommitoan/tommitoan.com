@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FengShuiLanguageToggle, useFengShuiLanguage } from "@/components/fengshui/FengShuiLanguage";
-import { blogContent } from "@/content/fengshui-blog";
+import { FengShuiLanguageToggle, useFengShuiWorldCopy } from "@/components/fengshui/FengShuiLanguage";
 import { siteContent } from "@/content/site-content";
+import { BAZI_ORIGIN } from "@/lib/sister-site";
 
 /**
  * Routes with large bundles (the gateway and the Tech and Discover pages load the 3D and CV code). Next prefetches every
@@ -15,12 +15,13 @@ const HEAVY_ROUTES = new Set(["/", "/tech", "/discover"]);
 /** A slim fixed bar that stays readable over both the night sky and the paper. */
 export function WorldHeader() {
   const pathname = usePathname();
-  const copy = blogContent[useFengShuiLanguage()].nav;
-  // The Feng Shui pages (blog, About) belong to this world; the first four links are the site's own.
-  const items = [
-    ...siteContent.navigation.map((item) => ({ key: item.label, label: item.label, href: item.href })),
-    { key: "blog", label: copy.blog, href: "/fengshui/blog/" },
-    { key: "about", label: copy.about, href: "/fengshui/about/" },
+  const copy = useFengShuiWorldCopy().nav;
+  // The blog and the About page live on the Ba-zi site, so those two are plain links to it (the kit covers the page
+  // change with the same slats as between any two pages of the family); the first four links are this site's own.
+  const items = siteContent.navigation.map((item) => ({ key: item.label, label: item.label, href: item.href }));
+  const baziLinks = [
+    { key: "blog", label: copy.blog, href: `${BAZI_ORIGIN}/blog` },
+    { key: "about", label: copy.about, href: `${BAZI_ORIGIN}/about` },
   ];
   return (
     <header className="fs-header">
@@ -32,14 +33,18 @@ export function WorldHeader() {
           {items.map((item) => {
             const href = item.href === "/#home" ? "/" : item.href;
             const base = href.replace(/\/$/, "");
-            // Blog posts live below /fengshui/blog/, so the Blog link stays current there; /fengshui itself is exact.
-            const current = item.key === "blog" ? pathname.startsWith("/fengshui/blog") : pathname === href || pathname === `${base}/`;
+            const current = pathname === href || pathname === `${base}/`;
             return (
               <Link key={item.key} href={item.href} prefetch={HEAVY_ROUTES.has(href) ? false : undefined} aria-current={current ? "page" : undefined}>
                 {item.label}
               </Link>
             );
           })}
+          {baziLinks.map((link) => (
+            <a key={link.key} href={link.href}>
+              {link.label}
+            </a>
+          ))}
         </nav>
         <FengShuiLanguageToggle />
       </div>

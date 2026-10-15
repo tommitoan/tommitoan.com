@@ -16,8 +16,7 @@ Personal website for Toan Ngo, built as a static Next.js space gateway with thre
 - `/tech` — engineering profile and CV route (7 sections: Hero, About, Skills, Experience, Education, Projects, Contact)
 - `/discover` — homelab, experiments, and public channels (coming soon)
 - `/fengshui` — the Feng Shui world: the scroll story of a chart, Bazica and Ba-zi basics
-- `/fengshui/blog/` and `/fengshui/blog/<lang>/<slug>/` — the blog (see Blog)
-- `/fengshui/about/` — the About page
+- The blog and the About page live on the Ba-zi site (`bazi.tommitoan.com/blog`, `/about`); the old `/fengshui/blog/...` and `/fengshui/about/` addresses answer with a 301 to them (see Blog and About)
 
 ## Tech Stack
 
@@ -99,23 +98,18 @@ Homepage scene configuration lives in `src/components/gateway/gatewayHomeConfig.
 - The `/tech` page adds its own `tech-bg.png` fixed background and a custom star canvas config — these override the layout background intentionally.
 - The gateway (`/`) manages its own full-screen background independently.
 
-## Blog
+## Blog and About (moved)
 
-Posts are Markdown files in `content/blog/`, read at build time (a static export has no server). The blog is at `/fengshui/blog/`, a post at `/fengshui/blog/<lang>/<slug>/`, and the About page at `/fengshui/about/`.
+The blog and the About page are part of the Ba-zi site (`bazica-web`: posts in `content/blog/`, the About text in `site_pages.go`). Here:
 
-- **File name:** `<slug>.<lang>.md`, where the slug is lowercase letters, digits and single hyphens and the language is `vi` or `en`. A post written in both languages uses the same slug twice (`welcome.vi.md`, `welcome.en.md`); the two versions then link to each other and name each other with `hreflang`.
-- **Front matter** (between two `---` lines, one `key: value` per line): `title`, `date` (a real date as `YYYY-MM-DD`) and `description` are required; `draft: true` keeps the post out of the build.
-- **Body:** Markdown. Raw HTML is shown as text and only `http`, `https`, `mailto`, relative and `#` links are kept.
-- **A mistake stops the build** with the file name and the reason (bad name, missing key, impossible date, empty text, a post given twice), so nothing broken goes live.
-- The list shows one row per slug, newest first, in the visitor's language when that version exists and in the other language, with a label, when it does not.
-- The page text of the blog and About is in `src/content/fengshui-blog.ts` (Vietnamese and English).
-- `NEXT_PUBLIC_BAZI_ORIGIN` (build time, default `https://bazi.tommitoan.com`) points the links and the kit at another Ba-zi site, for example a staging one. It must be a plain `http` or `https` origin; anything else is ignored. The Go site's matching setting is `PUBLIC_SITE_URL`.
+- The header links "Blog" and "About" (and the 404 page's blog button) are plain links to the Ba-zi site, built from `NEXT_PUBLIC_BAZI_ORIGIN` (build time, default `https://bazi.tommitoan.com`). It must be a plain `http` or `https` origin; anything else is ignored. The Go site's matching settings are `PUBLIC_SITE_URL` (where it finds this site) and `SITE_URL` (its own address).
+- `nginx.conf.template` redirects the old addresses with a 301: `/fengshui/blog/<lang>/<slug>/` to `<BAZI_ORIGIN>/blog/<lang>/<slug>`, any other `/fengshui/blog...` to `<BAZI_ORIGIN>/blog`, and `/fengshui/about...` to `<BAZI_ORIGIN>/about`. nginx reads `BAZI_ORIGIN` when it starts (the Dockerfile sets the default); a staging pair sets it together with `NEXT_PUBLIC_BAZI_ORIGIN`.
+- The sitemap lists only this site's own pages; the Ba-zi site has its own `/sitemap.xml`.
 
 ## Performance, caching and error pages
 
-- **Budgets:** `pnpm build && pnpm check:budgets` adds up the gzip size of the scripts and styles each page names and fails when a page is over its budget (the world home 290 KB of scripts, blog, post and About pages 235 KB, the 404 page 200 KB, the gateway 520 KB, Tech and Discover 280 KB), and when an icon, a character frame or a gateway image grows past its limit. The numbers are in `scripts/check-budgets.mjs`, about 10% over what was measured; raise one only with a reason.
+- **Budgets:** `pnpm build && pnpm check:budgets` adds up the gzip size of the scripts and styles each page names and fails when a page is over its budget (the world home 290 KB of scripts, the 404 page 200 KB, the gateway 520 KB, Tech and Discover 280 KB), and when an icon, a character frame or a gateway image grows past its limit. The numbers are in `scripts/check-budgets.mjs`, about 10% over what was measured; raise one only with a reason.
 - **Prefetch:** the world header does not prefetch `/`, `/tech` and `/discover` (`HEAVY_ROUTES` in `WorldHeader.tsx`), because Next would otherwise download the gateway's 3D bundle on every Feng Shui page.
-- **Client bundle:** the Markdown renderer runs at build time only. `src/lib/blog/entries.ts` is the client-safe part; a test fails if a client component imports `posts.ts`, `markdown.ts` or `load.ts`.
 - **nginx** (`nginx.conf.template`): gzip for text, the site's own `404.html` (in the look of the Feng Shui world), `/_next/static/` kept for a year as immutable, images and fonts for a week, pages and their payloads always revalidated. To try the real configuration (the commands are the same on macOS, Ubuntu and Fedora):
 
 ```bash
@@ -143,5 +137,5 @@ docker run --rm -p 8080:8080 tommitoan-web
 ## Notes
 
 - The app uses static export via `next.config.ts` (`output: "export"`).
-- No environment variables are required for local development. `NEXT_PUBLIC_BAZI_ORIGIN` is optional (see Blog).
+- No environment variables are required for local development. `NEXT_PUBLIC_BAZI_ORIGIN` is optional (see Blog and About).
 - Canonical contact email: `tommitoan1995@gmail.com`.

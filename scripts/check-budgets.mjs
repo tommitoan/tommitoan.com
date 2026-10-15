@@ -17,7 +17,6 @@ const KB = 1024;
 // Budgets in kilobytes of gzip, for scripts + styles together. Headroom is about 10% over the measured size.
 const BUDGETS = [
   { name: "Feng Shui world home", pages: ["fengshui/index.html"], scripts: 290, styles: 22 },
-  { name: "Blog, post and About pages", pages: ["fengshui/blog/index.html", "fengshui/about/index.html", "fengshui/blog/vi/welcome/index.html", "fengshui/blog/en/welcome/index.html"], scripts: 235, styles: 22 },
   { name: "404 page", pages: ["404.html"], scripts: 200, styles: 22 },
   { name: "Gateway (3D scene)", pages: ["index.html"], scripts: 520, styles: 16 },
   { name: "Tech and Discover pages", pages: ["tech/index.html", "discover/index.html"], scripts: 280, styles: 16 },

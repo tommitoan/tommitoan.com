@@ -14,6 +14,18 @@ server {
   # The 404 page is the site's own, in the look of the Feng Shui world (Next writes it to 404.html).
   error_page 404 /404.html;
 
+  # The blog and the About page moved to the Ba-zi site. The old addresses lead to the same content there.
+  # Specific patterns first: the first matching regular expression wins.
+  location ~ ^/fengshui/blog/(vi|en)/([a-z0-9-]+)/?$ {
+    return 301 ${BAZI_ORIGIN}/blog/$1/$2;
+  }
+  location ~ ^/fengshui/blog(/.*)?$ {
+    return 301 ${BAZI_ORIGIN}/blog;
+  }
+  location ~ ^/fengshui/about(/.*)?$ {
+    return 301 ${BAZI_ORIGIN}/about;
+  }
+
   # Build output whose file name carries a content hash never changes.
   location ^~ /_next/static/ {
     add_header Cache-Control "public, max-age=31536000, immutable" always;
