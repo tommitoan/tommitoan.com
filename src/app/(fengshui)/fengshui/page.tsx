@@ -1,5 +1,5 @@
 import { createMetadata } from "@/lib/metadata";
-import { FengShuiHeroSection } from "@/components/fengshui/sections/FengShuiHeroSection";
+import { FengShuiPageTitle } from "@/components/fengshui/sections/FengShuiPageTitle";
 import { FengShuiIntroSection } from "@/components/fengshui/sections/FengShuiIntroSection";
 import { FengShuiBasicsSection } from "@/components/fengshui/sections/FengShuiBasicsSection";
 import { FengShuiPillarsSection } from "@/components/fengshui/sections/FengShuiPillarsSection";
@@ -40,7 +40,7 @@ export default function FengShuiPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageLd) }}
       />
-      <FengShuiHeroSection />
+      <FengShuiPageTitle />
       <BirthScene />
       <FengShuiIntroSection />
       <StorySection />

@@ -10,7 +10,6 @@ export type WorldStep = {
 
 /** Copy of the Feng Shui world that is not part of the original page: the scene, the story, the dial, the marquee. */
 export type WorldCopy = {
-  hero: { scrollHint: string; chartCta: string };
   scene: {
     label: string;
     first: string;
@@ -46,7 +45,6 @@ export type WorldCopy = {
 };
 
 const vi: WorldCopy = {
-  hero: { scrollHint: "Cuộn xuống, xem một lá số thành hình", chartCta: "Lập lá số →" },
   scene: {
     label: "Một lá số lớn lên cùng thời gian: từ đêm sao đến bình minh, từ đứa trẻ sơ sinh đến cụ già",
     first: "Trước khi bạn ra đời, chỉ có bầu trời",
@@ -92,7 +90,6 @@ const vi: WorldCopy = {
 };
 
 const en: WorldCopy = {
-  hero: { scrollHint: "Scroll to watch a chart come to life", chartCta: "Make a chart →" },
   scene: {
     label: "A chart grows up over time: from the night sky to dawn, from a newborn to an elder",
     first: "Before you were born, there was only the sky",

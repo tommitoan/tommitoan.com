@@ -22,7 +22,7 @@ function ScrollScene() {
   const wrapperRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const skyRef = useRef<HTMLCanvasElement>(null);
-  const nebulaRef = useRef<HTMLImageElement>(null);
+  const hazeRef = useRef<HTMLDivElement>(null);
   const inkRef = useRef<HTMLImageElement>(null);
   const vignetteRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
@@ -41,7 +41,7 @@ function ScrollScene() {
     const wrapper = wrapperRef.current;
     const stage = stageRef.current;
     const canvas = skyRef.current;
-    const nebula = nebulaRef.current;
+    const haze = hazeRef.current;
     const ink = inkRef.current;
     const vignette = vignetteRef.current;
     const glow = glowRef.current;
@@ -53,10 +53,10 @@ function ScrollScene() {
     const figureB = figureBRef.current;
     const starLabel = starLabelRef.current;
     const ctx = canvas?.getContext("2d");
-    if (!wrapper || !stage || !canvas || !ctx || !nebula || !ink || !vignette || !glow || !sun || !base || !trail || !shadow || !figureA || !figureB || !starLabel) return;
+    if (!wrapper || !stage || !canvas || !ctx || !haze || !ink || !vignette || !glow || !sun || !base || !trail || !shadow || !figureA || !figureB || !starLabel) return;
 
     const dayCycle = createDayCycle({ paintBody: false, root: wrapper });
-    const stars = makeStars(200);
+    const stars = makeStars(340);
     const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
     let geometry: SceneGeometry = sceneGeometry(stage.clientWidth, stage.clientHeight);
     let curve = starCurve(geometry);
@@ -85,7 +85,7 @@ function ScrollScene() {
       const frame = sceneFrame(progress, geometry);
       dayCycle.render(progress);
 
-      nebula.style.opacity = String(frame.nebulaOpacity);
+      haze.style.opacity = String(frame.nebulaOpacity);
       ink.style.opacity = String(frame.inkWashOpacity);
       vignette.style.opacity = String(frame.vignette);
       glow.style.opacity = String(frame.glow);
@@ -204,8 +204,7 @@ function ScrollScene() {
   return (
     <section ref={wrapperRef} className="fs-scene" data-kit-section="Cảnh sinh ra / Birth" aria-label={copy.label}>
       <div ref={stageRef} className="fs-scene-stage" role="img" aria-label={copy.label}>
-        {/* eslint-disable-next-line @next/next/no-img-element -- decorative layers painted by the scroll loop */}
-        <img ref={nebulaRef} className="fs-scene-nebula" src="/fengshui/nebula.webp" alt="" aria-hidden="true" />
+        <div ref={hazeRef} className="fs-scene-haze" aria-hidden="true" />
         {/* eslint-disable-next-line @next/next/no-img-element -- decorative layers painted by the scroll loop */}
         <img ref={inkRef} className="fs-scene-nebula fs-scene-ink" src="/fengshui/nebula.webp" alt="" aria-hidden="true" />
         <div ref={vignetteRef} className="fs-scene-vignette" />

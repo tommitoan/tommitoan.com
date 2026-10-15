@@ -9,17 +9,37 @@ export interface Star {
   phase: number;
 }
 
+/** A few stars in every twelve are large and glow; the rest are fine points, like the star dust of the other pages. */
 export function makeStars(count: number, random: () => number = Math.random): Star[] {
-  return Array.from({ length: count }, () => ({ x: random(), y: random() * 0.85, r: random() * 1.3 + 0.3, phase: random() * 6 }));
+  return Array.from({ length: count }, () => ({
+    x: random(),
+    y: random() * 0.9,
+    r: random() < 0.08 ? 1.5 + random() * 1.1 : random() * 1.0 + 0.3,
+    phase: random() * 6,
+  }));
 }
+
+/** Stars above this radius also get a soft halo. */
+export const GLOW_RADIUS = 1.4;
 
 export function drawStarfield(ctx: CanvasRenderingContext2D, width: number, height: number, stars: readonly Star[], timeMs: number, alpha: number): void {
   if (alpha <= 0.01) return;
   for (const star of stars) {
     const a = (0.3 + 0.7 * Math.abs(Math.sin(timeMs / 900 + star.phase))) * alpha;
-    ctx.fillStyle = `rgba(240,232,255,${a.toFixed(3)})`;
+    const x = star.x * width;
+    const y = star.y * height;
+    if (star.r > GLOW_RADIUS) {
+      const halo = ctx.createRadialGradient(x, y, 0, x, y, star.r * 5);
+      halo.addColorStop(0, `rgba(214,226,255,${(0.42 * a).toFixed(3)})`);
+      halo.addColorStop(1, "rgba(214,226,255,0)");
+      ctx.fillStyle = halo;
+      ctx.beginPath();
+      ctx.arc(x, y, star.r * 5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.fillStyle = `rgba(236,243,255,${a.toFixed(3)})`;
     ctx.beginPath();
-    ctx.arc(star.x * width, star.y * height, star.r, 0, Math.PI * 2);
+    ctx.arc(x, y, star.r, 0, Math.PI * 2);
     ctx.fill();
   }
 }
