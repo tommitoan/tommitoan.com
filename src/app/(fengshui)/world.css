@@ -1507,17 +1507,200 @@
 }
 
 
-/* Section by section scrolling (KitMount switches it on with a wide window and no request for less motion; section-pager.ts moves
-   the page). Each paged band fills the window, so a move shows one section and nothing of the next. The pager stops at the Day
-   Master: from the section marked data-pager-free down, bands keep their own height and the page scrolls normally. */
-html.fs-pager {
-  scroll-behavior: auto;
-}
-html.fs-pager .fs-world > main > .fs-band:not([data-pager-free]):not([data-pager-free] ~ .fs-band) {
+/* Why: each card opens with a big number that counts up when it comes into view. */
+.fs-reason {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  min-height: 100svh;
-  padding-top: 4.5rem;
-  padding-bottom: 2.5rem;
+}
+.fs-card .fs-reason-figure {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0 0 1.1rem;
+  padding-bottom: 1rem;
+  border-bottom: 0.5px solid var(--kit-line);
+  color: var(--kit-muted);
+}
+.fs-reason-figure b {
+  color: var(--kit-seal);
+  font: 400 clamp(3rem, 5.2vw, 4.4rem) / 1 var(--fs-serif);
+  font-variant-numeric: tabular-nums;
+}
+.fs-reason-figure > span {
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+
+/* Roadmap: one line, three stops. The segment after a stop is solid when that stop is done and dashed when it is not. */
+.fs-road {
+  --fs-road-gold: #a9792b;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 1.5rem;
+  margin: 3rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.fs-road-stop {
+  position: relative;
+  padding-top: 3.4rem;
+}
+.fs-road-node {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border: 2px solid var(--kit-seal);
+  border-radius: 50%;
+  background: var(--kit-paper);
+  color: var(--kit-paper);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+.fs-road-stop::before {
+  content: "";
+  position: absolute;
+  top: calc(1.05rem - 1px);
+  left: 2.1rem;
+  right: calc(-1.5rem);
+  height: 0;
+  border-top: 2px dashed var(--kit-line);
+  transform-origin: left center;
+}
+.fs-road-stop:last-child::before {
+  display: none;
+}
+.fs-road-stop[data-status="done"]::before {
+  border-top: 2px solid var(--fs-road-gold);
+}
+.fs-road-stop[data-status="done"] .fs-road-node {
+  background: var(--kit-seal);
+}
+.fs-road-stop[data-status="next"] .fs-road-node::after {
+  content: "";
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: var(--kit-seal);
+}
+.fs-road-stop[data-status="later"] .fs-road-node {
+  border: 2px dashed var(--kit-muted);
+}
+.fs-road-badge {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  padding: 0.15rem 0.7rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  color: var(--kit-seal);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.fs-road-stop[data-status="later"] .fs-road-badge {
+  color: var(--kit-muted);
+}
+.fs-road-stop h3 {
+  margin: 0 0 0.9rem;
+  font: 400 1.35rem/1.3 var(--fs-serif);
+}
+.fs-road-items {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.fs-road-items li {
+  padding: 0.6rem 0.9rem;
+  background: var(--kit-surface);
+  border: 0.5px solid var(--kit-line);
+  border-radius: 6px;
+  font-size: 0.92rem;
+}
+.fs-road-stop[data-status="later"] .fs-road-items li {
+  border-style: dashed;
+  color: var(--kit-muted);
+}
+
+/* The drawing-in only runs when the script has armed the line (no script or less motion: everything is simply there). */
+.fs-road[data-armed] .fs-road-node {
+  transform: scale(0.4);
+  opacity: 0;
+}
+.fs-road[data-armed] .fs-road-stop::before {
+  transform: scaleX(0);
+}
+.fs-road[data-armed] .fs-road-badge,
+.fs-road[data-armed] .fs-road-stop h3,
+.fs-road[data-armed] .fs-road-items li {
+  opacity: 0;
+  transform: translateY(12px);
+}
+.fs-road[data-drawn] .fs-road-node {
+  transform: none;
+  opacity: 1;
+  transition: transform 0.5s cubic-bezier(0.34, 1.5, 0.64, 1), opacity 0.3s;
+  transition-delay: calc(var(--i) * 0.7s);
+}
+.fs-road[data-drawn] .fs-road-stop::before {
+  transform: none;
+  transition: transform 0.7s ease-out;
+  transition-delay: calc(var(--i) * 0.7s + 0.35s);
+}
+.fs-road[data-drawn] .fs-road-badge,
+.fs-road[data-drawn] .fs-road-stop h3,
+.fs-road[data-drawn] .fs-road-items li {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.5s, transform 0.5s;
+  transition-delay: calc(var(--i) * 0.7s + 0.2s + var(--j, 0) * 0.12s);
+}
+.fs-road[data-drawn] .fs-road-stop[data-status="next"] .fs-road-node {
+  animation: fs-road-pulse 2.4s ease-out 2.2s infinite;
+}
+@keyframes fs-road-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(139, 46, 31, 0.4);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 0.8rem rgba(139, 46, 31, 0);
+  }
+}
+@media (max-width: 760px) {
+  .fs-road {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .fs-road-stop {
+    padding: 0 0 0 3.3rem;
+  }
+  .fs-road-stop::before {
+    top: 2.1rem;
+    left: calc(1.05rem - 1px);
+    right: auto;
+    bottom: -2rem;
+    height: auto;
+    border-top: 0;
+    border-left: 2px dashed var(--kit-line);
+    transform-origin: center top;
+  }
+  .fs-road-stop[data-status="done"]::before {
+    border-top: 0;
+    border-left: 2px solid var(--fs-road-gold);
+  }
+  .fs-road[data-armed]:not([data-drawn]) .fs-road-stop::before {
+    transform: scaleY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fs-road-stop[data-status="next"] .fs-road-node {
+    animation: none;
+  }
 }
