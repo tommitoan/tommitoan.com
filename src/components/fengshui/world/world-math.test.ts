@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { NIGHT, PAPER } from "@kit/color";
 import { SOLAR_TERMS_VI } from "@kit/solar";
-import { arcPath, dayIndexOf, daysInYear, dialDay, dialState, JIE_INDEXES, ringPoint, SOLAR_TERMS_HAN } from "./dial-math";
+import { arcPath, dayIndexOf, daysInYear, dialDay, dialState, isMonthOpener, JIE_INDEXES, radialLabel, ringPoint, SOLAR_TERMS_HAN } from "./dial-math";
 import { marqueeAdvance, marqueeSkew, sixtyCycle, smoothVelocity } from "./marquee-math";
 import { bezier, easeToward, LIFE_SPAN, luckMarkX, LUCK_PILLARS, pinProgress, sceneFrame, sceneGeometry, starCurve } from "./scene-math";
 import { ringRotation, storyStep } from "./story-math";
@@ -242,5 +242,31 @@ describe("pinned solar-terms dial", () => {
     expect(arcPath(350, 20, 100, centre)).toContain("0 0 0");
     expect(arcPath(0, 360, 100, centre)).toBe("");
     expect(arcPath(0, 359.95, 100, centre)).toContain("0 1 0");
+  });
+});
+
+describe("solar term roles and ring labels", () => {
+  it("marks exactly twelve terms as opening a month, Lập Xuân first", () => {
+    expect([...Array(24).keys()].filter(isMonthOpener)).toHaveLength(12);
+    expect(isMonthOpener(21)).toBe(true);
+    expect(isMonthOpener(0)).toBe(false);
+  });
+
+  it("turns each label along its radius and flips the ones on the left so they are not upside down", () => {
+    const centre = { x: 0, y: 0 };
+    expect(radialLabel(0, 100, centre)).toMatchObject({ rotation: -0, anchor: "start" });
+    expect(radialLabel(45, 100, centre)).toMatchObject({ rotation: -45, anchor: "start" });
+    expect(radialLabel(180, 100, centre)).toMatchObject({ rotation: 0, anchor: "end" });
+    expect(radialLabel(225, 100, centre)).toMatchObject({ rotation: -45, anchor: "end" });
+    expect(radialLabel(270, 100, centre).anchor).toBe("start");
+    expect(radialLabel(90, 100, centre).anchor).toBe("start");
+  });
+
+  it("never lets a label end up upside down", () => {
+    for (let k = 0; k < 24; k++) {
+      const { rotation } = radialLabel(k * 15, 100, { x: 0, y: 0 });
+      const normalised = ((rotation % 360) + 540) % 360 - 180;
+      expect(Math.abs(normalised)).toBeLessThanOrEqual(90 + 1e-9);
+    }
   });
 });

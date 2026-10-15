@@ -291,6 +291,10 @@
   font-size: 0.95rem;
   font-weight: 500;
 }
+/* The link rule `.fs-world a { color: inherit }` would otherwise turn the label of a filled button dark on the seal red. */
+.fs-world .fs-btn:not(.fs-btn-ghost):not(.fs-btn-cta) {
+  color: var(--kit-paper);
+}
 .fs-btn-ghost {
   background: transparent;
   border-color: currentColor;
@@ -902,7 +906,7 @@
   letter-spacing: 0.01em;
   box-shadow: 0 0 28px rgba(242, 211, 145, 0.45);
   animation: fs-cta-pulse 2.2s ease-out infinite;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: filter 0.2s;
 }
 .fs-btn-cta::after {
   content: "";
@@ -920,12 +924,16 @@
 }
 .fs-btn-cta:hover,
 .fs-btn-cta:focus-visible {
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 0 44px rgba(242, 211, 145, 0.75);
+  filter: brightness(1.06);
 }
 .fs-cta .fs-btn-ghost {
   border-color: rgba(238, 232, 255, 0.55);
   color: #eee8ff;
+  transition: background 0.2s;
+}
+.fs-cta .fs-btn-ghost:hover,
+.fs-cta .fs-btn-ghost:focus-visible {
+  background: rgba(238, 232, 255, 0.1);
 }
 @keyframes fs-cta-pulse {
   0% {
@@ -1076,7 +1084,7 @@
 /* Solar-terms dial */
 .fs-dial {
   display: grid;
-  grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 460px) minmax(0, 1fr);
   gap: 2rem;
   align-items: center;
 }
@@ -1087,8 +1095,7 @@
 }
 .fs-dial-term {
   fill: var(--kit-muted);
-  font-size: 9.5px;
-  text-anchor: middle;
+  font-size: 10.5px;
   transition: fill 0.25s;
 }
 .fs-dial-term[data-opens="true"] {
@@ -1099,6 +1106,80 @@
   fill: var(--kit-seal);
   font-size: 12.5px;
   font-weight: 700;
+}
+.fs-dial-centre {
+  fill: var(--kit-ink);
+  font: 400 30px var(--fs-serif);
+  text-anchor: middle;
+}
+.fs-dial-centre-sub {
+  fill: var(--kit-seal);
+  font: 600 12px var(--fs-sans);
+  text-anchor: middle;
+}
+/* The card of the current term: its painting, whether it opens a Ba-zi month, and a line of imagery. */
+.fs-term {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 1rem;
+  margin: 1.1rem 0 0.4rem;
+  padding: 0.7rem;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid var(--kit-line);
+  border-radius: 10px;
+}
+.fs-term[data-opens="true"] {
+  border-color: var(--kit-seal);
+}
+.fs-term-image {
+  display: block;
+  width: 121px;
+  height: auto;
+  border-radius: 4px;
+  animation: fs-term-in 0.5s ease both;
+}
+@keyframes fs-term-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+.fs-term figcaption {
+  display: grid;
+  gap: 0.2rem;
+  line-height: 1.4;
+}
+.fs-term-badge {
+  justify-self: start;
+  padding: 0.05rem 0.6rem;
+  border: 1px solid var(--kit-line);
+  border-radius: 999px;
+  color: var(--kit-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.fs-term[data-opens="true"] .fs-term-badge {
+  border-color: var(--kit-seal);
+  background: var(--kit-seal);
+  color: var(--kit-paper);
+}
+.fs-term-name {
+  color: var(--kit-ink);
+  font: 400 1.35rem/1.2 var(--fs-serif);
+}
+.fs-term small {
+  color: var(--kit-muted);
+  font-size: 0.8rem;
+}
+.fs-term-imagery {
+  font-size: 0.92rem;
+}
+.fs-term-role {
+  color: var(--kit-muted);
+  font-size: 0.8rem;
 }
 /* Pinned dial: the Sun turns once round the ring while the section scrolls. */
 .fs-dial-scroll {
@@ -1127,14 +1208,9 @@
   transform: scaleX(0);
   transform-origin: 0 50%;
 }
-.fs-dial-earth {
-  fill: var(--kit-ink);
-  font-size: 16px;
-  text-anchor: middle;
-}
 .fs-dial-label {
   display: block;
-  margin-top: 1.2rem;
+  margin-top: 0.9rem;
   color: var(--kit-muted);
   font-size: 0.85rem;
 }
@@ -1165,6 +1241,126 @@
 }
 .fs-dial-out dd {
   margin: 0;
+}
+
+/* Day Master */
+.fs-dm-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+  gap: 2rem;
+  align-items: center;
+  margin-top: 1.6rem;
+}
+.fs-dm-art {
+  margin: 0;
+  padding: 8px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(59, 47, 32, 0.18);
+}
+.fs-dm-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  animation: fs-term-in 0.5s ease both;
+}
+.fs-dm-info p {
+  margin: 0.6rem 0 0;
+  max-width: 52ch;
+}
+.fs-dm-kind {
+  color: var(--kit-seal);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.fs-dm-name {
+  margin: 0.1rem 0 0;
+  color: var(--kit-ink);
+  font: 400 clamp(2.4rem, 5vw, 3.4rem) / 1.1 var(--fs-serif);
+}
+.fs-dm-info .fs-dm-title {
+  margin-top: 0.2rem;
+  color: var(--kit-seal);
+  font: 400 1.2rem/1.3 var(--fs-serif);
+}
+.fs-dm-picker {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-top: 1.8rem;
+}
+.fs-dm-tile {
+  display: grid;
+  justify-items: center;
+  gap: 0.25rem;
+  padding: 0.35rem 0.2rem 0.45rem;
+  border: 1px solid var(--kit-line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--kit-muted);
+  font: 600 0.78rem/1.2 var(--fs-sans);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.fs-dm-tile img {
+  width: 100%;
+  max-width: 56px;
+  height: auto;
+}
+.fs-dm-tile:hover {
+  background: rgba(255, 255, 255, 0.85);
+}
+.fs-dm-tile[aria-pressed="true"] {
+  border-color: var(--kit-seal);
+  background: #fff;
+  color: var(--kit-seal);
+  box-shadow: 0 0 0 1px var(--kit-seal);
+}
+.fs-dm-finder {
+  margin-top: 2rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--kit-line);
+}
+.fs-dm-finder label {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--kit-muted);
+  font-size: 0.9rem;
+}
+.fs-dm-date {
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--kit-line);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--kit-ink);
+  font: inherit;
+}
+.fs-dm-found {
+  min-height: 1.6em;
+  margin: 0.7rem 0 0;
+  color: var(--kit-seal);
+  font-weight: 600;
+}
+.fs-dm-finder .fs-note {
+  margin-top: 0.2rem;
+}
+@media (max-width: 760px) {
+  .fs-dm-stage {
+    grid-template-columns: 1fr;
+  }
+  .fs-dm-art {
+    max-width: 320px;
+    margin-inline: auto;
+  }
+  .fs-dm-picker {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  .fs-term {
+    grid-template-columns: 1fr;
+  }
+  .fs-term-image {
+    width: 100px;
+  }
 }
 
 /* Marquee */

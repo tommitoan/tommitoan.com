@@ -25,6 +25,8 @@ const BUDGETS = [
 const FILES = [
   { glob: /^\/icon\.png$|^\/apple-icon\.png$|^\/icon-192\.png$/, max: 80, label: "icons" },
   { glob: /^\/fengshui\/char\/.*\.webp$/, max: 90, label: "character frames" },
+  { glob: /^\/fengshui\/terms\/.*\.webp$/, max: 30, label: "solar term paintings" },
+  { glob: /^\/fengshui\/stems\/.*\.webp$/, max: 60, label: "heavenly stem paintings" },
   { glob: /^\/gateway\/.*\.webp$/, max: 600, label: "gateway images" },
 ];
 

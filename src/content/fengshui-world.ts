@@ -34,13 +34,34 @@ export type WorldCopy = {
     dateLabel: string;
     sunAt: string;
     degreesUnit: string;
-    lastTerm: string;
     month: string;
     monthWord: string;
+    monthPillar: string;
     year: string;
     beforeLichun: string;
+    /** Role of the term in the Ba-zi month, with {month} for the month's branch. */
+    opens: string;
+    middle: string;
+    opensBadge: string;
+    middleBadge: string;
+    imageAlt: string;
     note: string;
     ringLabel: string;
+  };
+  /** The Day Master section: the day pillar's stem, one of ten, with a picture and a few lines for each. */
+  dayMaster: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    pickerLabel: string;
+    imagery: string;
+    shadow: string;
+    disclaimer: string;
+    finderLabel: string;
+    finderResult: string;
+    finderNote: string;
+    imageAlt: string;
+    cta: string;
   };
   marquee: { eyebrow: string; title: string; caption: string };
   footer: { note: string };
@@ -54,7 +75,7 @@ const vi: WorldCopy = {
     first: "Trước khi bạn ra đời, chỉ có bầu trời",
     starLabel: "Sao chiếu mệnh của bạn",
     second: "Lúc bạn cất tiếng khóc chào đời, bầu trời được ghi lại",
-    secondSmall: "Giờ Ngọ · 15/12/1995 · bốn trụ ra đời cùng bạn",
+    secondSmall: "Giờ Ngọ · 29/12/1995 · bốn trụ ra đời cùng bạn",
     third: "Mỗi đại vận là một chặng đường",
     thirdSmall: "Cứ mười năm, người trong lá số lại lớn thêm một chặng",
     pillarLabels: ["Năm", "Tháng", "Ngày", "Giờ"],
@@ -74,18 +95,39 @@ const vi: WorldCopy = {
   },
   dial: {
     eyebrow: "Tiết khí",
-    title: "Tiết khí là vị trí thật của Mặt Trời",
-    description: "Năm Bát Tự đổi khi Mặt Trời đi tới 315° hoàng kinh (Lập Xuân), rồi cứ mỗi 30° tiếp theo lại sang một tháng mới.",
+    title: "Tiết khí quyết định trụ Tháng của bạn",
+    description:
+      "Bát Tự không tính tháng theo lịch âm hay lịch dương mà theo 12 tiết khí mở tháng (vạch đỏ). Sinh trước hay sau một mốc, dù chỉ vài phút, là đổi chi tháng, tức đổi Nguyệt trụ. Đó là trụ nói về mùa và môi trường bạn sinh ra, và là “nguyệt lệnh”: yếu tố nặng nhất khi xét Nhật chủ mạnh hay yếu.",
     dateLabel: "Ngày trong năm",
     sunAt: "Mặt Trời ở khoảng",
     degreesUnit: "° hoàng kinh",
-    lastTerm: "Tiết khí vừa qua",
     month: "Tháng Bát Tự",
     monthWord: "tháng",
+    monthPillar: "Nguyệt trụ",
     year: "Trụ năm Bát Tự",
     beforeLichun: "(chưa tới Lập Xuân)",
+    opens: "Tiết mở tháng {month}: sinh sau mốc này là sang tháng {month}, Nguyệt trụ đổi.",
+    middle: "Trung khí, nằm giữa tháng {month}: Nguyệt trụ vẫn giữ nguyên.",
+    opensBadge: "Mở tháng",
+    middleBadge: "Giữa tháng",
+    imageAlt: "Tranh minh họa tiết {name}",
     note: "Số liệu ở đây chỉ gần đúng, để minh họa. Bazica Web tính theo bảng tiết khí của thư viện.",
     ringLabel: "Vòng hoàng đạo với 24 tiết khí và vị trí Mặt Trời",
+  },
+  dayMaster: {
+    eyebrow: "Nhật chủ",
+    title: "Ngày sinh là chính bạn trong lá số",
+    description:
+      "Trụ ngày là ngày sinh của bạn, và Thiên Can của nó gọi là Nhật chủ: bản thân bạn trong lá số. Mọi Can Chi khác đều được đọc so với Nhật chủ. Có mười Can, mỗi hành hai Can, một dương một âm.",
+    pickerLabel: "Chọn một Can",
+    imagery: "Hình tượng",
+    shadow: "Mặt bóng cần để ý",
+    disclaimer: "Đây là hình tượng để ghi nhớ và đặt câu hỏi, không phải kết luận về tính cách. Cùng một Nhật chủ, mùa sinh và các Can Chi còn lại có thể làm hai lá số khác hẳn nhau.",
+    finderLabel: "Tìm Nhật chủ theo ngày sinh",
+    finderResult: "Ngày {date} là ngày {pillar}. Nhật chủ của bạn là {stem} ({kind}).",
+    finderNote: "Tính theo ngày dương lịch. Nếu bạn sinh từ 23:00, ngày có thể tính sang hôm sau tuỳ quy ước; Bazica Web tính đúng theo giờ sinh.",
+    imageAlt: "Tranh minh họa Thiên Can {name}",
+    cta: "Xem Nhật chủ trong lá số của bạn →",
   },
   marquee: { eyebrow: "Giáp Tý", title: "Vòng sáu mươi năm", caption: "Sáu mươi cặp can chi, cứ sáu mươi năm lại quay về từ đầu." },
   footer: { note: "© Toan Ngo · tommitoan" },
@@ -99,7 +141,7 @@ const en: WorldCopy = {
     first: "Before you were born, there was only the sky",
     starLabel: "The star that watches over you",
     second: "The moment you first cried, the sky was written down",
-    secondSmall: "Hour of the Horse · 15 Dec 1995 · your four pillars are born with you",
+    secondSmall: "Hour of the Horse · 29 Dec 1995 · your four pillars are born with you",
     third: "Each luck pillar is one stretch of the road",
     thirdSmall: "The person in the chart grows up, ten years at a time",
     pillarLabels: ["Year", "Month", "Day", "Hour"],
@@ -119,18 +161,39 @@ const en: WorldCopy = {
   },
   dial: {
     eyebrow: "Solar terms",
-    title: "The solar terms are the Sun's real position",
-    description: "The Ba-zi year turns when the Sun reaches 315° of ecliptic longitude (Lichun), and a new month begins every 30° after that.",
+    title: "Solar terms set your Month Pillar",
+    description:
+      "Ba-zi counts months by the 12 solar terms that open a month (the red ticks), not by lunar or calendar months. Being born a few minutes before or after one of them changes the month branch, and so the Month Pillar: the pillar traditionally read as the season and surroundings you are born into, and the “month command” that weighs most when judging how strong the Day Master is.",
     dateLabel: "Day of the year",
     sunAt: "The Sun is at about",
     degreesUnit: "° ecliptic longitude",
-    lastTerm: "Last solar term",
     month: "Ba-zi month",
     monthWord: "month of the",
+    monthPillar: "Month Pillar",
     year: "Ba-zi year pillar",
     beforeLichun: "(Lichun has not come yet)",
+    opens: "A term that opens the {month} month: born after it, you are in the {month} month and the Month Pillar changes.",
+    middle: "A mid-month term inside the {month} month: the Month Pillar stays the same.",
+    opensBadge: "Opens a month",
+    middleBadge: "Mid-month",
+    imageAlt: "Painting of {name}",
     note: "These values are approximate and only for illustration. Bazica Web uses the library's own solar-term tables.",
     ringLabel: "The ecliptic ring with the 24 solar terms and the position of the Sun",
+  },
+  dayMaster: {
+    eyebrow: "Day Master",
+    title: "Your birth day is you, in the chart",
+    description:
+      "The Day Pillar is your birth day, and its heavenly stem is the Day Master: you, in the chart. Every other stem and branch is read against it. There are ten stems, two for each element, one yang and one yin.",
+    pickerLabel: "Pick a stem",
+    imagery: "Imagery",
+    shadow: "Shadow side to watch",
+    disclaimer: "This imagery is for remembering and asking questions, not a verdict on character. Two charts with the same Day Master can differ widely in season of birth and in their other stems and branches.",
+    finderLabel: "Find your Day Master from your birth date",
+    finderResult: "{date} is a {pillar} day. Your Day Master is {stem} ({kind}).",
+    finderNote: "Counted by calendar date. If you were born from 23:00 the day may count as the next one, depending on the convention; Bazica Web uses your exact birth time.",
+    imageAlt: "Painting of the heavenly stem {name}",
+    cta: "See the Day Master in your own chart →",
   },
   marquee: { eyebrow: "Jia Zi", title: "The sixty-year cycle", caption: "Sixty stem-and-branch pairs, starting over every sixty years." },
   footer: { note: "© Toan Ngo · tommitoan" },
