@@ -30,7 +30,6 @@ export type FengShuiCopy = {
   description: string;
   primaryCta: string;
   repoCta: string;
-  intro: string[];
   basics: {
     eyebrow: string;
     title: string;
@@ -73,10 +72,6 @@ const vi: FengShuiCopy = {
     "Góc này dành cho Bazica, Bát Tự và mảng phong thuỷ mà mình hay tò mò — làm mãi rồi thành code, giao diện và những sản phẩm thử nghiệm.",
   primaryCta: "Mở Bazica Web →",
   repoCta: "Xem trên GitHub →",
-  intro: [
-    "Với mình, đây không phải phần phụ bên cạnh công việc lập trình. Nó là một hướng sản phẩm thật: vừa tìm hiểu kiến thức nền, vừa viết code, vừa phải làm sao cho dễ hiểu và dễ dùng.",
-    "Bazica là sản phẩm đầu tiên mình làm đến nơi đến chốn: một thư viện Go mã nguồn mở và trang bazi.tommitoan.com, nơi bạn nhập ngày giờ sinh là xem được lá số ngay.",
-  ],
   basics: {
     eyebrow: "Cơ sở",
     title: "Hiểu nhanh về",
@@ -197,10 +192,6 @@ const en: FengShuiCopy = {
     "This route is for Bazica, Ba-zi, and the broader curiosity around Feng Shui that keeps turning into code, interfaces, and product experiments.",
   primaryCta: "Open Bazica Web →",
   repoCta: "View on GitHub →",
-  intro: [
-    "I do not treat this lane as decoration beside the engineering work. It is a real product direction where domain research, technical implementation, and careful simplification meet.",
-    "Bazica is the first serious proof point: an open-source Go library and the live app at bazi.tommitoan.com that turn a niche symbolic system into something people can actually test and use.",
-  ],
   basics: {
     eyebrow: "Basics",
     title: "A quick look at",

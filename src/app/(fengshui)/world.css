@@ -136,11 +136,14 @@
   color: var(--kit-muted);
   font-size: 0.85rem;
 }
-/* "Experience the journey again": a quiet pill with an arrow that rises a little on hover. */
-.fs-footer .fs-wrap:first-child {
+/* "Experience the journey again": a quiet pill with an arrow that rises a little on hover, bottom right above the footer. */
+.fs-replay-row {
+  padding: 1.8rem 0 1.4rem;
+  background: var(--kit-paper);
+}
+.fs-replay-row .fs-wrap {
   display: flex;
-  justify-content: center;
-  margin-bottom: 1.2rem;
+  justify-content: flex-end;
 }
 .fs-replay {
   display: inline-flex;
@@ -372,6 +375,10 @@
 }
 .fs-pillar b span {
   display: block;
+}
+/* A card that stands for any pillar: the words, in bold, instead of one real stem and branch. */
+.fs-pillar-generic b {
+  font: 700 0.95rem/1.5 var(--fs-sans);
 }
 
 /* Birth scene (pinned) */
