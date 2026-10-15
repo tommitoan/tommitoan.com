@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { DEFAULT_DRIFT, driftProgress, parseDrift, shouldMountDrift } from "./drift";
 import { sampleTargets, shouldMountDust, stepParticle, type Particle } from "./dust";
 import { nextFrame, parseLifeFrames, shouldMountLife } from "./life";
+import { applyTheme, resolveTheme } from "./theme";
 import { dayState, luminance, seg, skyColor, smoothstep, textMix, NIGHT, PAPER } from "./color";
 import { resolveTier } from "./env";
 import { blendFrames } from "./keyframes";
@@ -389,5 +390,28 @@ describe("life strip (effect 25, light)", () => {
     expect(shouldMountLife("full")).toBe(true);
     expect(shouldMountLife("subtle")).toBe(false);
     expect(shouldMountLife("off")).toBe(false);
+  });
+});
+
+describe("cover theme", () => {
+  it("is paper unless asked for night", () => {
+    expect(resolveTheme("night")).toBe("night");
+    for (const value of ["paper", "", "NIGHT", undefined, null, 3]) expect(resolveTheme(value)).toBe("paper");
+  });
+
+  it("sets and restores the attribute on the page", () => {
+    const attrs = new Map<string, string>();
+    const root = {
+      getAttribute: (name: string) => attrs.get(name) ?? null,
+      setAttribute: (name: string, value: string) => void attrs.set(name, value),
+      removeAttribute: (name: string) => void attrs.delete(name),
+    } as unknown as HTMLElement;
+    const restore = applyTheme("night", root);
+    expect(attrs.get("data-kit-theme")).toBe("night");
+    restore();
+    expect(attrs.has("data-kit-theme")).toBe(false);
+    attrs.set("data-kit-theme", "night");
+    applyTheme("paper", root);
+    expect(attrs.has("data-kit-theme")).toBe(false);
   });
 });

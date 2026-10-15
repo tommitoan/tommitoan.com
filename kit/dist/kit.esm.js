@@ -1,4 +1,4 @@
-/* tommitoan kit 0.4.0 */
+/* tommitoan kit 0.5.0 */
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -1884,6 +1884,21 @@ function playSeal(options) {
   return { lifting, done };
 }
 
+// kit/src/theme.ts
+var THEME_ATTRIBUTE = "data-kit-theme";
+function resolveTheme(value) {
+  return value === "night" ? "night" : "paper";
+}
+function applyTheme(theme, root = document.documentElement) {
+  const before = root.getAttribute(THEME_ATTRIBUTE);
+  if (theme === "night") root.setAttribute(THEME_ATTRIBUTE, "night");
+  else root.removeAttribute(THEME_ATTRIBUTE);
+  return () => {
+    if (before === null) root.removeAttribute(THEME_ATTRIBUTE);
+    else root.setAttribute(THEME_ATTRIBUTE, before);
+  };
+}
+
 // kit/src/transition.ts
 var EASE2 = "cubic-bezier(0.65, 0, 0.35, 1)";
 var FLAG_KEY = "kit:cover";
@@ -2019,7 +2034,7 @@ function createTransitions(options) {
 }
 
 // kit/src/version.ts
-var KIT_VERSION = "0.4.0";
+var KIT_VERSION = "0.5.0";
 
 // kit/src/wash.ts
 function mountWash(tier) {
@@ -2099,9 +2114,10 @@ function createDayCycle(options = {}) {
 function init(options = {}) {
   const tier = options.tier ?? detectTier();
   const finePointer = hasFinePointer();
+  const restoreTheme = applyTheme(resolveTheme(options.theme));
   const on = (name) => options.effects?.[name] !== false;
   const family = [window.location.origin, ...options.family ?? []];
-  const cleanups = [];
+  const cleanups = [restoreTheme];
   const track = (mounted) => {
     if (mounted) cleanups.push(() => mounted.destroy());
   };
@@ -2166,6 +2182,7 @@ export {
   lerp,
   monthBranch,
   playSeal,
+  resolveTheme,
   resolveTier,
   seg,
   shichen,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { SpaceBackgroundAstronaut } from "@/components/canvas/SpaceBackgroundAstronaut";
@@ -9,8 +9,9 @@ import { PlanetSphereClient } from "@/components/gateway/PlanetSphereClient";
 import { GatewayLoadingScreen } from "@/components/gateway/GatewayLoadingScreen";
 import { MatrixRainCanvas } from "@/components/gateway/MatrixRainCanvas";
 import { AuroraCanvas } from "@/components/gateway/AuroraCanvas";
-import { PaperGate } from "@/components/gateway/PaperGate";
-import { PAPER_GATE_FALLBACK_MS, gateDestination, usesPaperGate, type GateBox } from "@/components/gateway/paperGate";
+import { AstronautSpeech } from "@/components/gateway/AstronautSpeech";
+import { astronautSide, canGuide, expandedWidth, globeOpacity } from "@/components/gateway/gatewayHover";
+import { markWarpArrival } from "@/components/gateway/warpArrival";
 import {
   createAnchorStyle,
   createFrameStyle,
@@ -70,6 +71,15 @@ function buildPlanetGlow(
   ].join(' ');
 }
 
+function subscribeToResize(onChange: () => void): () => void {
+  window.addEventListener("resize", onChange);
+  return () => window.removeEventListener("resize", onChange);
+}
+
+function readViewportWidth(): number {
+  return window.innerWidth;
+}
+
 export function SpaceGatewayHome() {
   const router = useRouter();
   const reducedMotion = useReducedMotion();
@@ -79,14 +89,14 @@ export function SpaceGatewayHome() {
   const [isGatewayReady, setIsGatewayReady] = useState(false);
   const [assetsReady, setAssetsReady] = useState(false);
   const [isLoaderFinishing, setIsLoaderFinishing] = useState(false);
-  const [gate, setGate] = useState<{ box: GateBox; href: string } | null>(null);
   const [readyPlanets, setReadyPlanets] = useState<Record<GatewayHomeId, boolean>>({
     tech: false,
     discover: false,
     fengshui: false,
   });
   const timeoutRef = useRef<number | null>(null);
-  const gateOpenedRef = useRef(false);
+  // The window width, so the hover guide switches on and off as the window is resized.
+  const viewportWidth = useSyncExternalStore(subscribeToResize, readViewportWidth, () => 0);
 
   const activePortal = selected
     ? gatewayHomeConfig.portals.find((item) => item.id === selected) ?? null
@@ -180,32 +190,21 @@ export function SpaceGatewayHome() {
     });
   };
 
-  const openGate = (href: string) => {
-    if (gateOpenedRef.current) return;
-    gateOpenedRef.current = true;
-    // A full page load lets the Feng Shui world paint its paper cover before first paint and play its seal.
-    window.location.assign(gateDestination(href));
+  // The hovered window grows where it stands, so the pointer is always still inside it; the others are pushed aside.
+  const enterPortal = (id: GatewayHomeId) => {
+    if (!selected) setHoveredPortal(id);
   };
 
-  // A page restored from the back/forward cache must not keep the paper over the gateway.
-  useEffect(() => {
-    const onPageShow = (event: PageTransitionEvent) => {
-      if (!event.persisted) return;
-      gateOpenedRef.current = false;
-      setGate(null);
-    };
-    window.addEventListener("pageshow", onPageShow);
-    return () => window.removeEventListener("pageshow", onPageShow);
-  }, []);
+  const leavePortal = (id: GatewayHomeId) => {
+    // Moving from one window to the next can report the new one before the old one ends; only the old one clears itself.
+    if (!selected) setHoveredPortal((current) => (current === id ? null : current));
+  };
 
-  const handleSelect = (item: GatewayHomePortal, box: GateBox) => {
-    if (selected || gate) return;
-    if (usesPaperGate(item.id, !!reducedMotion)) {
-      setGate({ box, href: item.href });
-      timeoutRef.current = window.setTimeout(() => openGate(item.href), PAPER_GATE_FALLBACK_MS);
-      return;
-    }
+  const handleSelect = (item: GatewayHomePortal) => {
+    if (selected) return;
     setSelected(item.id);
+    // The Feng Shui world opens with its seal on a fresh page load only; a warp has just done the opening.
+    markWarpArrival(item.href);
     const delay = reducedMotion
       ? gatewayHomeConfig.transitions.reducedMotionRouteDelayMs
       : gatewayHomeConfig.transitions.routeDelayMs;
@@ -218,6 +217,11 @@ export function SpaceGatewayHome() {
     ? gatewayHomeConfig.transitions.zoomOffsetXByPortal[activePortal.id]
     : "0vw";
   const debug = gatewayHomeConfig.debug;
+  const guide = canGuide(viewportWidth, !!reducedMotion);
+  const hoveredSlot = hoveredPortal ? gatewayHomeConfig.portals.findIndex((item) => item.id === hoveredPortal) : null;
+  // The astronaut introduces the portal under the pointer, when there is room and motion for it.
+  const talking = !!hoveredPortal && !selected && guide;
+  const hoveredInfo = hoveredPortal ? gatewayHomeConfig.portals.find((item) => item.id === hoveredPortal) ?? null : null;
 
   return (
     <section className="space-gateway-shell relative w-full h-screen overflow-hidden text-white">
@@ -271,36 +275,53 @@ export function SpaceGatewayHome() {
               const isHovered = hoveredPortal === gateway.id;
               const isSelected = selected === gateway.id;
 
+              const frameSizeStyle = createFrameStyle({
+                width: gatewayHomeConfig.frame.width,
+                height: {
+                  mobileRem: gatewayHomeConfig.frame.height.mobileRem * (gateway.planet.frameHeightScale ?? 1),
+                  viewport: gatewayHomeConfig.frame.height.viewport * (gateway.planet.frameHeightScale ?? 1),
+                  desktopRem: gatewayHomeConfig.frame.height.desktopRem * (gateway.planet.frameHeightScale ?? 1),
+                },
+                radiusRem: gatewayHomeConfig.frame.radiusRem,
+              });
+
+              const expanded = guide && isHovered && !selected;
+
               return (
-                <motion.div
+                <div
                   key={gateway.id}
+                  // This window is what takes the hover and the click. It widens where it stands, so the pointer stays inside it.
+                  onPointerEnter={(event) => event.pointerType === "mouse" && enterPortal(gateway.id)}
+                  onPointerLeave={(event) => event.pointerType === "mouse" && leavePortal(gateway.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSelect(gateway);
+                  }}
+                  className={`relative shrink-0 ${selected ? 'cursor-default pointer-events-none' : 'cursor-pointer'}`}
+                  style={{
+                    ...frameSizeStyle,
+                    width: expanded ? expandedWidth(String(frameSizeStyle.width), gatewayHomeConfig.hover.expandFactor) : frameSizeStyle.width,
+                    transition: `width ${gatewayHomeConfig.hover.expandSeconds}s cubic-bezier(0.22, 1, 0.36, 1)`,
+                    zIndex: isHovered ? 51 : 50,
+                  }}
+                >
+                <motion.div
                   initial={{ opacity: 0, y: 50 }}
                   animate={{
-                    opacity: selected && !isSelected ? 0 : 1,
+                    opacity: selected && !isSelected ? 0 : globeOpacity(i, hoveredSlot, gatewayHomeConfig.hover.dimOpacity),
                     y: 0,
                     filter: selected && isSelected
                       ? `brightness(${gatewayHomeConfig.hover.selectedBrightness}) contrast(${gatewayHomeConfig.hover.selectedContrast})`
                       : "brightness(1) contrast(1)",
                   }}
-                  transition={{ duration: 0.8, delay: selected ? 0 : 0.2 + i * 0.15 }}
-                  onHoverStart={() => !selected && !gate && setHoveredPortal(gateway.id)}
-                  onHoverEnd={() => !selected && !gate && setHoveredPortal(null)}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    handleSelect(gateway, { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom });
+                  transition={{
+                    duration: 0.8,
+                    delay: selected || isGatewayReady ? 0 : 0.2 + i * 0.15,
+                    opacity: { duration: 0.45 },
                   }}
-                  className={`group relative overflow-hidden ${selected || gate ? 'cursor-default pointer-events-none' : 'cursor-pointer'} flex flex-col items-center transition-all duration-500`}
+                  className="group pointer-events-none relative h-full w-full overflow-hidden flex flex-col items-center transition-[box-shadow] duration-500"
                   style={{
-                    ...createFrameStyle({
-                      width: gatewayHomeConfig.frame.width,
-                      height: {
-                        mobileRem: gatewayHomeConfig.frame.height.mobileRem * (gateway.planet.frameHeightScale ?? 1),
-                        viewport: gatewayHomeConfig.frame.height.viewport * (gateway.planet.frameHeightScale ?? 1),
-                        desktopRem: gatewayHomeConfig.frame.height.desktopRem * (gateway.planet.frameHeightScale ?? 1),
-                      },
-                      radiusRem: gatewayHomeConfig.frame.radiusRem,
-                    }),
+                    borderRadius: frameSizeStyle.borderRadius,
                     ...(debug.showFrames ? {
                       borderWidth: `${gatewayHomeConfig.frame.borderWidthPx}px`,
                       borderStyle: 'solid',
@@ -313,7 +334,6 @@ export function SpaceGatewayHome() {
                       backgroundPosition: gateway.theme.frameImageSrc ? 'auto, center' : 'auto',
                       backgroundColor: 'rgba(0,0,0,0.6)',
                     } : {}),
-                    zIndex: 50,
                   }}
                 >
                   {debug.showPortalEffects ? gateway.effects.map((effect, effectIndex) => (
@@ -344,7 +364,7 @@ export function SpaceGatewayHome() {
                         <motion.div
                           animate={{
                             y: isHovered || isSelected ? -gateway.planet.hoverLiftPx : 0,
-                            scale: isHovered || isSelected ? gatewayHomeConfig.hover.planetScale : 1,
+                            scale: expanded ? gatewayHomeConfig.hover.expandedPlanetScale : isHovered || isSelected ? gatewayHomeConfig.hover.planetScale : 1,
                           }}
                           transition={{ duration: 1.2, ease: "easeOut" }}
                           style={{
@@ -398,6 +418,7 @@ export function SpaceGatewayHome() {
                     />
                   ) : null}
                 </motion.div>
+                </div>
               );
             })}
           </div>
@@ -411,10 +432,12 @@ export function SpaceGatewayHome() {
             camera={{ position: gatewayHomeConfig.astronaut.camera.position, fov: gatewayHomeConfig.astronaut.camera.fov }}
             dpr={[1, 2]}
           >
-            <SpaceBackgroundAstronaut isWarping={!!selected} targetIndex={activeIndex} />
+            <SpaceBackgroundAstronaut isWarping={!!selected} targetIndex={activeIndex} talkSide={talking ? astronautSide(hoveredSlot) : null} />
           </Canvas>
         </div>
       ) : null}
+
+      <AstronautSpeech portal={talking && hoveredInfo ? { label: hoveredInfo.label, speech: hoveredInfo.speech } : null} side={astronautSide(hoveredSlot)} />
 
       <AnimatePresence>
         {selected && (
@@ -431,8 +454,6 @@ export function SpaceGatewayHome() {
           />
         )}
       </AnimatePresence>
-
-      {gate ? <PaperGate box={gate.box} radiusPx={gatewayHomeConfig.frame.radiusRem * 16} onOpen={() => openGate(gate.href)} /> : null}
 
       <GatewayLoadingScreen
         loadingProgress={loadingProgress}

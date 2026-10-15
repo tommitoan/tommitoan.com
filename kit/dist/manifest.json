@@ -1,10 +1,10 @@
 {
-  "version": "0.4.0",
+  "version": "0.5.0",
   "files": {
     "VERSION": {
       "bytes": 6,
       "gzip": 26,
-      "sha256": "40b8eb4000a913a7791090535f291d3d369874162a89ef3c9e3d4e887a1b9e79"
+      "sha256": "a0ad50640139a524f86591157145bf1d4674ea9c065bfea21558f0f7b04430c8"
     },
     "kit-boot.js": {
       "bytes": 242,
@@ -12,19 +12,19 @@
       "sha256": "de4a9ffac84747ef0b5cd890cfd11029cc58823248fda61c0de76af6af29a984"
     },
     "kit.css": {
-      "bytes": 5417,
-      "gzip": 1824,
-      "sha256": "378c325b77d08d596b4661531bcddae906cfe15e822a7bceb9f449e0cf8072f1"
+      "bytes": 5825,
+      "gzip": 1961,
+      "sha256": "d72e88cb40b340e6d65d114c608cc70a2052f68b136664508df262005be9977f"
     },
     "kit.esm.js": {
-      "bytes": 78782,
-      "gzip": 19908,
-      "sha256": "f9b21b4db8fbfb2088cc51080a3ed1c6d0586e0b773bdb9ccacb08c2b97e1f0c"
+      "bytes": 79388,
+      "gzip": 20070,
+      "sha256": "a82ce187dd75280a25cbae091bd4eeb8bc0569c2768dc6a862675ad8925628c4"
     },
     "kit.iife.js": {
-      "bytes": 45408,
-      "gzip": 14841,
-      "sha256": "213d48dd0c68bdbaaf1ad1e6fc4a4ea93d2a14ddb3ca8ace689069a5406352a2"
+      "bytes": 45716,
+      "gzip": 14944,
+      "sha256": "cc3873adb78fb6f08f5f06a89f202f8812e094d8aa1c3e669fd7729660951c3e"
     }
   }
 }

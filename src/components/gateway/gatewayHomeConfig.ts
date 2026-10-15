@@ -97,6 +97,8 @@ export interface GatewayHomePortal {
   label: string;
   href: string;
   description: string;
+  /** What the astronaut says while this portal is hovered. One or two short sentences. */
+  speech: string;
   theme: {
     hoverGradientClass: string;
     glowColor: string;
@@ -337,6 +339,12 @@ export const gatewayHomeConfig = {
     planetGlowBlurPx: 24,
     planetGlowRestBlurPx: 16,
     overlayOpacity: 0.06,
+    /** Opacity of the windows that are not hovered; how many times wider the hovered one grows, and how long that takes. */
+    dimOpacity: 0.28,
+    expandFactor: 1.9,
+    expandSeconds: 0.7,
+    /** The planet in the hovered, widened window is a little larger. */
+    expandedPlanetScale: 1.14,
   },
   hoverBackdrop: {
     insetXPercent: 18,
@@ -352,6 +360,10 @@ export const gatewayHomeConfig = {
   } satisfies PlanetStageConfig,
   astronaut: {
     assetSrc: "/gateway/characters/astronaut.webp",
+    /** The astronaut facing the visitor, shown while he introduces a portal. Same canvas as assetSrc (1024 x 1536, transparent). */
+    frontAssetSrc: "/gateway/characters/astronaut-front.webp",
+    /** While he talks he turns round, grows and steps to one side: x is the distance from the middle (world units). */
+    talk: { scale: 5.6, x: 2.15, y: -1.3 },
     camera: {
       position: [0, 0, 5] as [number, number, number],
       fov: 50,
@@ -393,6 +405,7 @@ export const gatewayHomeConfig = {
       label: "Tech",
       href: "/tech",
       description: "Dive into software, engineering, and digital tools.",
+      speech: "This is the engineering desk: Go services, cloud systems and the tools behind them. Shall we step in?",
       theme: {
         hoverGradientClass: "from-fuchsia-600/40 to-purple-500/0",
         glowColor: "rgba(192, 38, 211, 0.6)",
@@ -432,6 +445,7 @@ export const gatewayHomeConfig = {
       label: "Discover",
       href: "/discover",
       description: "Explore our curated collections and discoveries.",
+      speech: "The lab: a homelab, experiments and the channels where ideas get tested. Want a look around?",
       theme: {
         hoverGradientClass: "from-cyan-500/40 to-sky-400/0",
         glowColor: "rgba(34, 211, 238, 0.6)",
@@ -465,6 +479,7 @@ export const gatewayHomeConfig = {
       label: "Feng Shui",
       href: "/fengshui",
       description: "Balance energy and explore spatial harmony.",
+      speech: "Here Ba-zi meets code. A star falls, a person grows, and a chart tells the story. Ready to see yours?",
       theme: {
         hoverGradientClass: "from-slate-100/20 to-white/0",
         glowColor: "rgba(205, 220, 255, 0.92)",
