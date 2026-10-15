@@ -5,11 +5,20 @@ export type FengShuiLanguage = "vi" | "en";
 export type FengShuiPillar = {
   title: string;
   description: string;
+  /** The number shown big on the card; it counts up when the card comes into view. */
+  figure: number;
+  /** What the number counts, in a few words. */
+  unit: string;
 };
+
+export type FengShuiLaneStatus = "done" | "next" | "later";
 
 export type FengShuiLane = {
   title: string;
   items: string[];
+  status: FengShuiLaneStatus;
+  /** The short stop label on the roadmap line (Now, Next, Later). */
+  badge: string;
 };
 
 export type FengShuiTerm = {
@@ -140,16 +149,22 @@ const vi: FengShuiCopy = {
       title: "Vì sao có trang này",
       description:
         "Đây là chỗ cho phần việc nằm giữa lập trình, diễn giải và thiết kế sản phẩm: lấy những lĩnh vực ít người làm phần mềm rồi biến chúng thành công cụ dùng được lâu dài.",
+      figure: 60,
+      unit: "cặp can chi trong một vòng Giáp Tý",
     },
     {
       title: "Bazica cho thấy điều gì",
       description:
         "Mình có thể chuyển quy tắc của một lĩnh vực thành code rõ ràng, đưa ra một sản phẩm công khai dùng được, và theo nó đến cùng thay vì bỏ dở ở mức thử nghiệm.",
+      figure: 700,
+      unit: "năm ngày sinh Bazica tính được, 1700–2399",
     },
     {
       title: "Sắp tới",
       description:
         "Thêm bài giải thích, kể rõ hơn về sản phẩm, và có thể có thêm công cụ về Bát Tự, lịch và phong thuỷ nếu giao diện vẫn giữ được sự gọn gàng.",
+      figure: 3,
+      unit: "hướng làm tiếp: bài viết, kể chuyện, công cụ",
     },
   ],
   lanesHeading: { eyebrow: "Lộ trình", title: "Hướng đi", accent: "tiếp theo" },
@@ -157,14 +172,20 @@ const vi: FengShuiCopy = {
     {
       title: "Đã có",
       items: ["Thư viện Bazica (Go)", "Bazica Web — bazi.tommitoan.com", "Mã nguồn công khai trên GitHub"],
+      status: "done",
+      badge: "Bây giờ",
     },
     {
       title: "Tiếp theo",
       items: ["Bài giải thích từng bước", "Bản xuất PDF đẹp hơn", "Ghi chú kiến thức công khai"],
+      status: "next",
+      badge: "Kế tiếp",
     },
     {
       title: "Xa hơn",
       items: ["Công cụ tính toán tương tác", "Giao diện hỗ trợ học Bát Tự", "Hệ sinh thái sản phẩm đầy đủ hơn"],
+      status: "later",
+      badge: "Sau này",
     },
   ],
   principlesHeading: { eyebrow: "Nguyên tắc", title: "Cách mình", accent: "làm" },
@@ -260,16 +281,22 @@ const en: FengShuiCopy = {
       title: "Why this route exists",
       description:
         "It gives a proper home to the part of my work that sits between engineering, interpretation, and product design. It is where unusual domains get turned into durable software surfaces.",
+      figure: 60,
+      unit: "stem and branch pairs in one Jiazi cycle",
     },
     {
       title: "What Bazica proves",
       description:
         "It proves I can encode domain rules clearly, ship a usable public artifact, and keep a focused product coherent instead of leaving it as an experiment forever.",
+      figure: 700,
+      unit: "years of birth dates Bazica computes, 1700–2399",
     },
     {
       title: "What comes next",
       description:
         "More explainers, richer product storytelling, and possibly additional tools around Ba-zi, calendar systems, and Feng Shui workflows if the surface stays clear enough.",
+      figure: 3,
+      unit: "directions ahead: writing, storytelling, tools",
     },
   ],
   lanesHeading: { eyebrow: "Roadmap", title: "Where this is", accent: "headed" },
@@ -277,14 +304,20 @@ const en: FengShuiCopy = {
     {
       title: "Current artifact",
       items: ["Bazica Go library", "Bazica Web — bazi.tommitoan.com", "Public GitHub repository"],
+      status: "done",
+      badge: "Now",
     },
     {
       title: "Likely next layer",
       items: ["Guided explainers", "More polished visual outputs", "Public-facing domain notes"],
+      status: "next",
+      badge: "Next",
     },
     {
       title: "Longer horizon",
       items: ["Interactive calculators", "Teaching-oriented interfaces", "A stronger product ecosystem"],
+      status: "later",
+      badge: "Later",
     },
   ],
   principlesHeading: { eyebrow: "Principles", title: "How it", accent: "gets built" },
