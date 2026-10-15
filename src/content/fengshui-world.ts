@@ -26,7 +26,7 @@ export type WorldCopy = {
     ageUnit: string;
     frameAlts: [string, string, string];
   };
-  story: { eyebrow: string; title: string; label: string; steps: [WorldStep, WorldStep, WorldStep, WorldStep] };
+  story: { eyebrow: string; title: string; label: string; stemWord: string; branchWord: string; steps: [WorldStep, WorldStep, WorldStep, WorldStep] };
   dial: {
     eyebrow: string;
     title: string;
@@ -88,6 +88,8 @@ const vi: WorldCopy = {
     eyebrow: "Cách đọc",
     title: "Bốn trụ, bốn bước",
     label: "Bốn bước đọc một lá số: năm, tháng, ngày, giờ",
+    stemWord: "Thiên Can",
+    branchWord: "Địa Chi",
     steps: [
       { glyph: "年", kicker: "Bước 1 · Trụ Năm", title: "Năm đổi ở Lập Xuân", text: "Trụ năm đổi vào Lập Xuân, khoảng 4 tháng 2, chứ không phải mùng một Tết." },
       { glyph: "月", kicker: "Bước 2 · Trụ Tháng", title: "Tháng chạy theo tiết khí", text: "Mười hai tiết khí chia năm thành mười hai tháng. Sinh vào mùa nào thì Nhật Chủ vượng hay suy theo mùa đó." },
@@ -155,6 +157,8 @@ const en: WorldCopy = {
     eyebrow: "How to read",
     title: "Four pillars, four steps",
     label: "Four steps to read a chart: year, month, day, hour",
+    stemWord: "Stem",
+    branchWord: "Branch",
     steps: [
       { glyph: "年", kicker: "Step 1 · Year pillar", title: "The year turns at Lichun", text: "The year pillar changes at Lichun, around 4 February, not on Lunar New Year's day." },
       { glyph: "月", kicker: "Step 2 · Month pillar", title: "Months follow the solar terms", text: "Twelve solar terms divide the year into twelve months. The season you are born in decides whether the Day Master is strong or weak." },

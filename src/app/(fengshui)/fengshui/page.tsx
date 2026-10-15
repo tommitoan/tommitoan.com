@@ -1,6 +1,5 @@
 import { createMetadata } from "@/lib/metadata";
 import { FengShuiPageTitle } from "@/components/fengshui/sections/FengShuiPageTitle";
-import { FengShuiIntroSection } from "@/components/fengshui/sections/FengShuiIntroSection";
 import { FengShuiBasicsSection } from "@/components/fengshui/sections/FengShuiBasicsSection";
 import { FengShuiPillarsSection } from "@/components/fengshui/sections/FengShuiPillarsSection";
 import { FengShuiLanesSection } from "@/components/fengshui/sections/FengShuiLanesSection";
@@ -43,7 +42,6 @@ export default function FengShuiPage() {
       />
       <FengShuiPageTitle />
       <BirthScene />
-      <FengShuiIntroSection />
       <StorySection />
       <SolarDial />
       <DayMaster />
