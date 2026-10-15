@@ -1,3 +1,5 @@
+import { BAZI_ORIGIN } from "@/lib/sister-site";
+
 export type FengShuiLanguage = "vi" | "en";
 
 export type FengShuiPillar = {
@@ -57,9 +59,9 @@ export type FengShuiCopy = {
 
 /** The live Bazica Web app and the open-source library behind it. */
 export const fengshuiLinks = {
-  app: "https://bazi.tommitoan.com/",
+  app: `${BAZI_ORIGIN}/`,
   /** The calculator page; the hero button goes straight to it. */
-  chart: "https://bazi.tommitoan.com/chart",
+  chart: `${BAZI_ORIGIN}/chart`,
   repo: "https://github.com/tommitoan/bazica",
 };
 

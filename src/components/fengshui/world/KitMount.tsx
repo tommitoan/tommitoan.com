@@ -2,9 +2,10 @@
 
 import { useEffect } from "react";
 import { init } from "@kit";
+import { BAZI_ORIGIN } from "@/lib/sister-site";
 
 /** The sister site that shares this look; links to it get the cover animation and it opens with the reveal. */
-const SISTER_ORIGINS = ["https://bazi.tommitoan.com"] as const;
+const SISTER_ORIGINS = [BAZI_ORIGIN] as const;
 
 /** Pages of this site that also run the kit. Links to other pages (the gateway, /tech) are left alone. */
 const KIT_PATHS = ["/fengshui"] as const;

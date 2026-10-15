@@ -15,7 +15,9 @@ Personal website for Toan Ngo, built as a static Next.js space gateway with thre
 - `/` — gateway homepage with 3 interactive 3D portals
 - `/tech` — engineering profile and CV route (7 sections: Hero, About, Skills, Experience, Education, Projects, Contact)
 - `/discover` — homelab, experiments, and public channels (coming soon)
-- `/fengshui` — Bazica and symbolic-product route (coming soon)
+- `/fengshui` — the Feng Shui world: the scroll story of a chart, Bazica and Ba-zi basics
+- `/fengshui/blog/` and `/fengshui/blog/<lang>/<slug>/` — the blog (see Blog)
+- `/fengshui/about/` — the About page
 
 ## Tech Stack
 
@@ -97,6 +99,18 @@ Homepage scene configuration lives in `src/components/gateway/gatewayHomeConfig.
 - The `/tech` page adds its own `tech-bg.png` fixed background and a custom star canvas config — these override the layout background intentionally.
 - The gateway (`/`) manages its own full-screen background independently.
 
+## Blog
+
+Posts are Markdown files in `content/blog/`, read at build time (a static export has no server). The blog is at `/fengshui/blog/`, a post at `/fengshui/blog/<lang>/<slug>/`, and the About page at `/fengshui/about/`.
+
+- **File name:** `<slug>.<lang>.md`, where the slug is lowercase letters, digits and single hyphens and the language is `vi` or `en`. A post written in both languages uses the same slug twice (`welcome.vi.md`, `welcome.en.md`); the two versions then link to each other and name each other with `hreflang`.
+- **Front matter** (between two `---` lines, one `key: value` per line): `title`, `date` (a real date as `YYYY-MM-DD`) and `description` are required; `draft: true` keeps the post out of the build.
+- **Body:** Markdown. Raw HTML is shown as text and only `http`, `https`, `mailto`, relative and `#` links are kept.
+- **A mistake stops the build** with the file name and the reason (bad name, missing key, impossible date, empty text, a post given twice), so nothing broken goes live.
+- The list shows one row per slug, newest first, in the visitor's language when that version exists and in the other language, with a label, when it does not.
+- The page text of the blog and About is in `src/content/fengshui-blog.ts` (Vietnamese and English).
+- `NEXT_PUBLIC_BAZI_ORIGIN` (build time, default `https://bazi.tommitoan.com`) points the links and the kit at another Ba-zi site, for example a staging one. It must be a plain `http` or `https` origin; anything else is ignored. The Go site's matching setting is `PUBLIC_SITE_URL`.
+
 ## Docs
 
 - `docs/features.md`
@@ -109,5 +123,5 @@ Homepage scene configuration lives in `src/components/gateway/gatewayHomeConfig.
 ## Notes
 
 - The app uses static export via `next.config.ts` (`output: "export"`).
-- No environment variables are required for local development.
+- No environment variables are required for local development. `NEXT_PUBLIC_BAZI_ORIGIN` is optional (see Blog).
 - Canonical contact email: `tommitoan1995@gmail.com`.
