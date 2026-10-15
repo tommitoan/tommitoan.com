@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useFengShuiLanguage } from "@/components/fengshui/FengShuiLanguage";
 import { errorContent } from "@/content/fengshui-errors";
+import { BAZI_ORIGIN } from "@/lib/sister-site";
 
 type Props = { kind: "notFound" } | { kind: "error"; onRetry: () => void };
 
@@ -31,9 +32,10 @@ export function ErrorView(props: Props) {
               <Link href="/fengshui/" className="fs-btn fs-btn-ghost">
                 {copy.notFound.world}
               </Link>
-              <Link href="/fengshui/blog/" className="fs-btn fs-btn-ghost">
+              {/* The blog lives on the Ba-zi site. */}
+              <a href={`${BAZI_ORIGIN}/blog`} className="fs-btn fs-btn-ghost">
                 {copy.notFound.blog}
-              </Link>
+              </a>
             </>
           ) : null}
         </div>
