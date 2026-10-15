@@ -136,6 +136,39 @@
   color: var(--kit-muted);
   font-size: 0.85rem;
 }
+/* "Experience the journey again": a quiet pill with an arrow that rises a little on hover. */
+.fs-footer .fs-wrap:first-child {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.2rem;
+}
+.fs-replay {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1.4rem;
+  border: 1px solid var(--kit-seal);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--kit-seal);
+  font: 600 0.9rem/1.2 var(--fs-sans);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.fs-replay:hover,
+.fs-replay:focus-visible {
+  background: var(--kit-seal);
+  color: var(--kit-paper);
+}
+.fs-replay-arrow {
+  display: inline-block;
+  font-size: 1.1rem;
+  transition: transform 0.25s;
+}
+.fs-replay:hover .fs-replay-arrow,
+.fs-replay:focus-visible .fs-replay-arrow {
+  transform: translateY(-3px);
+}
 .fs-footer-inner {
   display: flex;
   flex-wrap: wrap;
@@ -1038,6 +1071,37 @@
   margin: 0;
   color: var(--kit-muted);
 }
+/* The four pillar cards: each slot is an empty outline until its step is done, then the card drops in. */
+.fs-story-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 6.2rem));
+  gap: 0.6rem;
+  margin-top: 1.2rem;
+}
+.fs-story-slot {
+  border: 1px dashed var(--kit-line);
+  border-radius: 6px;
+  min-height: 5.6rem;
+}
+.fs-story-slot .fs-pillar {
+  height: 100%;
+  opacity: 0;
+  transform: translateY(-14px) scale(0.92);
+  transition: opacity 0.5s, transform 0.55s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+.fs-story-slot[data-shown="true"] {
+  border-color: transparent;
+}
+.fs-story-slot[data-shown="true"] .fs-pillar {
+  opacity: 1;
+  transform: none;
+  box-shadow: 0 6px 16px rgba(59, 47, 32, 0.14);
+}
+@media (prefers-reduced-motion: reduce) {
+  .fs-story-slot .fs-pillar {
+    transition: none;
+  }
+}
 .fs-story-count {
   display: flex;
   align-items: center;
@@ -1092,6 +1156,14 @@
   display: block;
   width: 100%;
   height: auto;
+  cursor: pointer;
+  /* A finger can scrub the ring sideways while the page still scrolls up and down. */
+  touch-action: pan-y;
+}
+.fs-dial-hint {
+  margin: 0.4rem 0 0;
+  color: var(--kit-muted);
+  font-size: 0.8rem;
 }
 .fs-dial-term {
   fill: var(--kit-muted);
@@ -1181,33 +1253,6 @@
   color: var(--kit-muted);
   font-size: 0.8rem;
 }
-/* Pinned dial: the Sun turns once round the ring while the section scrolls. */
-.fs-dial-scroll {
-  position: relative;
-  height: 480svh;
-}
-.fs-dial-stage {
-  position: sticky;
-  top: 0;
-  display: grid;
-  align-items: center;
-  height: 100svh;
-  min-height: 560px;
-  background: var(--kit-paper);
-  color: var(--kit-ink);
-}
-.fs-dial-progress {
-  height: 2px;
-  margin-top: 0.7rem;
-  background: rgba(138, 122, 90, 0.3);
-}
-.fs-dial-progress u {
-  display: block;
-  height: 100%;
-  background: var(--kit-seal);
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-}
 .fs-dial-label {
   display: block;
   margin-top: 0.9rem;
@@ -1290,6 +1335,8 @@
   margin-top: 1.8rem;
 }
 .fs-dm-tile {
+  position: relative;
+  overflow: hidden;
   display: grid;
   justify-items: center;
   gap: 0.25rem;
@@ -1306,6 +1353,25 @@
   width: 100%;
   max-width: 56px;
   height: auto;
+}
+/* The thin bar that fills in three seconds on the stem in the middle, then the next one takes over. */
+.fs-dm-timer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--kit-seal);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+.fs-dm-timer[data-running="true"] {
+  animation: fs-dm-fill 3s linear forwards;
+}
+@keyframes fs-dm-fill {
+  to {
+    transform: scaleX(1);
+  }
 }
 .fs-dm-tile:hover {
   background: rgba(255, 255, 255, 0.85);

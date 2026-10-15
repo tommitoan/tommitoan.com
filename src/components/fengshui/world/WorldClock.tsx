@@ -26,7 +26,7 @@ export function WorldClock({ className }: { className?: string }) {
   const { previous, current, next } = view;
   return (
     <div className={`fs-clock ${className ?? ""}`.trim()} role="timer" aria-label={`${copy.hour} ${current.name}, ${copy.left} ${formatCountdown(current.remainingSeconds)}`}>
-      <Hour hour={previous} label={copy.previous} />
+      <Hour hour={previous} label={copy.previous} hourWord={copy.hour} />
       <div className="fs-clock-hour" data-now="true" aria-hidden="true">
         <b className="fs-han">{current.han}</b>
         <small>
@@ -37,19 +37,21 @@ export function WorldClock({ className }: { className?: string }) {
         </span>
         <i className="fs-clock-bar" style={{ transform: `scaleX(${current.progress.toFixed(4)})` }} />
       </div>
-      <Hour hour={next} label={copy.next} />
+      <Hour hour={next} label={copy.next} hourWord={copy.hour} />
     </div>
   );
 }
 
-function Hour({ hour, label }: { hour: DoubleHour; label: string }) {
+function Hour({ hour, label, hourWord }: { hour: DoubleHour; label: string; hourWord: string }) {
   return (
     <div className="fs-clock-hour" aria-hidden="true">
       <b className="fs-han">{hour.han}</b>
       <small>
         {label} · {hour.range}
       </small>
-      <span>{hour.name}</span>
+      <span>
+        {hourWord} {hour.name}
+      </span>
     </div>
   );
 }

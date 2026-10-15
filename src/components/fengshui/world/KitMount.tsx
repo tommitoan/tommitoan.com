@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { init } from "@kit";
 import { consumeWarpArrival } from "@/components/gateway/warpArrival";
+import { setKit } from "./kit-handle";
 import { BAZI_ORIGIN } from "@/lib/sister-site";
 
 /** The sister site that shares this look; links to it get the cover animation and it opens with the reveal. */
@@ -28,6 +29,7 @@ export function KitMount() {
   useEffect(() => {
     if (warped.current === null) warped.current = consumeWarpArrival(window.location.pathname);
     const kit = init({ family: SISTER_ORIGINS, transitionPaths: KIT_PATHS, theme: "night", effects: { clock: false, cursor: CURSOR_TRIAL, seal: !warped.current } });
+    setKit(kit);
     // Images and links of this world cannot be dragged out of the page (the stylesheet also stops text selection).
     const stopDrag = (event: DragEvent) => {
       if (event.target instanceof Element && event.target.closest(".fs-world")) event.preventDefault();
@@ -35,6 +37,7 @@ export function KitMount() {
     document.addEventListener("dragstart", stopDrag);
     return () => {
       document.removeEventListener("dragstart", stopDrag);
+      setKit(null);
       kit.destroy();
     };
   }, []);

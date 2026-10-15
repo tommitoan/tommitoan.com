@@ -40,6 +40,8 @@ export type WorldCopy = {
     year: string;
     beforeLichun: string;
     /** Role of the term in the Ba-zi month, with {month} for the month's branch. */
+    /** How the dial can be used: it runs by itself, and the pointer picks a term. */
+    hint: string;
     opens: string;
     middle: string;
     opensBadge: string;
@@ -61,10 +63,10 @@ export type WorldCopy = {
     finderResult: string;
     finderNote: string;
     imageAlt: string;
-    cta: string;
+    finderInvalid: string;
   };
   marquee: { eyebrow: string; title: string; caption: string };
-  footer: { note: string };
+  footer: { note: string; replay: string };
 };
 
 const vi: WorldCopy = {
@@ -106,6 +108,7 @@ const vi: WorldCopy = {
     monthPillar: "Nguyệt trụ",
     year: "Trụ năm Bát Tự",
     beforeLichun: "(chưa tới Lập Xuân)",
+    hint: "Vòng tự chạy, khoảng 3 giây một tiết. Rê chuột lên vòng (hoặc kéo ngón tay) để chọn một tiết; rời ra là vòng chạy tiếp.",
     opens: "Tiết mở tháng {month}: sinh sau mốc này là sang tháng {month}, Nguyệt trụ đổi.",
     middle: "Trung khí, nằm giữa tháng {month}: Nguyệt trụ vẫn giữ nguyên.",
     opensBadge: "Mở tháng",
@@ -127,10 +130,10 @@ const vi: WorldCopy = {
     finderResult: "Ngày {date} là ngày {pillar}. Nhật chủ của bạn là {stem} ({kind}).",
     finderNote: "Tính theo ngày dương lịch. Nếu bạn sinh từ 23:00, ngày có thể tính sang hôm sau tuỳ quy ước; Bazica Web tính đúng theo giờ sinh.",
     imageAlt: "Tranh minh họa Thiên Can {name}",
-    cta: "Xem Nhật chủ trong lá số của bạn →",
+    finderInvalid: "Ngày chưa hợp lệ. Nhập theo dd/mm/yyyy, từ năm 1900 đến 2100.",
   },
   marquee: { eyebrow: "Giáp Tý", title: "Vòng sáu mươi năm", caption: "Sáu mươi cặp can chi, cứ sáu mươi năm lại quay về từ đầu." },
-  footer: { note: "© Toan Ngo · tommitoan" },
+  footer: { note: "© Toan Ngo · tommitoan", replay: "Trải nghiệm lại hành trình" },
 };
 
 const en: WorldCopy = {
@@ -172,6 +175,7 @@ const en: WorldCopy = {
     monthPillar: "Month Pillar",
     year: "Ba-zi year pillar",
     beforeLichun: "(Lichun has not come yet)",
+    hint: "The ring runs by itself, about three seconds a term. Move the pointer over it (or drag a finger) to pick a term; move away and it runs on.",
     opens: "A term that opens the {month} month: born after it, you are in the {month} month and the Month Pillar changes.",
     middle: "A mid-month term inside the {month} month: the Month Pillar stays the same.",
     opensBadge: "Opens a month",
@@ -193,10 +197,10 @@ const en: WorldCopy = {
     finderResult: "{date} is a {pillar} day. Your Day Master is {stem} ({kind}).",
     finderNote: "Counted by calendar date. If you were born from 23:00 the day may count as the next one, depending on the convention; Bazica Web uses your exact birth time.",
     imageAlt: "Painting of the heavenly stem {name}",
-    cta: "See the Day Master in your own chart →",
+    finderInvalid: "That is not a valid date. Type it as dd/mm/yyyy, from 1900 to 2100.",
   },
   marquee: { eyebrow: "Jia Zi", title: "The sixty-year cycle", caption: "Sixty stem-and-branch pairs, starting over every sixty years." },
-  footer: { note: "© Toan Ngo · tommitoan" },
+  footer: { note: "© Toan Ngo · tommitoan", replay: "Experience the journey again" },
 };
 
 export const worldContent: Record<FengShuiLanguage, WorldCopy> = { vi, en };

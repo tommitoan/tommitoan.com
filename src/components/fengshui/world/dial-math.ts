@@ -95,3 +95,45 @@ export function radialLabel(longitude: number, radius: number, centre: Point): {
   const onLeft = Math.cos((longitude * Math.PI) / 180) < -1e-9;
   return { x: point.x, y: point.y, rotation: onLeft ? 180 - longitude : -longitude, anchor: onLeft ? "end" : "start" };
 }
+
+/** Days per second that make the Sun cross one solar term in about three seconds: 24 terms in 72 seconds. */
+export const SECONDS_PER_TERM = 3;
+export const daysPerSecond = (year: number): number => daysInYear(year) / (24 * SECONDS_PER_TERM);
+
+/** The ecliptic longitude of a point seen from the ring's centre, 0 to the right and counter-clockwise, like ringPoint. */
+export function longitudeAt(point: Point, centre: Point): number {
+  const degrees = (Math.atan2(centre.y - point.y, point.x - centre.x) * 180) / Math.PI;
+  return ((degrees % 360) + 360) % 360;
+}
+
+const tables = new Map<number, number[]>();
+
+/** The Sun's longitude at noon on every day of a year (cached, 365 or 366 entries). */
+export function longitudeTable(year: number): number[] {
+  const known = tables.get(year);
+  if (known) return known;
+  const table = Array.from({ length: daysInYear(year) }, (_, day) => solarLongitude(noonUtc(year, day)));
+  tables.set(year, table);
+  return table;
+}
+
+/** The day of the year on which the Sun is nearest to a longitude, so the pointer can pick a day by where it is on the ring. */
+export function dayForLongitude(year: number, longitude: number): number {
+  const table = longitudeTable(year);
+  let best = 0;
+  let bestGap = 360;
+  table.forEach((value, day) => {
+    const gap = Math.abs((((value - longitude) % 360) + 540) % 360 - 180);
+    if (gap < bestGap) {
+      best = day;
+      bestGap = gap;
+    }
+  });
+  return best;
+}
+
+/** The Sun's longitude at a fractional day of the year (day 3.5 is noon plus half a day after 4 January's noon), for smooth movement. */
+export function longitudeAtDay(year: number, day: number): number {
+  const whole = Math.floor(day);
+  return solarLongitude(noonUtc(year, whole) + (day - whole) * 86400000);
+}

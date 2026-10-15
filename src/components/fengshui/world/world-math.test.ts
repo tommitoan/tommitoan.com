@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { NIGHT, PAPER } from "@kit/color";
 import { SOLAR_TERMS_VI } from "@kit/solar";
-import { arcPath, dayIndexOf, daysInYear, dialDay, dialState, isMonthOpener, JIE_INDEXES, radialLabel, ringPoint, SOLAR_TERMS_HAN } from "./dial-math";
+import { arcPath, dayForLongitude, dayIndexOf, daysInYear, daysPerSecond, dialDay, dialState, isMonthOpener, JIE_INDEXES, longitudeAt, radialLabel, ringPoint, SOLAR_TERMS_HAN } from "./dial-math";
 import { marqueeAdvance, marqueeSkew, sixtyCycle, smoothVelocity } from "./marquee-math";
 import { bezier, easeToward, LIFE_SPAN, luckMarkX, LUCK_PILLARS, pinProgress, sceneFrame, sceneGeometry, starCurve } from "./scene-math";
-import { ringRotation, storyStep } from "./story-math";
+import { ringRotation, storyStep, storyView } from "./story-math";
 
 const g = sceneGeometry(1200, 760);
 
@@ -267,6 +267,65 @@ describe("solar term roles and ring labels", () => {
       const { rotation } = radialLabel(k * 15, 100, { x: 0, y: 0 });
       const normalised = ((rotation % 360) + 540) % 360 - 180;
       expect(Math.abs(normalised)).toBeLessThanOrEqual(90 + 1e-9);
+    }
+  });
+});
+
+describe("story timeline", () => {
+  it("tells one step per fifth and holds the last step while the finished chart shows", () => {
+    expect(storyView(0).step).toBe(0);
+    expect(storyView(0.19).step).toBe(0);
+    expect(storyView(0.21).step).toBe(1);
+    expect(storyView(0.41).step).toBe(2);
+    expect(storyView(0.61).step).toBe(3);
+    expect(storyView(0.95).step).toBe(3);
+    expect(storyView(1).step).toBe(3);
+  });
+
+  it("brings in one pillar card just before each step ends, all four before the section lets go", () => {
+    expect(storyView(0).cards).toBe(0);
+    expect(storyView(0.14).cards).toBe(0);
+    expect(storyView(0.16).cards).toBe(1);
+    expect(storyView(0.34).cards).toBe(1);
+    expect(storyView(0.36).cards).toBe(2);
+    expect(storyView(0.56).cards).toBe(3);
+    expect(storyView(0.76).cards).toBe(4);
+    expect(storyView(1).cards).toBe(4);
+  });
+
+  it("clamps progress outside 0 to 1", () => {
+    expect(storyView(-2)).toEqual({ step: 0, cards: 0 });
+    expect(storyView(5)).toEqual({ step: 3, cards: 4 });
+  });
+});
+
+describe("dial that plays and follows the pointer", () => {
+  it("runs at about three seconds a solar term", () => {
+    expect(24 * 3 * daysPerSecond(2026)).toBeCloseTo(365, 6);
+    expect(24 * 3 * daysPerSecond(2028)).toBeCloseTo(366, 6);
+  });
+
+  it("reads the longitude of a point on the ring, the opposite of ringPoint", () => {
+    const centre = { x: 230, y: 230 };
+    for (const longitude of [0, 15, 90, 179, 180, 270, 315, 359]) {
+      const back = longitudeAt(ringPoint(longitude, 100, centre), centre);
+      expect(Math.abs(((back - longitude + 540) % 360) - 180)).toBeLessThan(1e-6);
+    }
+  });
+
+  it("finds the day on which the Sun is at a longitude", () => {
+    // The Sun is at 0 degrees at the March equinox, about 20 March, and at 90 degrees at the June solstice, about 21 June.
+    expect(Math.abs(dayForLongitude(2026, 0) - dayIndexOf(2026, 3, 20))).toBeLessThanOrEqual(1);
+    expect(Math.abs(dayForLongitude(2026, 90) - dayIndexOf(2026, 6, 21))).toBeLessThanOrEqual(1);
+    expect(Math.abs(dayForLongitude(2026, 315) - dayIndexOf(2026, 2, 4))).toBeLessThanOrEqual(1);
+    expect(dialState(2026, dayForLongitude(2026, 200)).longitude).toBeGreaterThan(190);
+  });
+
+  it("gives a day for every longitude, even across 0 and 360", () => {
+    for (let longitude = 0; longitude < 360; longitude += 7.5) {
+      const day = dayForLongitude(2026, longitude);
+      expect(day).toBeGreaterThanOrEqual(0);
+      expect(day).toBeLessThan(365);
     }
   });
 });
