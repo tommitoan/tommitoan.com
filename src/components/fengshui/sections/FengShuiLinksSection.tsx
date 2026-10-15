@@ -25,10 +25,10 @@ export function FengShuiLinksSection() {
             <p className="fs-copy">{copy.description}</p>
             <p className="fs-cta-free">{cta.free}</p>
             <div className="fs-actions fs-actions-center">
-              <a href={fengshuiLinks.app} className="fs-btn fs-btn-cta" data-kit-magnetic>
+              <a href={fengshuiLinks.app} className="fs-btn fs-btn-cta">
                 {copy.appCta}
               </a>
-              <a href={fengshuiLinks.repo} target="_blank" rel="noreferrer" className="fs-btn fs-btn-ghost" data-kit-magnetic>
+              <a href={fengshuiLinks.repo} target="_blank" rel="noreferrer" className="fs-btn fs-btn-ghost">
                 {copy.repoCta}
               </a>
             </div>

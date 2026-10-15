@@ -82,3 +82,16 @@ export function arcPath(fromLongitude: number, toLongitude: number, radius: numb
   const end = ringPoint(fromLongitude + Math.min(sweep, 359.9), radius, centre);
   return `M ${start.x.toFixed(1)} ${start.y.toFixed(1)} A ${radius} ${radius} 0 ${sweep > 180 ? 1 : 0} 0 ${end.x.toFixed(1)} ${end.y.toFixed(1)}`;
 }
+
+/** True for the twelve "opening" terms (jie) that start a Ba-zi month; the other twelve fall in the middle of a month. */
+export const isMonthOpener = (termIndex: number): boolean => (JIE_INDEXES as readonly number[]).includes(termIndex);
+
+/**
+ * Where a label goes on the ring and how it is turned, so that it runs along the radius and stays readable: on the left
+ * half it is flipped and anchored at its end.
+ */
+export function radialLabel(longitude: number, radius: number, centre: Point): { x: number; y: number; rotation: number; anchor: "start" | "end" } {
+  const point = ringPoint(longitude, radius, centre);
+  const onLeft = Math.cos((longitude * Math.PI) / 180) < -1e-9;
+  return { x: point.x, y: point.y, rotation: onLeft ? 180 - longitude : -longitude, anchor: onLeft ? "end" : "start" };
+}

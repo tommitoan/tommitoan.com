@@ -7,6 +7,7 @@ import { FengShuiLanesSection } from "@/components/fengshui/sections/FengShuiLan
 import { FengShuiPrinciplesSection } from "@/components/fengshui/sections/FengShuiPrinciplesSection";
 import { FengShuiLinksSection } from "@/components/fengshui/sections/FengShuiLinksSection";
 import { BirthScene } from "@/components/fengshui/world/BirthScene";
+import { DayMaster } from "@/components/fengshui/world/DayMaster";
 import { Marquee } from "@/components/fengshui/world/Marquee";
 import { SolarDial } from "@/components/fengshui/world/SolarDial";
 import { StorySection } from "@/components/fengshui/world/StorySection";
@@ -45,6 +46,7 @@ export default function FengShuiPage() {
       <FengShuiIntroSection />
       <StorySection />
       <SolarDial />
+      <DayMaster />
       <FengShuiBasicsSection />
       <FengShuiPillarsSection />
       <FengShuiLanesSection />

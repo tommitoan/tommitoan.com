@@ -1,15 +1,19 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import { BRANCHES_HAN, STEMS_HAN } from "@kit/solar";
 import { elementColor } from "./elements";
-import { arcPath, dayIndexOf, daysInYear, dialDay, dialState, type DialState, ringPoint, SOLAR_TERMS_HAN } from "./dial-math";
+import { arcPath, dayIndexOf, daysInYear, dialDay, dialState, type DialState, isMonthOpener, radialLabel, ringPoint } from "./dial-math";
+import { monthPillar, pillarName } from "./pillar-math";
 import { RevealHeading } from "./RevealHeading";
 import { easeToward, pinProgress } from "./scene-math";
 import { useWorldMode } from "./use-world-mode";
-import { useFengShuiWorldCopy } from "@/components/fengshui/FengShuiLanguage";
+import { useFengShuiLanguage, useFengShuiWorldCopy } from "@/components/fengshui/FengShuiLanguage";
+import { termDates, termImage, termName, TERMS } from "@/content/fengshui-terms";
 
-const CENTRE = { x: 160, y: 160 };
-const RADIUS = 108;
+const CENTRE = { x: 230, y: 230 };
+const RADIUS = 100;
+const LABEL_RADIUS = RADIUS + 15;
 
 const subscribeNever = (): (() => void) => () => undefined;
 
@@ -132,37 +136,55 @@ function ScrollDial() {
 
 function DialLayout({ year, state, control }: { year: number; state: DialState; control: ReactNode }) {
   const copy = useFengShuiWorldCopy().dial;
+  const language = useFengShuiLanguage();
   const sun = ringPoint(state.longitude, RADIUS, CENTRE);
   const start = dialState(year, 0).longitude;
   const trail = arcPath(start, state.longitude, RADIUS, CENTRE);
+  const info = TERMS[state.term.index]!;
+  const opens = isMonthOpener(state.term.index);
+  const month = monthPillar(state.pillar.stem, state.month.index);
+  const monthHan = `${STEMS_HAN[month.stem]}${BRANCHES_HAN[month.branch]}`;
+  const role = (opens ? copy.opens : copy.middle).replaceAll("{month}", state.month.name);
+  const alt = copy.imageAlt.replace("{name}", termName(info, language));
   return (
     <div className="fs-wrap fs-dial">
-      <svg viewBox="0 0 320 320" role="img" aria-label={copy.ringLabel} className="fs-dial-ring">
+      <svg viewBox="0 0 460 460" role="img" aria-label={copy.ringLabel} className="fs-dial-ring">
         <circle cx={CENTRE.x} cy={CENTRE.y} r={RADIUS} fill="none" stroke="var(--kit-line)" strokeWidth="1" />
         {trail ? <path d={trail} fill="none" stroke="var(--kit-seal)" strokeWidth="2.4" strokeLinecap="round" opacity="0.55" /> : null}
-        <circle cx={CENTRE.x} cy={CENTRE.y} r="18" fill="none" stroke="var(--kit-ink)" strokeWidth="1.6" />
-        <text x={CENTRE.x} y={CENTRE.y + 6} className="fs-han fs-dial-earth">
-          地
-        </text>
         {Array.from({ length: 24 }, (_, k) => {
           const longitude = k * 15;
-          const opens = (longitude - 315 + 360) % 30 === 0;
-          const inner = ringPoint(longitude, RADIUS - (opens ? 10 : 5), CENTRE);
-          const outer = ringPoint(longitude, RADIUS + (opens ? 10 : 5), CENTRE);
-          return <line key={k} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} stroke={opens ? "var(--kit-seal)" : "var(--kit-line)"} strokeWidth={opens ? 2.2 : 1} />;
+          const opener = isMonthOpener(Math.round(longitude / 15));
+          const inner = ringPoint(longitude, RADIUS - (opener ? 9 : 4), CENTRE);
+          const outer = ringPoint(longitude, RADIUS + (opener ? 9 : 4), CENTRE);
+          return <line key={k} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} stroke={opener ? "var(--kit-seal)" : "var(--kit-line)"} strokeWidth={opener ? 2.2 : 1} />;
         })}
-        {SOLAR_TERMS_HAN.map((han, termIndex) => {
-          const at = ringPoint(termIndex * 15, RADIUS + 27, CENTRE);
-          const opens = (termIndex * 15 - 315 + 360) % 30 === 0;
+        {TERMS.map((term, termIndex) => {
+          const at = radialLabel(termIndex * 15, LABEL_RADIUS, CENTRE);
           return (
-            <text key={termIndex} x={at.x} y={at.y + 3.5} className="fs-han fs-dial-term" data-opens={opens ? "true" : undefined} data-current={termIndex === state.term.index ? "true" : undefined}>
-              {han}
+            <text
+              key={termIndex}
+              x={at.x}
+              y={at.y}
+              dy="0.35em"
+              textAnchor={at.anchor}
+              transform={`rotate(${at.rotation.toFixed(2)} ${at.x.toFixed(2)} ${at.y.toFixed(2)})`}
+              className="fs-dial-term"
+              data-opens={isMonthOpener(termIndex) ? "true" : undefined}
+              data-current={termIndex === state.term.index ? "true" : undefined}
+            >
+              {termName(term, language)}
             </text>
           );
         })}
+        <text x={CENTRE.x} y={CENTRE.y - 4} className="fs-dial-centre">
+          {state.longitude.toFixed(0)}°
+        </text>
+        <text x={CENTRE.x} y={CENTRE.y + 14} className="fs-dial-centre-sub">
+          {termName(info, language)}
+        </text>
         <g transform={`translate(${sun.x.toFixed(1)} ${sun.y.toFixed(1)})`}>
-          <circle r="13" fill="#c4543a" opacity="0.22" />
-          <circle r="7.5" fill="#c4543a" />
+          <circle r="12" fill="#c4543a" opacity="0.22" />
+          <circle r="7" fill="#c4543a" />
         </g>
       </svg>
 
@@ -170,34 +192,45 @@ function DialLayout({ year, state, control }: { year: number; state: DialState; 
         <span className="fs-eyebrow">{copy.eyebrow}</span>
         <RevealHeading className="fs-title">{copy.title}</RevealHeading>
         <p className="fs-copy">{copy.description}</p>
+        <figure className="fs-term" data-opens={opens ? "true" : undefined}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- watercolour of the term, the export has no image optimiser */}
+          <img key={state.term.index} src={termImage(state.term.index)} alt={alt} width={121} height={122} className="fs-term-image" decoding="async" />
+          <figcaption>
+            <span className="fs-term-badge">{opens ? copy.opensBadge : copy.middleBadge}</span>
+            <b className="fs-term-name">{termName(info, language)}</b>
+            <small>
+              {termDates(info, language)} · {state.term.index * 15}°
+            </small>
+            <span className="fs-term-imagery">{info.imagery[language]}</span>
+            <span className="fs-term-role">{role}</span>
+          </figcaption>
+        </figure>
         {control}
         <dl className="fs-dial-out" aria-live="polite">
           <div>
-            <dt>{copy.sunAt}</dt>
-            <dd>
-              <b>{state.longitude.toFixed(1)}</b>
-              {copy.degreesUnit}
-            </dd>
-          </div>
-          <div>
-            <dt>{copy.lastTerm}</dt>
-            <dd>
-              <b className="fs-han">{state.term.han}</b> {state.term.name}
-            </dd>
-          </div>
-          <div>
             <dt>{copy.month}</dt>
             <dd>
-              {copy.monthWord} <b>{state.month.name}</b> (<span className="fs-han">{state.month.han}</span>)
+              {copy.monthWord} <b>{state.month.name}</b>
+            </dd>
+          </div>
+          <div>
+            <dt>{copy.monthPillar}</dt>
+            <dd>
+              <b>{pillarName(month)}</b>{" "}
+              <span className="fs-han" aria-hidden="true">
+                <span style={{ color: elementColor(monthHan[0]!) }}>{monthHan[0]}</span>
+                <span style={{ color: elementColor(monthHan[1]!) }}>{monthHan[1]}</span>
+              </span>
             </dd>
           </div>
           <div>
             <dt>{copy.year}</dt>
             <dd>
-              <b className="fs-han">
+              <b>{yearName(state)}</b>{" "}
+              <span className="fs-han" aria-hidden="true">
                 <span style={{ color: elementColor(state.pillar.stem) }}>{state.pillar.stem}</span>
                 <span style={{ color: elementColor(state.pillar.branch) }}>{state.pillar.branch}</span>
-              </b>{" "}
+              </span>{" "}
               {state.beforeLichun ? copy.beforeLichun : ""}
             </dd>
           </div>
@@ -206,4 +239,9 @@ function DialLayout({ year, state, control }: { year: number; state: DialState; 
       </div>
     </div>
   );
+}
+
+/** "Bính Ngọ" for the Ba-zi year of the dial's state. */
+function yearName(state: DialState): string {
+  return pillarName({ stem: Math.max(0, STEMS_HAN.indexOf(state.pillar.stem)), branch: Math.max(0, BRANCHES_HAN.indexOf(state.pillar.branch)) });
 }
