@@ -28,7 +28,15 @@ export function KitMount() {
   useEffect(() => {
     if (warped.current === null) warped.current = consumeWarpArrival(window.location.pathname);
     const kit = init({ family: SISTER_ORIGINS, transitionPaths: KIT_PATHS, theme: "night", effects: { clock: false, cursor: CURSOR_TRIAL, seal: !warped.current } });
-    return () => kit.destroy();
+    // Images and links of this world cannot be dragged out of the page (the stylesheet also stops text selection).
+    const stopDrag = (event: DragEvent) => {
+      if (event.target instanceof Element && event.target.closest(".fs-world")) event.preventDefault();
+    };
+    document.addEventListener("dragstart", stopDrag);
+    return () => {
+      document.removeEventListener("dragstart", stopDrag);
+      kit.destroy();
+    };
   }, []);
   return null;
 }

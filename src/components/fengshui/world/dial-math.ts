@@ -65,3 +65,20 @@ export function ringPoint(longitude: number, radius: number, centre: Point): Poi
 }
 
 export const termName = (index: number): string => SOLAR_TERMS_VI[index];
+
+/** The day of the year (0 is 1 January) the pinned dial shows for a scroll progress from 0 to 1: one turn of the Sun over the whole section. */
+export function dialDay(progress: number, year: number): number {
+  return Math.round(clamp(progress, 0, 1) * (daysInYear(year) - 1));
+}
+
+/**
+ * SVG path of the arc the Sun has travelled, from one ecliptic longitude to another, going the way longitudes increase
+ * (counter-clockwise on the ring). Empty while the Sun has hardly moved; it stops just short of a full circle.
+ */
+export function arcPath(fromLongitude: number, toLongitude: number, radius: number, centre: Point): string {
+  const sweep = (((toLongitude - fromLongitude) % 360) + 360) % 360;
+  if (sweep < 0.2) return "";
+  const start = ringPoint(fromLongitude, radius, centre);
+  const end = ringPoint(fromLongitude + Math.min(sweep, 359.9), radius, centre);
+  return `M ${start.x.toFixed(1)} ${start.y.toFixed(1)} A ${radius} ${radius} 0 ${sweep > 180 ? 1 : 0} 0 ${end.x.toFixed(1)} ${end.y.toFixed(1)}`;
+}

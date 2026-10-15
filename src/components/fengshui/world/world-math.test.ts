@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { NIGHT, PAPER } from "@kit/color";
 import { SOLAR_TERMS_VI } from "@kit/solar";
-import { dayIndexOf, daysInYear, dialState, JIE_INDEXES, ringPoint, SOLAR_TERMS_HAN } from "./dial-math";
+import { arcPath, dayIndexOf, daysInYear, dialDay, dialState, JIE_INDEXES, ringPoint, SOLAR_TERMS_HAN } from "./dial-math";
 import { marqueeAdvance, marqueeSkew, sixtyCycle, smoothVelocity } from "./marquee-math";
 import { bezier, easeToward, LIFE_SPAN, luckMarkX, LUCK_PILLARS, pinProgress, sceneFrame, sceneGeometry, starCurve } from "./scene-math";
 import { ringRotation, storyStep } from "./story-math";
@@ -214,5 +214,33 @@ describe("marquee", () => {
     expect(marqueeSkew(-1000, -1, true)).toBe(-14);
     expect(marqueeSkew(10, -1, false)).toBe(0);
     expect(smoothVelocity(0, 100)).toBeCloseTo(12, 6);
+  });
+});
+
+describe("pinned solar-terms dial", () => {
+  it("takes the Sun once round the year as the section scrolls", () => {
+    expect(dialDay(0, 2026)).toBe(0);
+    expect(dialDay(1, 2026)).toBe(364);
+    expect(dialDay(1, 2028)).toBe(365);
+    expect(dialDay(0.5, 2026)).toBe(182);
+    expect(dialDay(-3, 2026)).toBe(0);
+    expect(dialDay(9, 2026)).toBe(364);
+  });
+
+  it("passes every one of the 24 terms between the first and the last day", () => {
+    const seen = new Set<number>();
+    for (let day = 0; day < daysInYear(2026); day++) seen.add(dialState(2026, day).term.index);
+    expect(seen.size).toBe(24);
+  });
+
+  it("draws the travelled arc counter-clockwise and picks the long way past half a turn", () => {
+    const centre = { x: 160, y: 160 };
+    expect(arcPath(10, 10.1, 100, centre)).toBe("");
+    const quarter = arcPath(0, 90, 100, centre);
+    expect(quarter).toBe("M 260.0 160.0 A 100 100 0 0 0 160.0 60.0");
+    expect(arcPath(0, 270, 100, centre)).toContain("0 1 0");
+    expect(arcPath(350, 20, 100, centre)).toContain("0 0 0");
+    expect(arcPath(0, 360, 100, centre)).toBe("");
+    expect(arcPath(0, 359.95, 100, centre)).toContain("0 1 0");
   });
 });

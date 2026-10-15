@@ -2,6 +2,7 @@
 
 import { useFengShuiWorldCopy } from "@/components/fengshui/FengShuiLanguage";
 import { PillarCard } from "./PillarCards";
+import { ScrollCue } from "./ScrollCue";
 import { LUCK_PILLARS, SAMPLE_PILLARS } from "./scene-math";
 
 /**
@@ -26,8 +27,8 @@ export function StaticLife() {
             <circle r="3.4" fill="#fffbe9" />
           </svg>
           <h2 className="fs-static-title">{copy.first}</h2>
-          <p>{copy.firstSmall}</p>
           <p className="fs-static-label">{copy.starLabel}</p>
+          <ScrollCue className="fs-cue-static" />
         </div>
       </div>
 
@@ -65,7 +66,6 @@ export function StaticLife() {
           </ol>
           <h2 className="fs-static-title">{copy.third}</h2>
           <p>{copy.thirdSmall}</p>
-          <p className="fs-static-note">{copy.sampleNote}</p>
         </div>
       </div>
     </section>
