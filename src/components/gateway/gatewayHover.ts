@@ -1,46 +1,24 @@
 /**
- * Pure rules of the gateway's hover guide: which portal is active, where the three globes go, and how the astronaut's
- * speech is typed. No DOM here.
+ * Pure rules of the gateway's hover guide: how wide the hovered window grows, which globes dim, where the astronaut stands
+ * and how his speech is typed. No DOM here.
  *
- * The three portals sit in static slots (left, centre, right). The slot under the pointer picks the active portal, so the
- * choice does not flicker when a globe glides away from under the cursor. The active globe moves to the centre and the
- * globe that was in the centre takes its place; the others dim.
+ * The hovered window grows where it stands (the row is centred, so it widens on both sides and always still covers the
+ * pointer) and the other two are pushed aside. Moving the pointer out of it brings everything back.
  */
-
-export const CENTRE_SLOT = 1;
-
-/**
- * The portal a pointer in `slot` means. While another portal is active, its globe stands in the centre slot, so a pointer
- * moving there to click it must keep it active instead of switching to the portal that used to sit in the centre.
- */
-export function resolveHoverTarget(slot: number, current: number | null): number {
-  if (slot === CENTRE_SLOT && current !== null && current !== CENTRE_SLOT) return current;
-  return slot;
-}
-
-/**
- * How far each globe moves sideways, in the same unit as `centres` (the x of each slot's middle). The active globe goes to the
- * centre, the centre globe goes to the active slot, and the third stays. With nothing active, or the centre active, nothing moves.
- */
-export function slotOffsets(active: number | null, centres: readonly number[]): number[] {
-  const offsets = centres.map(() => 0);
-  if (active === null || active === CENTRE_SLOT || active < 0 || active >= centres.length) return offsets;
-  const centre = centres[CENTRE_SLOT];
-  const own = centres[active];
-  if (centre === undefined || own === undefined) return offsets;
-  offsets[active] = centre - own;
-  offsets[CENTRE_SLOT] = own - centre;
-  return offsets;
-}
 
 /** Opacity of a globe: full for the active one (and for all when none is), dimmed for the rest. */
 export function globeOpacity(slot: number, active: number | null, dimmed: number): number {
   return active === null || slot === active ? 1 : dimmed;
 }
 
-/** The astronaut stands on the side away from the active globe, so he never covers it. The centre globe sends him right. */
+/** The astronaut stands on the side away from the hovered window, so he never covers it. The middle window sends him right. */
 export function astronautSide(active: number | null): "left" | "right" {
   return active === 2 ? "left" : "right";
+}
+
+/** The width of a window that has grown: `base` is a CSS length (a clamp() is fine) and `factor` how many times wider it gets. */
+export function expandedWidth(base: string, factor: number): string {
+  return `calc(${base} * ${factor})`;
 }
 
 /** How much of the line is on screen after `elapsedMs` of typing at `charsPerSecond`. */

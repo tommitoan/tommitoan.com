@@ -339,9 +339,12 @@ export const gatewayHomeConfig = {
     planetGlowBlurPx: 24,
     planetGlowRestBlurPx: 16,
     overlayOpacity: 0.06,
-    /** Opacity of the globes that are not hovered, and how long the hovered one takes to glide to the centre. */
+    /** Opacity of the windows that are not hovered; how many times wider the hovered one grows, and how long that takes. */
     dimOpacity: 0.28,
-    moveSeconds: 0.9,
+    expandFactor: 1.9,
+    expandSeconds: 0.7,
+    /** The planet in the hovered, widened window is a little larger. */
+    expandedPlanetScale: 1.14,
   },
   hoverBackdrop: {
     insetXPercent: 18,

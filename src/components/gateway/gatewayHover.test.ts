@@ -1,43 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { astronautSide, canGuide, globeOpacity, resolveHoverTarget, slotOffsets, turnSquash, typedText } from "./gatewayHover";
+import { astronautSide, canGuide, expandedWidth, globeOpacity, turnSquash, typedText } from "./gatewayHover";
 
-describe("hover target", () => {
-  it("is the slot under the pointer when nothing is active", () => {
-    for (const slot of [0, 1, 2]) expect(resolveHoverTarget(slot, null)).toBe(slot);
-  });
-
-  it("keeps the active portal when the pointer reaches the centre to click it", () => {
-    expect(resolveHoverTarget(1, 0)).toBe(0);
-    expect(resolveHoverTarget(1, 2)).toBe(2);
-    expect(resolveHoverTarget(1, 1)).toBe(1);
-  });
-
-  it("switches at once to the portal in the left or right slot", () => {
-    expect(resolveHoverTarget(2, 0)).toBe(2);
-    expect(resolveHoverTarget(0, 2)).toBe(0);
-  });
-});
-
-describe("globe offsets", () => {
-  const centres = [100, 400, 700];
-
-  it("moves nothing without an active portal or with the centre one", () => {
-    expect(slotOffsets(null, centres)).toEqual([0, 0, 0]);
-    expect(slotOffsets(1, centres)).toEqual([0, 0, 0]);
-  });
-
-  it("swaps the left globe with the centre one", () => {
-    expect(slotOffsets(0, centres)).toEqual([300, -300, 0]);
-  });
-
-  it("swaps the right globe with the centre one", () => {
-    expect(slotOffsets(2, centres)).toEqual([0, 300, -300]);
-  });
-
-  it("copes with a bad index or missing measurements", () => {
-    expect(slotOffsets(5, centres)).toEqual([0, 0, 0]);
-    expect(slotOffsets(-1, centres)).toEqual([0, 0, 0]);
-    expect(slotOffsets(0, [])).toEqual([]);
+describe("window width", () => {
+  it("multiplies any CSS length, including a clamp()", () => {
+    expect(expandedWidth("20rem", 1.9)).toBe("calc(20rem * 1.9)");
+    expect(expandedWidth("clamp(10.5rem, 15.5vw, 20.5rem)", 2)).toBe("calc(clamp(10.5rem, 15.5vw, 20.5rem) * 2)");
   });
 });
 
@@ -48,7 +15,7 @@ describe("dimming and the astronaut's side", () => {
     expect(globeOpacity(1, 0, 0.3)).toBe(0.3);
   });
 
-  it("puts the astronaut away from the active globe", () => {
+  it("puts the astronaut away from the hovered window", () => {
     expect(astronautSide(0)).toBe("right");
     expect(astronautSide(1)).toBe("right");
     expect(astronautSide(2)).toBe("left");

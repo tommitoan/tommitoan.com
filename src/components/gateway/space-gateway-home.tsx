@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { SpaceBackgroundAstronaut } from "@/components/canvas/SpaceBackgroundAstronaut";
@@ -10,7 +10,7 @@ import { GatewayLoadingScreen } from "@/components/gateway/GatewayLoadingScreen"
 import { MatrixRainCanvas } from "@/components/gateway/MatrixRainCanvas";
 import { AuroraCanvas } from "@/components/gateway/AuroraCanvas";
 import { AstronautSpeech } from "@/components/gateway/AstronautSpeech";
-import { astronautSide, canGuide, globeOpacity, resolveHoverTarget, slotOffsets } from "@/components/gateway/gatewayHover";
+import { astronautSide, canGuide, expandedWidth, globeOpacity } from "@/components/gateway/gatewayHover";
 import { markWarpArrival } from "@/components/gateway/warpArrival";
 import {
   createAnchorStyle,
@@ -71,6 +71,15 @@ function buildPlanetGlow(
   ].join(' ');
 }
 
+function subscribeToResize(onChange: () => void): () => void {
+  window.addEventListener("resize", onChange);
+  return () => window.removeEventListener("resize", onChange);
+}
+
+function readViewportWidth(): number {
+  return window.innerWidth;
+}
+
 export function SpaceGatewayHome() {
   const router = useRouter();
   const reducedMotion = useReducedMotion();
@@ -86,11 +95,8 @@ export function SpaceGatewayHome() {
     fengshui: false,
   });
   const timeoutRef = useRef<number | null>(null);
-  const rowRef = useRef<HTMLDivElement>(null);
-  const slotRefs = useRef<Array<HTMLDivElement | null>>([]);
-  // The slot of the active portal (not the portal id): see gatewayHover.ts for why the slot, not the globe, takes the hover.
-  const activeSlotRef = useRef<number | null>(null);
-  const [offsets, setOffsets] = useState<number[]>([0, 0, 0]);
+  // The window width, so the hover guide switches on and off as the window is resized.
+  const viewportWidth = useSyncExternalStore(subscribeToResize, readViewportWidth, () => 0);
 
   const activePortal = selected
     ? gatewayHomeConfig.portals.find((item) => item.id === selected) ?? null
@@ -184,29 +190,19 @@ export function SpaceGatewayHome() {
     });
   };
 
-  const enterSlot = (slot: number) => {
-    if (selected) return;
-    const next = resolveHoverTarget(slot, activeSlotRef.current);
-    if (next === activeSlotRef.current) return;
-    activeSlotRef.current = next;
-    setHoveredPortal(gatewayHomeConfig.portals[next]?.id ?? null);
-    // Where each globe goes is measured from the slots, which never move, so it holds at any window size.
-    const centres = slotRefs.current.map((slotElement) => (slotElement ? slotElement.offsetLeft + slotElement.offsetWidth / 2 : 0));
-    setOffsets(canGuide(window.innerWidth, !!reducedMotion) ? slotOffsets(next, centres) : [0, 0, 0]);
+  // The hovered window grows where it stands, so the pointer is always still inside it; the others are pushed aside.
+  const enterPortal = (id: GatewayHomeId) => {
+    if (!selected) setHoveredPortal(id);
   };
 
-  const leaveRow = () => {
-    if (selected) return;
-    activeSlotRef.current = null;
-    setHoveredPortal(null);
-    setOffsets([0, 0, 0]);
+  const leavePortal = (id: GatewayHomeId) => {
+    // Moving from one window to the next can report the new one before the old one ends; only the old one clears itself.
+    if (!selected) setHoveredPortal((current) => (current === id ? null : current));
   };
 
   const handleSelect = (item: GatewayHomePortal) => {
     if (selected) return;
     setSelected(item.id);
-    // The warp zooms to where the portal stands in its own slot, so the globes go home first.
-    setOffsets([0, 0, 0]);
     // The Feng Shui world opens with its seal on a fresh page load only; a warp has just done the opening.
     markWarpArrival(item.href);
     const delay = reducedMotion
@@ -221,10 +217,10 @@ export function SpaceGatewayHome() {
     ? gatewayHomeConfig.transitions.zoomOffsetXByPortal[activePortal.id]
     : "0vw";
   const debug = gatewayHomeConfig.debug;
-  // The slot of the hovered portal, from state so a render never reads a ref.
+  const guide = canGuide(viewportWidth, !!reducedMotion);
   const hoveredSlot = hoveredPortal ? gatewayHomeConfig.portals.findIndex((item) => item.id === hoveredPortal) : null;
   // The astronaut introduces the portal under the pointer, when there is room and motion for it.
-  const talking = !!hoveredPortal && !selected && canGuide(typeof window === "undefined" ? 0 : window.innerWidth, !!reducedMotion);
+  const talking = !!hoveredPortal && !selected && guide;
   const hoveredInfo = hoveredPortal ? gatewayHomeConfig.portals.find((item) => item.id === hoveredPortal) ?? null : null;
 
   return (
@@ -268,8 +264,6 @@ export function SpaceGatewayHome() {
 
         <div className="relative z-10 w-full h-full flex flex-col items-center justify-center pt-4 pb-4 px-4 md:px-6">
           <div
-            ref={rowRef}
-            onPointerLeave={leaveRow}
             className="flex flex-col md:flex-row items-center justify-center w-full max-w-7xl origin-center"
             style={{
               ...createGapStyle(gatewayHomeConfig.row.gapMobileRem, gatewayHomeConfig.row.gapDesktopRem),
@@ -291,28 +285,30 @@ export function SpaceGatewayHome() {
                 radiusRem: gatewayHomeConfig.frame.radiusRem,
               });
 
+              const expanded = guide && isHovered && !selected;
+
               return (
                 <div
                   key={gateway.id}
-                  ref={(element) => {
-                    slotRefs.current[i] = element;
-                  }}
-                  // The slot is the stable thing under the pointer; the globe inside it glides about.
-                  onPointerEnter={(event) => event.pointerType === "mouse" && enterSlot(i)}
+                  // This window is what takes the hover and the click. It widens where it stands, so the pointer stays inside it.
+                  onPointerEnter={(event) => event.pointerType === "mouse" && enterPortal(gateway.id)}
+                  onPointerLeave={(event) => event.pointerType === "mouse" && leavePortal(gateway.id)}
                   onClick={(e) => {
                     e.stopPropagation();
-                    const slot = resolveHoverTarget(i, activeSlotRef.current);
-                    const portal = gatewayHomeConfig.portals[slot];
-                    if (portal) handleSelect(portal);
+                    handleSelect(gateway);
                   }}
                   className={`relative shrink-0 ${selected ? 'cursor-default pointer-events-none' : 'cursor-pointer'}`}
-                  style={{ ...frameSizeStyle, zIndex: isHovered ? 51 : 50 }}
+                  style={{
+                    ...frameSizeStyle,
+                    width: expanded ? expandedWidth(String(frameSizeStyle.width), gatewayHomeConfig.hover.expandFactor) : frameSizeStyle.width,
+                    transition: `width ${gatewayHomeConfig.hover.expandSeconds}s cubic-bezier(0.22, 1, 0.36, 1)`,
+                    zIndex: isHovered ? 51 : 50,
+                  }}
                 >
                 <motion.div
                   initial={{ opacity: 0, y: 50 }}
                   animate={{
                     opacity: selected && !isSelected ? 0 : globeOpacity(i, hoveredSlot, gatewayHomeConfig.hover.dimOpacity),
-                    x: offsets[i] ?? 0,
                     y: 0,
                     filter: selected && isSelected
                       ? `brightness(${gatewayHomeConfig.hover.selectedBrightness}) contrast(${gatewayHomeConfig.hover.selectedContrast})`
@@ -321,7 +317,6 @@ export function SpaceGatewayHome() {
                   transition={{
                     duration: 0.8,
                     delay: selected || isGatewayReady ? 0 : 0.2 + i * 0.15,
-                    x: { duration: gatewayHomeConfig.hover.moveSeconds, ease: [0.22, 1, 0.36, 1] },
                     opacity: { duration: 0.45 },
                   }}
                   className="group pointer-events-none relative h-full w-full overflow-hidden flex flex-col items-center transition-[box-shadow] duration-500"
@@ -369,7 +364,7 @@ export function SpaceGatewayHome() {
                         <motion.div
                           animate={{
                             y: isHovered || isSelected ? -gateway.planet.hoverLiftPx : 0,
-                            scale: isHovered || isSelected ? gatewayHomeConfig.hover.planetScale : 1,
+                            scale: expanded ? gatewayHomeConfig.hover.expandedPlanetScale : isHovered || isSelected ? gatewayHomeConfig.hover.planetScale : 1,
                           }}
                           transition={{ duration: 1.2, ease: "easeOut" }}
                           style={{
