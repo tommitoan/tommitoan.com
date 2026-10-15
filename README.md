@@ -111,6 +111,26 @@ Posts are Markdown files in `content/blog/`, read at build time (a static export
 - The page text of the blog and About is in `src/content/fengshui-blog.ts` (Vietnamese and English).
 - `NEXT_PUBLIC_BAZI_ORIGIN` (build time, default `https://bazi.tommitoan.com`) points the links and the kit at another Ba-zi site, for example a staging one. It must be a plain `http` or `https` origin; anything else is ignored. The Go site's matching setting is `PUBLIC_SITE_URL`.
 
+## Performance, caching and error pages
+
+- **Budgets:** `pnpm build && pnpm check:budgets` adds up the gzip size of the scripts and styles each page names and fails when a page is over its budget (the world home 290 KB of scripts, blog, post and About pages 235 KB, the 404 page 200 KB, the gateway 520 KB, Tech and Discover 280 KB), and when an icon, a character frame or a gateway image grows past its limit. The numbers are in `scripts/check-budgets.mjs`, about 10% over what was measured; raise one only with a reason.
+- **Prefetch:** the world header does not prefetch `/`, `/tech` and `/discover` (`HEAVY_ROUTES` in `WorldHeader.tsx`), because Next would otherwise download the gateway's 3D bundle on every Feng Shui page.
+- **Client bundle:** the Markdown renderer runs at build time only. `src/lib/blog/entries.ts` is the client-safe part; a test fails if a client component imports `posts.ts`, `markdown.ts` or `load.ts`.
+- **nginx** (`nginx.conf.template`): gzip for text, the site's own `404.html` (in the look of the Feng Shui world), `/_next/static/` kept for a year as immutable, images and fonts for a week, pages and their payloads always revalidated. To try the real configuration (the commands are the same on macOS, Ubuntu and Fedora):
+
+```bash
+docker build -t tommitoan-web .
+```
+
+```bash
+docker run --rm -p 8080:8080 tommitoan-web
+```
+
+  Then open `http://localhost:8080/fengshui/` and a missing address such as `http://localhost:8080/fengshui/nope/`; stop it with Ctrl+C.
+- **Errors:** a page of the Feng Shui world that throws while rendering shows `src/app/(fengshui)/error.tsx` inside the header and footer, with a retry button; the 404 page is `src/app/not-found.tsx`.
+- **Skip link:** every page of the world starts with a skip link to `#fs-main`.
+- **Pointer ring trial (effect 20):** off by default. To try it: `NEXT_PUBLIC_KIT_CURSOR=1 pnpm dev`, open `/fengshui/` with a mouse. The real cursor stays; a ring follows it, grows over links and buttons, and an ink splash marks a click.
+
 ## Docs
 
 - `docs/features.md`

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { groupEntries, parsePostFile } from "./posts";
+import { groupEntries } from "./entries";
+import { parsePostFile } from "./posts";
 import { blogSitemap } from "./sitemap";
 
 const raw = (date: string) => `---\ntitle: T\ndate: ${date}\ndescription: D\n---\nBody text`;

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useFengShuiLanguage } from "@/components/fengshui/FengShuiLanguage";
 import { blogContent } from "@/content/fengshui-blog";
 import { formatPostDate } from "@/lib/blog/format";
-import { postPath, summaryFor, type SummaryEntry } from "@/lib/blog/posts";
+import { postPath, summaryFor, type SummaryEntry } from "@/lib/blog/entries";
 import { PageHero } from "./PageHero";
 import { PreviewZone } from "./PreviewZone";
 

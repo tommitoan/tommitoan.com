@@ -1,3 +1,4 @@
+import { FIELD_SELECTOR, INTERACTIVE_SELECTOR, SPLASH_FRAMES, easeStep, ringTarget, shouldMountCursor } from "./cursor";
 import { describe, expect, it } from "vitest";
 import { dayState, luminance, seg, skyColor, smoothstep, textMix, NIGHT, PAPER } from "./color";
 import { resolveTier } from "./env";
@@ -250,5 +251,48 @@ describe("page transition rules", () => {
     expect(originOf("/relative", "https://tommitoan.com/a")).toBe("https://tommitoan.com");
     expect(originOf("mailto:a@b.c")).toBeNull();
     expect(originOf("::::")).toBeNull();
+  });
+});
+
+describe("pointer ring (effect 20)", () => {
+  it("is a quiet ring over plain page, larger and fully shown over something clickable", () => {
+    expect(ringTarget({ interactive: false, overField: false, pressed: false })).toEqual({ scale: 1, opacity: 0.75 });
+    expect(ringTarget({ interactive: true, overField: false, pressed: false })).toEqual({ scale: 1.7, opacity: 1 });
+  });
+
+  it("shrinks while pressed, relative to where it was", () => {
+    expect(ringTarget({ interactive: false, overField: false, pressed: true }).scale).toBeCloseTo(0.8);
+    expect(ringTarget({ interactive: true, overField: false, pressed: true }).scale).toBeCloseTo(1.36);
+  });
+
+  it("disappears over a text field, where the real text cursor must stay in charge", () => {
+    expect(ringTarget({ interactive: true, overField: true, pressed: false })).toEqual({ scale: 1, opacity: 0 });
+  });
+
+  it("eases toward a target and lands on it", () => {
+    expect(easeStep(0, 10, 0.5)).toBe(5);
+    expect(easeStep(9.99, 10, 0.5, 0.02)).toBe(10);
+    expect(easeStep(3, 3, 0.2)).toBe(3);
+    expect(easeStep(0, 10, 5)).toBe(10);
+    expect(easeStep(0, 10, -1)).toBe(0);
+  });
+
+  it("mounts only when asked for, on the full tier and with a mouse-like pointer", () => {
+    expect(shouldMountCursor(true, "full", true)).toBe(true);
+    expect(shouldMountCursor(false, "full", true)).toBe(false);
+    expect(shouldMountCursor(true, "subtle", true)).toBe(false);
+    expect(shouldMountCursor(true, "off", true)).toBe(false);
+    expect(shouldMountCursor(true, "full", false)).toBe(false);
+  });
+
+  it("treats links and buttons as clickable and text inputs as fields, but not checkboxes", () => {
+    for (const clickable of ["a[href]", "button", "summary", '[role="button"]', "[data-kit-magnetic]"]) expect(INTERACTIVE_SELECTOR).toContain(clickable);
+    expect(FIELD_SELECTOR).toContain("textarea");
+    for (const notAField of ["button", "submit", "checkbox", "radio", "range"]) expect(FIELD_SELECTOR).toContain(`:not([type="${notAField}"])`);
+  });
+
+  it("splashes outward and fades away", () => {
+    expect(SPLASH_FRAMES[0]).toMatchObject({ opacity: 0.35 });
+    expect(SPLASH_FRAMES[SPLASH_FRAMES.length - 1]).toMatchObject({ opacity: 0 });
   });
 });

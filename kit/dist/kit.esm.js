@@ -1,4 +1,4 @@
-/* tommitoan kit 0.2.0 */
+/* tommitoan kit 0.3.0 */
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -126,6 +126,161 @@ function watchReducedMotion(onChange, win = window) {
   const query = win.matchMedia("(prefers-reduced-motion: reduce)");
   query.addEventListener("change", onChange);
   return () => query.removeEventListener("change", onChange);
+}
+
+// kit/src/color.ts
+var clamp = (x, min, max) => Math.max(min, Math.min(max, x));
+var lerp = (a, b, t) => a + (b - a) * t;
+var smoothstep = (t) => {
+  const x = clamp(t, 0, 1);
+  return x * x * (3 - 2 * x);
+};
+var seg = (p, a, b) => clamp((p - a) / (b - a), 0, 1);
+var lerpColor = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
+var luminance = (c) => 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2];
+var rgbString = (c) => `rgb(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])})`;
+var NIGHT = [12, 16, 36];
+var PAPER = [243, 234, 215];
+var INK = [59, 47, 32];
+var MOON = [238, 232, 255];
+var MUTED_NIGHT = [167, 159, 196];
+var MUTED_DAY = [102, 85, 63];
+var DAY_STOPS = [
+  [0, NIGHT],
+  [0.28, [28, 28, 74]],
+  [0.42, [84, 64, 124]],
+  [0.5, [226, 140, 120]],
+  [0.6, [248, 208, 152]],
+  [0.72, PAPER]
+];
+function skyColor(progress) {
+  const p = clamp(progress, 0, 1);
+  for (let i = 0; i < DAY_STOPS.length - 1; i++) {
+    const [p0, c0] = DAY_STOPS[i];
+    const [p1, c1] = DAY_STOPS[i + 1];
+    if (p <= p1) return lerpColor(c0, c1, smoothstep(seg(p, p0, p1)));
+  }
+  return DAY_STOPS[DAY_STOPS.length - 1][1];
+}
+var textMix = (lum) => smoothstep(seg(lum, 100, 140));
+function dayState(progress) {
+  const p = clamp(progress, 0, 1);
+  const sky = skyColor(p);
+  const lum = luminance(sky);
+  const mix = textMix(lum);
+  return {
+    progress: p,
+    sky,
+    luminance: lum,
+    textMix: mix,
+    fg: lerpColor(MOON, INK, mix),
+    muted: lerpColor(MUTED_NIGHT, MUTED_DAY, mix)
+  };
+}
+
+// kit/src/cursor.ts
+function ringTarget({ interactive, overField, pressed }) {
+  if (overField) return { scale: 1, opacity: 0 };
+  const base = interactive ? 1.7 : 1;
+  return { scale: pressed ? base * 0.8 : base, opacity: interactive ? 1 : 0.75 };
+}
+function easeStep(current, target, factor, rest = 0.02) {
+  const next = current + (target - current) * clamp(factor, 0, 1);
+  return Math.abs(target - next) < rest ? target : next;
+}
+function shouldMountCursor(enabled, tier, finePointer) {
+  return enabled && tier === "full" && finePointer;
+}
+var INTERACTIVE_SELECTOR = 'a[href], button, summary, label, select, [role="button"], [data-kit-magnetic]';
+var FIELD_SELECTOR = 'input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, [contenteditable=""], [contenteditable="true"]';
+var SPLASH_FRAMES = [
+  { transform: "scale(0.2)", opacity: 0.35 },
+  { transform: "scale(4.2)", opacity: 0 }
+];
+var SPLASH_MS = 520;
+function mountCursor(tier, finePointer, enabled) {
+  if (!shouldMountCursor(enabled, tier, finePointer)) return { destroy: () => void 0 };
+  const ring = document.createElement("div");
+  ring.className = "kit-cursor-ring";
+  ring.setAttribute("aria-hidden", "true");
+  document.body.appendChild(ring);
+  let goal = { x: 0, y: 0 };
+  let shown = { x: 0, y: 0 };
+  let look = { scale: 1, opacity: 0 };
+  let input = { interactive: false, overField: false, pressed: false };
+  let frame = 0;
+  let seen = false;
+  const draw = () => {
+    ring.style.transform = `translate3d(${shown.x.toFixed(1)}px, ${shown.y.toFixed(1)}px, 0) scale(${look.scale.toFixed(3)})`;
+    ring.style.opacity = look.opacity.toFixed(2);
+  };
+  const tick = () => {
+    frame = 0;
+    const target = ringTarget(input);
+    shown = { x: easeStep(shown.x, goal.x, 0.22, 0.2), y: easeStep(shown.y, goal.y, 0.22, 0.2) };
+    look = { scale: easeStep(look.scale, target.scale, 0.2), opacity: easeStep(look.opacity, seen ? target.opacity : 0, 0.2, 0.01) };
+    draw();
+    const moving = shown.x !== goal.x || shown.y !== goal.y || look.scale !== target.scale || look.opacity !== (seen ? target.opacity : 0);
+    if (moving) frame = window.requestAnimationFrame(tick);
+  };
+  const run = () => {
+    if (!frame) frame = window.requestAnimationFrame(tick);
+  };
+  const classify = (target) => {
+    const element = target instanceof Element ? target : null;
+    input = {
+      ...input,
+      interactive: Boolean(element?.closest(INTERACTIVE_SELECTOR)),
+      overField: Boolean(element?.closest(FIELD_SELECTOR))
+    };
+  };
+  const onMove = (event) => {
+    if (event.pointerType !== "mouse") return;
+    goal = { x: event.clientX, y: event.clientY };
+    if (!seen) {
+      seen = true;
+      shown = { ...goal };
+    }
+    classify(event.target);
+    run();
+  };
+  const onDown = (event) => {
+    if (event.pointerType !== "mouse" || event.button !== 0) return;
+    input = { ...input, pressed: true };
+    const splash = document.createElement("div");
+    splash.className = "kit-splash";
+    splash.setAttribute("aria-hidden", "true");
+    splash.style.left = `${event.clientX}px`;
+    splash.style.top = `${event.clientY}px`;
+    document.body.appendChild(splash);
+    const animation = splash.animate(SPLASH_FRAMES, { duration: SPLASH_MS, easing: "cubic-bezier(0.16, 1, 0.3, 1)" });
+    const remove = () => splash.remove();
+    animation.finished.then(remove, remove);
+    run();
+  };
+  const onUp = () => {
+    input = { ...input, pressed: false };
+    run();
+  };
+  const onLeave = () => {
+    seen = false;
+    run();
+  };
+  document.addEventListener("pointermove", onMove, { passive: true });
+  document.addEventListener("pointerdown", onDown, { passive: true });
+  document.addEventListener("pointerup", onUp, { passive: true });
+  document.documentElement.addEventListener("pointerleave", onLeave);
+  return {
+    destroy() {
+      document.removeEventListener("pointermove", onMove);
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("pointerup", onUp);
+      document.documentElement.removeEventListener("pointerleave", onLeave);
+      if (frame) window.cancelAnimationFrame(frame);
+      ring.remove();
+      document.querySelectorAll(".kit-splash").forEach((splash) => splash.remove());
+    }
+  };
 }
 
 // kit/src/magnetic.ts
@@ -375,14 +530,14 @@ function mountReveal(options) {
 
 // node_modules/.pnpm/lenis@1.3.26_react@19.2.0/node_modules/lenis/dist/lenis.mjs
 var version = "1.3.26";
-function clamp(min, input, max) {
+function clamp2(min, input, max) {
   return Math.max(min, Math.min(input, max));
 }
-function lerp(x, y, t) {
+function lerp2(x, y, t) {
   return (1 - t) * x + t * y;
 }
 function damp(x, y, lambda, deltaTime) {
-  return lerp(x, y, 1 - Math.exp(-lambda * deltaTime));
+  return lerp2(x, y, 1 - Math.exp(-lambda * deltaTime));
 }
 function modulo(n, d) {
   return (n % d + d) % d;
@@ -409,7 +564,7 @@ var Animate = class {
     let completed = false;
     if (this.duration && this.easing) {
       this.currentTime += deltaTime;
-      const linearProgress = clamp(0, this.currentTime / this.duration, 1);
+      const linearProgress = clamp2(0, this.currentTime / this.duration, 1);
       completed = linearProgress >= 1;
       const easedProgress = completed ? 1 : this.easing(linearProgress);
       this.value = this.from + (this.to - this.from) * easedProgress;
@@ -1100,7 +1255,7 @@ var Lenis = class {
         if (distance > this.limit / 2) target -= this.limit;
         else if (distance < -this.limit / 2) target += this.limit;
       }
-    } else target = clamp(0, target, this.limit);
+    } else target = clamp2(0, target, this.limit);
     if (target === this.targetScroll) {
       onStart?.(this);
       onComplete?.(this);
@@ -1576,7 +1731,7 @@ function createTransitions(options) {
 }
 
 // kit/src/version.ts
-var KIT_VERSION = "0.2.0";
+var KIT_VERSION = "0.3.0";
 
 // kit/src/wash.ts
 function mountWash(tier) {
@@ -1614,56 +1769,6 @@ function mountWash(tier) {
       if (frame) window.cancelAnimationFrame(frame);
       layer.remove();
     }
-  };
-}
-
-// kit/src/color.ts
-var clamp2 = (x, min, max) => Math.max(min, Math.min(max, x));
-var lerp2 = (a, b, t) => a + (b - a) * t;
-var smoothstep = (t) => {
-  const x = clamp2(t, 0, 1);
-  return x * x * (3 - 2 * x);
-};
-var seg = (p, a, b) => clamp2((p - a) / (b - a), 0, 1);
-var lerpColor = (a, b, t) => [lerp2(a[0], b[0], t), lerp2(a[1], b[1], t), lerp2(a[2], b[2], t)];
-var luminance = (c) => 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2];
-var rgbString = (c) => `rgb(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])})`;
-var NIGHT = [12, 16, 36];
-var PAPER = [243, 234, 215];
-var INK = [59, 47, 32];
-var MOON = [238, 232, 255];
-var MUTED_NIGHT = [167, 159, 196];
-var MUTED_DAY = [102, 85, 63];
-var DAY_STOPS = [
-  [0, NIGHT],
-  [0.28, [28, 28, 74]],
-  [0.42, [84, 64, 124]],
-  [0.5, [226, 140, 120]],
-  [0.6, [248, 208, 152]],
-  [0.72, PAPER]
-];
-function skyColor(progress) {
-  const p = clamp2(progress, 0, 1);
-  for (let i = 0; i < DAY_STOPS.length - 1; i++) {
-    const [p0, c0] = DAY_STOPS[i];
-    const [p1, c1] = DAY_STOPS[i + 1];
-    if (p <= p1) return lerpColor(c0, c1, smoothstep(seg(p, p0, p1)));
-  }
-  return DAY_STOPS[DAY_STOPS.length - 1][1];
-}
-var textMix = (lum) => smoothstep(seg(lum, 100, 140));
-function dayState(progress) {
-  const p = clamp2(progress, 0, 1);
-  const sky = skyColor(p);
-  const lum = luminance(sky);
-  const mix = textMix(lum);
-  return {
-    progress: p,
-    sky,
-    luminance: lum,
-    textMix: mix,
-    fg: lerpColor(MOON, INK, mix),
-    muted: lerpColor(MUTED_NIGHT, MUTED_DAY, mix)
   };
 }
 
@@ -1734,6 +1839,7 @@ function init(options = {}) {
   if (on("progress")) track(mountProgress());
   if (on("dots")) track(mountDots({ tier, smooth: smooth ?? void 0 }));
   if (on("magnetic")) track(mountMagnetic(tier, finePointer));
+  track(mountCursor(tier, finePointer, options.effects?.cursor === true));
   let destroyed = false;
   const destroy = () => {
     if (destroyed) return;
@@ -1749,7 +1855,7 @@ function init(options = {}) {
 export {
   baziYear,
   blendFrames,
-  clamp2 as clamp,
+  clamp,
   createDayCycle,
   createSmoothScroll,
   createTransitions,
@@ -1757,7 +1863,7 @@ export {
   detectTier,
   ganzhiYear,
   init,
-  lerp2 as lerp,
+  lerp,
   monthBranch,
   playSeal,
   resolveTier,

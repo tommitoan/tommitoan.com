@@ -6,6 +6,12 @@ import { FengShuiLanguageToggle, useFengShuiLanguage } from "@/components/fengsh
 import { blogContent } from "@/content/fengshui-blog";
 import { siteContent } from "@/content/site-content";
 
+/**
+ * Routes with large bundles (the gateway and the Tech and Discover pages load the 3D and CV code). Next prefetches every
+ * visible link, so these are left to load when clicked instead of being downloaded on every Feng Shui page.
+ */
+const HEAVY_ROUTES = new Set(["/", "/tech", "/discover"]);
+
 /** A slim fixed bar that stays readable over both the night sky and the paper. */
 export function WorldHeader() {
   const pathname = usePathname();
@@ -29,7 +35,7 @@ export function WorldHeader() {
             // Blog posts live below /fengshui/blog/, so the Blog link stays current there; /fengshui itself is exact.
             const current = item.key === "blog" ? pathname.startsWith("/fengshui/blog") : pathname === href || pathname === `${base}/`;
             return (
-              <Link key={item.key} href={item.href} aria-current={current ? "page" : undefined}>
+              <Link key={item.key} href={item.href} prefetch={HEAVY_ROUTES.has(href) ? false : undefined} aria-current={current ? "page" : undefined}>
                 {item.label}
               </Link>
             );
