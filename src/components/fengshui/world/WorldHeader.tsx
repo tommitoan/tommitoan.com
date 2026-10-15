@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FengShuiLanguageToggle, useFengShuiWorldCopy } from "@/components/fengshui/FengShuiLanguage";
+import { FengShuiLanguageToggle } from "@/components/fengshui/FengShuiLanguage";
 import { siteContent } from "@/content/site-content";
-import { BAZI_ORIGIN } from "@/lib/sister-site";
 
 /**
  * Routes with large bundles (the gateway and the Tech and Discover pages load the 3D and CV code). Next prefetches every
@@ -15,14 +14,8 @@ const HEAVY_ROUTES = new Set(["/", "/tech", "/discover"]);
 /** A slim fixed bar that stays readable over both the night sky and the paper. */
 export function WorldHeader() {
   const pathname = usePathname();
-  const copy = useFengShuiWorldCopy().nav;
-  // The blog and the About page live on the Ba-zi site, so those two are plain links to it (the kit covers the page
-  // change with the same slats as between any two pages of the family); the first four links are this site's own.
+  // Only this site's own pages: the blog and the About page belong to the Ba-zi site and are reached from there.
   const items = siteContent.navigation.map((item) => ({ key: item.label, label: item.label, href: item.href }));
-  const baziLinks = [
-    { key: "blog", label: copy.blog, href: `${BAZI_ORIGIN}/blog` },
-    { key: "about", label: copy.about, href: `${BAZI_ORIGIN}/about` },
-  ];
   return (
     <header className="fs-header">
       <div className="fs-header-inner">
@@ -40,11 +33,6 @@ export function WorldHeader() {
               </Link>
             );
           })}
-          {baziLinks.map((link) => (
-            <a key={link.key} href={link.href}>
-              {link.label}
-            </a>
-          ))}
         </nav>
         <FengShuiLanguageToggle />
       </div>

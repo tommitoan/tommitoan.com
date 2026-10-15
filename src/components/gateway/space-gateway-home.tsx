@@ -9,8 +9,7 @@ import { PlanetSphereClient } from "@/components/gateway/PlanetSphereClient";
 import { GatewayLoadingScreen } from "@/components/gateway/GatewayLoadingScreen";
 import { MatrixRainCanvas } from "@/components/gateway/MatrixRainCanvas";
 import { AuroraCanvas } from "@/components/gateway/AuroraCanvas";
-import { PaperGate } from "@/components/gateway/PaperGate";
-import { PAPER_GATE_FALLBACK_MS, gateDestination, usesPaperGate, type GateBox } from "@/components/gateway/paperGate";
+import { markWarpArrival } from "@/components/gateway/warpArrival";
 import {
   createAnchorStyle,
   createFrameStyle,
@@ -79,14 +78,12 @@ export function SpaceGatewayHome() {
   const [isGatewayReady, setIsGatewayReady] = useState(false);
   const [assetsReady, setAssetsReady] = useState(false);
   const [isLoaderFinishing, setIsLoaderFinishing] = useState(false);
-  const [gate, setGate] = useState<{ box: GateBox; href: string } | null>(null);
   const [readyPlanets, setReadyPlanets] = useState<Record<GatewayHomeId, boolean>>({
     tech: false,
     discover: false,
     fengshui: false,
   });
   const timeoutRef = useRef<number | null>(null);
-  const gateOpenedRef = useRef(false);
 
   const activePortal = selected
     ? gatewayHomeConfig.portals.find((item) => item.id === selected) ?? null
@@ -180,32 +177,11 @@ export function SpaceGatewayHome() {
     });
   };
 
-  const openGate = (href: string) => {
-    if (gateOpenedRef.current) return;
-    gateOpenedRef.current = true;
-    // A full page load lets the Feng Shui world paint its paper cover before first paint and play its seal.
-    window.location.assign(gateDestination(href));
-  };
-
-  // A page restored from the back/forward cache must not keep the paper over the gateway.
-  useEffect(() => {
-    const onPageShow = (event: PageTransitionEvent) => {
-      if (!event.persisted) return;
-      gateOpenedRef.current = false;
-      setGate(null);
-    };
-    window.addEventListener("pageshow", onPageShow);
-    return () => window.removeEventListener("pageshow", onPageShow);
-  }, []);
-
-  const handleSelect = (item: GatewayHomePortal, box: GateBox) => {
-    if (selected || gate) return;
-    if (usesPaperGate(item.id, !!reducedMotion)) {
-      setGate({ box, href: item.href });
-      timeoutRef.current = window.setTimeout(() => openGate(item.href), PAPER_GATE_FALLBACK_MS);
-      return;
-    }
+  const handleSelect = (item: GatewayHomePortal) => {
+    if (selected) return;
     setSelected(item.id);
+    // The Feng Shui world opens with its seal on a fresh page load only; a warp has just done the opening.
+    markWarpArrival(item.href);
     const delay = reducedMotion
       ? gatewayHomeConfig.transitions.reducedMotionRouteDelayMs
       : gatewayHomeConfig.transitions.routeDelayMs;
@@ -283,14 +259,13 @@ export function SpaceGatewayHome() {
                       : "brightness(1) contrast(1)",
                   }}
                   transition={{ duration: 0.8, delay: selected ? 0 : 0.2 + i * 0.15 }}
-                  onHoverStart={() => !selected && !gate && setHoveredPortal(gateway.id)}
-                  onHoverEnd={() => !selected && !gate && setHoveredPortal(null)}
+                  onHoverStart={() => !selected && setHoveredPortal(gateway.id)}
+                  onHoverEnd={() => !selected && setHoveredPortal(null)}
                   onClick={(e) => {
                     e.stopPropagation();
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    handleSelect(gateway, { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom });
+                    handleSelect(gateway);
                   }}
-                  className={`group relative overflow-hidden ${selected || gate ? 'cursor-default pointer-events-none' : 'cursor-pointer'} flex flex-col items-center transition-all duration-500`}
+                  className={`group relative overflow-hidden ${selected ? 'cursor-default pointer-events-none' : 'cursor-pointer'} flex flex-col items-center transition-all duration-500`}
                   style={{
                     ...createFrameStyle({
                       width: gatewayHomeConfig.frame.width,
@@ -431,8 +406,6 @@ export function SpaceGatewayHome() {
           />
         )}
       </AnimatePresence>
-
-      {gate ? <PaperGate box={gate.box} radiusPx={gatewayHomeConfig.frame.radiusRem * 16} onOpen={() => openGate(gate.href)} /> : null}
 
       <GatewayLoadingScreen
         loadingProgress={loadingProgress}

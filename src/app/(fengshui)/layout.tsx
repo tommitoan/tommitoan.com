@@ -9,8 +9,12 @@ import { SkipLink } from "@/components/fengshui/world/SkipLink";
 import { WorldHeader } from "@/components/fengshui/world/WorldHeader";
 import { worldSerif } from "../world-font";
 
-/** Adds the paper cover before first paint when the visitor arrives from the sister site. */
-const bootScript = readFileSync(path.join(process.cwd(), "kit/dist/kit-boot.js"), "utf8");
+/**
+ * Adds the cover before first paint when the visitor arrives from the sister site. The night look is set first, so the
+ * cover is the dark sky and not the paper the shared stylesheet uses by default.
+ */
+const bootScript =
+  'document.documentElement.setAttribute("data-kit-theme","night");' + readFileSync(path.join(process.cwd(), "kit/dist/kit-boot.js"), "utf8");
 
 export default function FengShuiLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

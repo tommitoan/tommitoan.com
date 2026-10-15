@@ -10,6 +10,7 @@ import { mountDots, mountProgress, type Mounted } from "./progress";
 import { mountReveal } from "./reveal";
 import { createSmoothScroll, watchModals, type SmoothScroll } from "./scroll";
 import { playSeal } from "./seal";
+import { applyTheme, resolveTheme, type Theme } from "./theme";
 import { createTransitions, type Transitions } from "./transition";
 import { KIT_VERSION } from "./version";
 import { mountWash } from "./wash";
@@ -26,6 +27,8 @@ export interface KitOptions {
   transitionPaths?: readonly string[];
   /** Force a motion tier. By default it follows the visitor's settings and device. */
   tier?: Tier;
+  /** The look of the covers (opening seal, slats, boot guard): "paper" (default) or "night". */
+  theme?: Theme;
   locale?: Locale;
   /** Text and glyph of the opening seal. */
   seal?: { glyph?: string; tagline?: string };
@@ -53,9 +56,10 @@ export interface Kit {
 export function init(options: KitOptions = {}): Kit {
   const tier = options.tier ?? detectTier();
   const finePointer = hasFinePointer();
+  const restoreTheme = applyTheme(resolveTheme(options.theme));
   const on = (name: EffectName): boolean => options.effects?.[name] !== false;
   const family = [window.location.origin, ...(options.family ?? [])];
-  const cleanups: Array<() => void> = [];
+  const cleanups: Array<() => void> = [restoreTheme];
   const track = (mounted: Mounted | null | undefined): void => {
     if (mounted) cleanups.push(() => mounted.destroy());
   };
@@ -124,6 +128,8 @@ export { createDayCycle } from "./day-cycle";
 export { clamp, lerp, smoothstep, seg, skyColor, dayState } from "./color";
 export { solarLongitude, solarTerm, monthBranch, baziYear, ganzhiYear } from "./solar";
 export { shichen } from "./shichen";
+export { resolveTheme } from "./theme";
+export type { Theme } from "./theme";
 export { createSmoothScroll } from "./scroll";
 export { playSeal } from "./seal";
 export { createTransitions } from "./transition";

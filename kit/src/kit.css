@@ -24,6 +24,18 @@
   --kit-z-seal: 1100;
   --kit-z-cursor: 1200;
   --kit-han: "Noto Serif SC", "Noto Serif CJK SC", "Songti SC", serif;
+  /* What covers the page: the boot guard, the opening seal and the slats. They follow the page's look, paper by
+     default; a page that opens in the night sky sets data-kit-theme="night" on <html> (see init's `theme`). */
+  --kit-cover-bg: var(--kit-paper);
+  --kit-cover-ink: var(--kit-seal);
+  --kit-cover-muted: var(--kit-muted);
+  --kit-slat: var(--kit-seal);
+}
+html[data-kit-theme="night"] {
+  --kit-cover-bg: #070b1d;
+  --kit-cover-ink: var(--kit-gold);
+  --kit-cover-muted: rgba(238, 232, 255, 0.7);
+  --kit-slat: #0c1230;
 }
 
 /* Smooth scroll (Lenis) */
@@ -45,7 +57,7 @@ html.kit-pending::before {
   position: fixed;
   inset: 0;
   z-index: var(--kit-z-seal);
-  background: var(--kit-paper);
+  background: var(--kit-cover-bg);
   animation: kit-pending-failsafe 0s 4s forwards;
 }
 @keyframes kit-pending-failsafe {
@@ -68,9 +80,13 @@ html.kit-pending::before {
   display: none;
 }
 .kit-slats > i {
-  background: var(--kit-seal);
+  background: var(--kit-slat);
   margin-right: -1px;
   transform: scaleY(0);
+}
+/* In the night look each slat carries a thin gold edge, like a lit panel of the sky. */
+html[data-kit-theme="night"] .kit-slats > i {
+  box-shadow: inset -1px 0 0 rgba(242, 211, 145, 0.22), inset 0 -40px 60px -40px rgba(242, 211, 145, 0.12);
 }
 .kit-slats.is-covering {
   pointer-events: auto;
@@ -84,8 +100,8 @@ html.kit-pending::before {
   display: grid;
   place-items: center;
   text-align: center;
-  background: var(--kit-paper);
-  color: var(--kit-seal);
+  background: var(--kit-cover-bg);
+  color: var(--kit-cover-ink);
 }
 .kit-seal-mark {
   width: 132px;
@@ -93,7 +109,7 @@ html.kit-pending::before {
   margin: 0 auto 14px;
   display: grid;
   place-items: center;
-  border: 5px solid var(--kit-seal);
+  border: 5px solid var(--kit-cover-ink);
   border-radius: 6px;
   font: 400 82px/1 var(--kit-han);
   transform: rotate(-6deg);
@@ -101,7 +117,7 @@ html.kit-pending::before {
 .kit-seal-tag {
   font: 400 13px/1.4 system-ui, sans-serif;
   letter-spacing: 0.04em;
-  color: var(--kit-muted);
+  color: var(--kit-cover-muted);
 }
 
 /* Heading reveal: words rise out of a mask. The hidden state exists only after the script split the heading. */

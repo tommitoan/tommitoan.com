@@ -3,7 +3,7 @@ import type { FengShuiLanguage } from "@/content/fengshui-content";
 /** Copy of the skip link, the 404 page and the error page of the Feng Shui world. */
 export type ErrorCopy = {
   skip: string;
-  notFound: { eyebrow: string; title: string; text: string; home: string; world: string; blog: string };
+  notFound: { eyebrow: string; title: string; text: string; home: string; world: string };
   error: { eyebrow: string; title: string; text: string; retry: string; home: string };
 };
 
@@ -15,7 +15,6 @@ const vi: ErrorCopy = {
     text: "Có thể địa chỉ bị gõ sai, hoặc trang đã được chuyển đi. Bạn thử vào một trong các trang dưới đây nhé.",
     home: "Về trang chủ",
     world: "Góc Phong thuỷ",
-    blog: "Bài viết",
   },
   error: {
     eyebrow: "Lỗi",
@@ -34,7 +33,6 @@ const en: ErrorCopy = {
     text: "The address may be mistyped, or the page may have moved. Try one of the pages below.",
     home: "Home",
     world: "The Feng Shui corner",
-    blog: "Blog",
   },
   error: {
     eyebrow: "Error",
