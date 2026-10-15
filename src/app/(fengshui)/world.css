@@ -993,3 +993,15 @@
 .fs-skip:focus { top: .6rem; }
 .fs-world main:focus { outline: none; }
 .fs-error { min-height: 70vh; display: flex; align-items: center; }
+
+/* The page fills the window: on a short page (one post, the 404 page) the footer sits at the bottom and the last
+   section grows to meet it, instead of leaving a dark band under the footer. */
+.fs-world { display: flex; flex-direction: column; min-height: 100svh; }
+.fs-world > main { display: flex; flex: 1 0 auto; flex-direction: column; }
+.fs-world > main > * { flex-shrink: 0; }
+.fs-world > main > :last-child { flex-grow: 1; }
+
+/* On a phone the fixed header wraps to two rows (about 127 px), so the short heroes start lower than their desktop 7.5rem. */
+@media (max-width: 760px) {
+  .fs-hero-compact { padding-top: 9.5rem; }
+}
