@@ -8,19 +8,19 @@ export type ErrorCopy = {
 };
 
 const vi: ErrorCopy = {
-  skip: "Bỏ qua, đến nội dung chính",
+  skip: "Bỏ qua, đi thẳng tới nội dung chính",
   notFound: {
     eyebrow: "404",
     title: "Không tìm thấy trang này",
-    text: "Địa chỉ có thể đã gõ sai hoặc trang đã được chuyển đi. Bạn có thể quay lại một trong các trang dưới đây.",
+    text: "Có thể địa chỉ bị gõ sai, hoặc trang đã được chuyển đi. Bạn thử vào một trong các trang dưới đây nhé.",
     home: "Về trang chủ",
     world: "Góc Phong thuỷ",
     blog: "Bài viết",
   },
   error: {
     eyebrow: "Lỗi",
-    title: "Trang gặp sự cố",
-    text: "Có gì đó trục trặc khi hiển thị trang này. Bạn thử tải lại, hoặc quay về trang chủ.",
+    title: "Trang này đang gặp sự cố",
+    text: "Trang này đang trục trặc. Bạn thử tải lại, hoặc quay về trang chủ.",
     retry: "Thử lại",
     home: "Về trang chủ",
   },
@@ -31,7 +31,7 @@ const en: ErrorCopy = {
   notFound: {
     eyebrow: "404",
     title: "This page was not found",
-    text: "The address may be mistyped, or the page has moved. You can go back to one of the pages below.",
+    text: "The address may be mistyped, or the page may have moved. Try one of the pages below.",
     home: "Home",
     world: "The Feng Shui corner",
     blog: "Blog",
@@ -39,7 +39,7 @@ const en: ErrorCopy = {
   error: {
     eyebrow: "Error",
     title: "This page ran into a problem",
-    text: "Something went wrong while showing this page. Try again, or go back home.",
+    text: "Something went wrong while loading this page. Try again, or head back home.",
     retry: "Try again",
     home: "Home",
   },
