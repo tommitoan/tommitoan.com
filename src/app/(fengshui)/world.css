@@ -92,7 +92,7 @@
 .fs-nav a {
   padding: 0.35rem 0.75rem;
   border-radius: 999px;
-  color: rgba(238, 232, 255, 0.7);
+  color: rgba(238, 232, 255, 0.82);
   transition: background 0.2s, color 0.2s;
 }
 .fs-nav a:hover {
@@ -120,7 +120,7 @@
   border: 0;
   border-radius: 999px;
   background: transparent;
-  color: rgba(238, 232, 255, 0.7);
+  color: rgba(238, 232, 255, 0.82);
   font: 600 0.75rem/1.4 var(--fs-sans);
   letter-spacing: 0.04em;
   cursor: pointer;
@@ -822,21 +822,116 @@
   color: var(--kit-muted);
   font-size: 0.88rem;
 }
-.fs-principles {
+/* Principles: three lines, the one in focus lit, a big numeral behind them and a thin bar that fills before the next takes over. */
+.fs-pr-stage {
+  position: relative;
+  margin-top: 2rem;
+}
+.fs-pr-mark {
+  position: absolute;
+  top: -2.2rem;
+  right: 0;
+  z-index: 0;
+  color: var(--kit-seal);
+  font: 400 clamp(6rem, 16vw, 11rem) / 1 var(--fs-serif);
+  font-variant-numeric: tabular-nums;
+  opacity: 0.1;
+  pointer-events: none;
+  animation: fs-pr-mark-in 0.6s ease-out;
+}
+@keyframes fs-pr-mark-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+.fs-pr-list {
+  position: relative;
+  z-index: 1;
   display: grid;
-  gap: 1.2rem;
-  margin: 2rem 0 0;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
   list-style: none;
 }
-.fs-principles li {
+.fs-pr-item {
+  position: relative;
   display: flex;
   align-items: flex-start;
-  gap: 1rem;
+  gap: 1.1rem;
+  width: 100%;
+  padding: 1.1rem 1.3rem;
+  overflow: hidden;
+  border: 0.5px solid var(--kit-line);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--kit-muted);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s;
 }
-.fs-principles p {
-  margin: 0;
+.fs-pr-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background: var(--kit-seal);
+  transform: scaleY(0);
+  transition: transform 0.35s;
+}
+.fs-pr-num {
+  flex: none;
+  min-width: 1.6rem;
+  font: 400 1.7rem/1.2 var(--fs-serif);
+  color: rgba(139, 46, 31, 0.4);
+  transition: color 0.3s;
+}
+.fs-pr-text {
   font-size: 1.1rem;
   line-height: 1.7;
+}
+.fs-pr-item:hover {
+  border-color: var(--kit-seal);
+  color: var(--kit-ink);
+}
+.fs-pr-item[aria-pressed="true"] {
+  border-color: var(--kit-seal);
+  background: var(--kit-surface);
+  color: var(--kit-ink);
+  box-shadow: 0 8px 24px rgba(59, 47, 32, 0.12);
+}
+.fs-pr-item[aria-pressed="true"]::before {
+  transform: scaleY(1);
+}
+.fs-pr-item[aria-pressed="true"] .fs-pr-num {
+  color: var(--kit-seal);
+}
+.fs-pr-timer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--kit-seal);
+  opacity: 0.55;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+.fs-pr-timer[data-running="true"] {
+  animation: fs-pr-fill 5s linear forwards;
+}
+@keyframes fs-pr-fill {
+  to {
+    transform: scaleX(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fs-pr-mark {
+    animation: none;
+  }
 }
 /* The call to try Bazica Web: a night card, a light running round its edge, a pulsing badge and a gold button. */
 .fs-cta {
