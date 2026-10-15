@@ -1,6 +1,9 @@
 import { mountClock, type Locale } from "./clock";
 import { detectTier, hasFinePointer, watchReducedMotion, type Tier } from "./env";
 import { mountCursor } from "./cursor";
+import { mountDrift } from "./drift";
+import { mountDust } from "./dust";
+import { mountLife } from "./life";
 import { mountMagnetic } from "./magnetic";
 import { shouldPlaySeal } from "./navigation";
 import { mountDots, mountProgress, type Mounted } from "./progress";
@@ -11,7 +14,7 @@ import { createTransitions, type Transitions } from "./transition";
 import { KIT_VERSION } from "./version";
 import { mountWash } from "./wash";
 
-export type EffectName = "transition" | "seal" | "reveal" | "wash" | "clock" | "progress" | "dots" | "magnetic" | "smooth" | "cursor";
+export type EffectName = "transition" | "seal" | "reveal" | "wash" | "clock" | "progress" | "dots" | "magnetic" | "smooth" | "cursor" | "dust" | "drift" | "life";
 
 export interface KitOptions {
   /** Origins that share this look, for the cross-site transition. This site's own origin is always included. */
@@ -37,12 +40,15 @@ export interface Kit {
   readonly ready: Promise<void>;
   readonly smooth: SmoothScroll | null;
   readonly transitions: Transitions | null;
+  /** Builds the section dots again, for a page that adds or removes [data-kit-section] after the kit started. */
+  refresh(): void;
   destroy(): void;
 }
 
 /**
  * Starts the global effects. Opt-in hooks are plain attributes: data-kit-reveal (headings),
- * data-kit-section="Label" (progress dots), data-kit-clock (hour clock), data-kit-magnetic (buttons).
+ * data-kit-section="Label" (progress dots), data-kit-clock (hour clock), data-kit-magnetic (buttons),
+ * data-kit-dust="glyph" (ink dust), data-kit-drift (drifting cards), data-kit-life (growing figure).
  */
 export function init(options: KitOptions = {}): Kit {
   const tier = options.tier ?? detectTier();
@@ -79,8 +85,17 @@ export function init(options: KitOptions = {}): Kit {
   if (on("reveal")) track(mountReveal({ tier, after: ready }));
   if (on("clock")) track(mountClock(options.locale ?? "vi"));
   if (on("progress")) track(mountProgress());
-  if (on("dots")) track(mountDots({ tier, smooth: smooth ?? undefined }));
+  let dots: Mounted | null = null;
+  const mountSectionDots = (): void => {
+    dots?.destroy();
+    dots = on("dots") ? mountDots({ tier, smooth: smooth ?? undefined }) : null;
+  };
+  mountSectionDots();
+  cleanups.push(() => dots?.destroy());
   if (on("magnetic")) track(mountMagnetic(tier, finePointer));
+  if (on("dust")) track(mountDust(tier));
+  if (on("drift")) track(mountDrift(tier, ready));
+  if (on("life")) track(mountLife(tier, ready));
   // The pointer ring is opt-in: only a page that sets effects.cursor to true gets it.
   track(mountCursor(tier, finePointer, options.effects?.cursor === true));
 
@@ -96,7 +111,11 @@ export function init(options: KitOptions = {}): Kit {
     if (detectTier() === "off") destroy();
   });
 
-  return { version: KIT_VERSION, tier, ready, smooth, transitions, destroy };
+  const refresh = (): void => {
+    if (!destroyed) mountSectionDots();
+  };
+
+  return { version: KIT_VERSION, tier, ready, smooth, transitions, refresh, destroy };
 }
 
 export { KIT_VERSION as version } from "./version";

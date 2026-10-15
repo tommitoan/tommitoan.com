@@ -282,3 +282,59 @@ html.kit-pending::before {
     display: none;
   }
 }
+
+/* Ink dust (effect 2): the plain glyph stays until the canvas has drawn, then fades behind it. */
+[data-kit-dust] {
+  position: relative;
+}
+.kit-dust-glyph {
+  display: block;
+  font: 400 var(--kit-dust-size, 240px) / 1 var(--kit-han);
+  color: color-mix(in srgb, var(--kit-seal) 22%, transparent);
+  text-align: center;
+  user-select: none;
+  transition: opacity 600ms var(--kit-ease);
+}
+.kit-dust-on .kit-dust-glyph {
+  opacity: 0;
+}
+.kit-dust-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Life strip (effect 25, light): frames stacked in one box, one active at a time, and a star that falls onto them. */
+[data-kit-life] {
+  position: relative;
+}
+[data-kit-life] img[data-age] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 700ms var(--kit-ease);
+}
+[data-kit-life] img[data-age]:first-of-type,
+[data-kit-life] img.is-active {
+  opacity: 1;
+}
+[data-kit-life].kit-life-playing img[data-age]:first-of-type:not(.is-active) {
+  opacity: 0;
+}
+[data-kit-life-star] {
+  position: absolute;
+  left: 50%;
+  top: 18%;
+  width: 34px;
+  height: 34px;
+  margin-left: -17px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fffbe9 0 14%, rgba(242, 211, 145, 0.85) 30%, rgba(242, 211, 145, 0) 70%);
+  opacity: 0;
+  pointer-events: none;
+}
