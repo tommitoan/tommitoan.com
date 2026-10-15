@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type Block, easeInOutCubic, pagerTarget, wheelPixels } from "./section-pager";
+import { type Block, easeOutQuart, pagerTarget, wheelIntent, wheelPixels, type WheelRecord } from "./section-pager";
 
 const VIEWPORT = 900;
 // A tall pinned scene, then three one-page bands, a tall pinned story, a one-page band and a short footer.
@@ -76,10 +76,84 @@ describe("helpers", () => {
     expect(wheelPixels(1, 2, 900)).toBe(900);
   });
 
-  it("eases from 0 to 1 and is symmetric", () => {
-    expect(easeInOutCubic(0)).toBe(0);
-    expect(easeInOutCubic(1)).toBe(1);
-    expect(easeInOutCubic(0.5)).toBeCloseTo(0.5);
-    expect(easeInOutCubic(0.25) + easeInOutCubic(0.75)).toBeCloseTo(1);
+  it("eases from 0 to 1 and answers at once: half the way is covered in the first sixth of the time", () => {
+    expect(easeOutQuart(0)).toBe(0);
+    expect(easeOutQuart(1)).toBe(1);
+    expect(easeOutQuart(0.16)).toBeGreaterThan(0.5);
+    expect(easeOutQuart(-1)).toBe(0);
+    expect(easeOutQuart(2)).toBe(1);
+    let last = 0;
+    for (let t = 0; t <= 1; t += 0.05) {
+      expect(easeOutQuart(t)).toBeGreaterThanOrEqual(last);
+      last = easeOutQuart(t);
+    }
+  });
+});
+
+describe("the free zone below the pager", () => {
+  const withFree: Block[] = [
+    { top: 0, bottom: 900 },
+    { top: 900, bottom: 1800 },
+    { top: 1800, bottom: 6000, free: true },
+  ];
+  const free = (scrollY: number, delta: number) => pagerTarget(withFree, scrollY, 900, 5100, delta);
+
+  it("crosses into it from the last paged section as one move to its top", () => {
+    expect(free(900, 100)).toBe(1800);
+  });
+
+  it("leaves the wheel alone inside it, down or up, even right at the bottom", () => {
+    expect(free(1800, 100)).toBeNull();
+    expect(free(3000, 100)).toBeNull();
+    expect(free(3000, -100)).toBeNull();
+    expect(free(5050, 100)).toBeNull();
+    expect(free(1850, -100)).toBeNull();
+  });
+
+  it("hands the very top of it back to the pager, to the last screen of the section above", () => {
+    expect(free(1800, -100)).toBe(900);
+  });
+});
+
+describe("telling a new push from a trackpad that is coasting", () => {
+  const events = (...pairs: Array<[number, number]>): WheelRecord[] => pairs.map(([time, size]) => ({ time, size }));
+
+  it("a new gesture, after a pause, moves the page; during a move it is remembered", () => {
+    expect(wheelIntent([], 1000, 100, false, 5000)).toBe("act");
+    expect(wheelIntent(events([500, 100]), 1000, 100, false, 5000)).toBe("act");
+    expect(wheelIntent([], 1000, 100, true, 0)).toBe("queue");
+    expect(wheelIntent(events([500, 100]), 1000, 100, true, 0)).toBe("queue");
+  });
+
+  it("events in a stream while a move runs are swallowed, not queued", () => {
+    expect(wheelIntent(events([950, 100]), 1000, 100, true, 0)).toBe("ignore");
+  });
+
+  it("right after a move ends, a continuing stream waits to show whether it is coasting", () => {
+    expect(wheelIntent(events([950, 100]), 1000, 100, false, 50)).toBe("ignore");
+  });
+
+  it("a wheel spun steadily goes on moving the page, a coasting trackpad does not", () => {
+    expect(wheelIntent(events([800, 100], [900, 100]), 1000, 100, false, 400)).toBe("act");
+    expect(wheelIntent(events([800, 60], [900, 56]), 1000, 40, false, 400)).toBe("ignore");
+    expect(wheelIntent(events([800, 30], [900, 32]), 1000, 60, false, 400)).toBe("act");
+  });
+});
+
+describe("a section only a little taller than the window", () => {
+  // A band of 943 px in a 900 px window is one page: the extra is its bottom padding.
+  const slightly: Block[] = [
+    { top: 0, bottom: 900 },
+    { top: 900, bottom: 1843 },
+    { top: 1843, bottom: 5000, free: true },
+  ];
+  const t = (scrollY: number, delta: number) => pagerTarget(slightly, scrollY, 900, 4100, delta);
+
+  it("moves to the next section in one turn instead of first scrolling the extra 43 px", () => {
+    expect(t(900, 100)).toBe(1843);
+  });
+
+  it("goes back to its top, not to some position inside it", () => {
+    expect(t(1843, -100)).toBe(900);
   });
 });

@@ -1291,10 +1291,10 @@
 /* Day Master */
 .fs-dm-stage {
   display: grid;
-  grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, min(340px, 31svh)) minmax(0, 1fr);
   gap: 2rem;
   align-items: center;
-  margin-top: 1.6rem;
+  margin-top: 1.2rem;
 }
 .fs-dm-art {
   margin: 0;
@@ -1332,7 +1332,7 @@
   display: grid;
   grid-template-columns: repeat(10, minmax(0, 1fr));
   gap: 0.5rem;
-  margin-top: 1.8rem;
+  margin-top: 1.2rem;
 }
 .fs-dm-tile {
   position: relative;
@@ -1383,8 +1383,8 @@
   box-shadow: 0 0 0 1px var(--kit-seal);
 }
 .fs-dm-finder {
-  margin-top: 2rem;
-  padding-top: 1.4rem;
+  margin-top: 1.2rem;
+  padding-top: 0.9rem;
   border-top: 1px solid var(--kit-line);
 }
 .fs-dm-finder label {
@@ -1501,12 +1501,16 @@
 
 
 /* Section by section scrolling (KitMount switches it on with a wide window and no request for less motion; section-pager.ts moves
-   the page). Each band fills the window, so a move shows one section and nothing of the next. A pinned scene or a band taller
-   than the window scrolls freely inside. */
-html.fs-pager .fs-world > main > .fs-band {
+   the page). Each paged band fills the window, so a move shows one section and nothing of the next. The pager stops at the Day
+   Master: from the section marked data-pager-free down, bands keep their own height and the page scrolls normally. */
+html.fs-pager {
+  scroll-behavior: auto;
+}
+html.fs-pager .fs-world > main > .fs-band:not([data-pager-free]):not([data-pager-free] ~ .fs-band) {
   display: flex;
   flex-direction: column;
   justify-content: center;
   min-height: 100svh;
-  padding-top: 5rem;
+  padding-top: 4.5rem;
+  padding-bottom: 2.5rem;
 }

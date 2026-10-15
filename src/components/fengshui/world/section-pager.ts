@@ -8,12 +8,18 @@ export interface Block {
   /** Top and bottom of a section in document coordinates. */
   top: number;
   bottom: number;
+  /** The rest of the page after the paged sections: the wheel scrolls freely and only the very top hands back to the pager. */
+  free?: boolean;
 }
 
 const TOLERANCE = 2;
 
-/** A section taller than the window is scrolled through; a shorter one is one page. */
-const isTall = (block: Block, viewport: number): boolean => block.bottom - block.top > viewport + 4;
+/**
+ * A section taller than the window is scrolled through; a shorter one, or one only a little taller (the extra is its own bottom
+ * padding), is one page. Without this slack a section 40 px too tall would need a pointless 40 px scroll before the next move.
+ */
+const PAGE_SLACK = 80;
+const isTall = (block: Block, viewport: number): boolean => block.bottom - block.top > viewport + PAGE_SLACK;
 
 /** Where the page should rest to show a section: its top, or for a tall one entered from below, its last screen. */
 const restFor = (block: Block, viewport: number, fromBelow: boolean): number => (fromBelow && isTall(block, viewport) ? block.bottom - viewport : block.top);
@@ -37,6 +43,13 @@ export function pagerTarget(blocks: readonly Block[], scrollY: number, viewport:
     const target = clamp(value);
     return Math.abs(target - scrollY) < TOLERANCE ? null : target;
   };
+
+  if (current.free) {
+    // Free scrolling. Only a turn upwards from the very top of this zone goes back to the pager's last screen.
+    if (down || scrollY > current.top + TOLERANCE) return null;
+    const previous = blocks[index - 1];
+    return previous ? settle(restFor(previous, viewport, true)) : null;
+  }
 
   if (isTall(current, viewport)) {
     if (down) {
@@ -66,29 +79,79 @@ export function wheelPixels(deltaY: number, deltaMode: number, viewport: number)
   return deltaY;
 }
 
-export const easeInOutCubic = (t: number): number => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+/** Fast at the start and slowing to a stop, so the page answers the wheel at once: half the distance is covered in the first 16% of the time. */
+export const easeOutQuart = (t: number): number => 1 - Math.pow(1 - Math.min(1, Math.max(0, t)), 4);
 
-const MOVE_MS = 900;
-/** After a move, wheel events are ignored until this long after the last one, so a trackpad's coasting does not start another. */
-const QUIET_MS = 140;
+const MOVE_MS = 650;
 const MIN_DELTA = 4;
 
+/** A wheel event, kept for a moment so a new push can be told from a trackpad that is still coasting. */
+export interface WheelRecord {
+  time: number;
+  size: number;
+}
+
+export type WheelIntent = "act" | "queue" | "ignore";
+
+/** A pause this long between wheel events means the visitor has started a new gesture. */
+const GESTURE_GAP_MS = 200;
+/** After a move ends, a continuing stream is given this long to show whether it is coasting or still being pushed. */
+const SETTLE_MS = 150;
+/** Within a stream, an event smaller than this share of the recent peak is a coasting tail, not a new push. */
+const COAST_RATIO = 0.95;
+
+/**
+ * What to do with a wheel event. A new gesture (after a pause) always counts: it moves the page, or while a move is running it
+ * is remembered and carried out the moment that move ends, so a visitor who scrolls again is never left waiting. Inside a
+ * continuing stream an event counts only when it is not weaker than the recent peak: a trackpad that coasts to a stop makes
+ * weaker and weaker events and is ignored, while a wheel spun steadily goes on moving the page section by section.
+ */
+export function wheelIntent(recent: readonly WheelRecord[], now: number, size: number, moving: boolean, sinceMoveEnd: number): WheelIntent {
+  const last = recent[recent.length - 1];
+  const newGesture = !last || now - last.time > GESTURE_GAP_MS;
+  if (moving) return newGesture ? "queue" : "ignore";
+  if (newGesture) return "act";
+  if (sinceMoveEnd < SETTLE_MS) return "ignore";
+  const peak = recent.filter((record) => now - record.time <= 300).reduce((most, record) => Math.max(most, record.size), 0);
+  return size >= peak * COAST_RATIO ? "act" : "ignore";
+}
+
 function readBlocks(): Block[] {
-  const found: Block[] = [];
-  const elements = document.querySelectorAll<HTMLElement>("#fs-main > section, .fs-footer");
-  elements.forEach((element) => {
+  const toBlock = (element: HTMLElement, free = false): Block => {
     const box = element.getBoundingClientRect();
-    if (box.height > 0) found.push({ top: box.top + window.scrollY, bottom: box.bottom + window.scrollY });
-  });
-  return found.sort((a, b) => a.top - b.top);
+    return { top: box.top + window.scrollY, bottom: box.bottom + window.scrollY, ...(free ? { free: true } : {}) };
+  };
+  const sections = Array.from(document.querySelectorAll<HTMLElement>("#fs-main > section")).filter((element) => element.getBoundingClientRect().height > 0);
+  const freeAt = sections.findIndex((element) => element.hasAttribute("data-pager-free"));
+  const paged = freeAt < 0 ? sections : sections.slice(0, freeAt);
+  const blocks = paged.map((element) => toBlock(element)).sort((a, b) => a.top - b.top);
+  const footer = document.querySelector<HTMLElement>(".fs-footer");
+  if (freeAt >= 0) {
+    const first = toBlock(sections[freeAt]!);
+    blocks.push({ top: first.top, bottom: footer ? toBlock(footer).bottom : document.documentElement.scrollHeight, free: true });
+  } else if (footer) {
+    blocks.push(toBlock(footer));
+  }
+  return blocks;
 }
 
 /** Starts the pager; the returned function stops it. */
 export function mountSectionPager(): () => void {
   let moving = false;
-  let lastWheel = 0;
+  let moveEnded = 0;
   let frame = 0;
   let cancelled = false;
+  let queued = 0;
+  let recent: WheelRecord[] = [];
+
+  /** Moves for a wheel of `delta` pixels from where the page is; false when the browser should scroll by itself. */
+  const go = (delta: number): boolean => {
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const target = pagerTarget(readBlocks(), window.scrollY, window.innerHeight, maxScroll, delta);
+    if (target === null) return false;
+    move(target);
+    return true;
+  };
 
   const move = (to: number) => {
     const from = window.scrollY;
@@ -97,13 +160,18 @@ export function mountSectionPager(): () => void {
     cancelled = false;
     const step = (now: number) => {
       const t = Math.min(1, (now - start) / MOVE_MS);
-      window.scrollTo(0, from + (to - from) * easeInOutCubic(t));
+      // "instant": the site sets scroll-behavior: smooth on <html>, which would turn each of these steps into its own slow glide.
+      window.scrollTo({ top: from + (to - from) * easeOutQuart(t), left: 0, behavior: "instant" });
       if (t < 1 && !cancelled) {
         frame = window.requestAnimationFrame(step);
         return;
       }
       moving = false;
-      lastWheel = performance.now();
+      moveEnded = performance.now();
+      // A visitor who scrolled again during the move gets the next move at once.
+      const next = queued;
+      queued = 0;
+      if (next !== 0 && !cancelled) go(next);
     };
     frame = window.requestAnimationFrame(step);
   };
@@ -112,23 +180,26 @@ export function mountSectionPager(): () => void {
     if (event.ctrlKey || event.metaKey || event.deltaY === 0) return;
     if (event.target instanceof Element && event.target.closest("input, textarea, select, [data-no-pager]")) return;
     const now = performance.now();
-    if (moving || now - lastWheel < QUIET_MS) {
-      // Still carrying the last move, or the wheel is still coasting: swallow it, and wait for it to go quiet.
-      lastWheel = now;
+    const delta = wheelPixels(event.deltaY, event.deltaMode, window.innerHeight);
+    const intent = wheelIntent(recent, now, Math.abs(delta), moving, now - moveEnded);
+    recent = [...recent.filter((record) => now - record.time <= 400), { time: now, size: Math.abs(delta) }];
+    if (moving) {
+      // Never let the browser scroll under a move in progress.
       event.preventDefault();
+      if (intent === "queue") queued = delta;
       return;
     }
-    lastWheel = now;
-    const delta = wheelPixels(event.deltaY, event.deltaMode, window.innerHeight);
+    if (intent === "ignore") {
+      // A coasting tail right after a move: keep the browser from carrying the page on.
+      if (now - moveEnded < 400) event.preventDefault();
+      return;
+    }
     if (Math.abs(delta) < MIN_DELTA) return;
-    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    const target = pagerTarget(readBlocks(), window.scrollY, window.innerHeight, maxScroll, delta);
-    if (target === null) return;
-    event.preventDefault();
-    move(target);
+    if (go(delta)) event.preventDefault();
   };
   const cancel = () => {
     cancelled = true;
+    queued = 0;
   };
 
   window.addEventListener("wheel", onWheel, { passive: false });
