@@ -1,4 +1,4 @@
-import { clamp, dayState, lerp, lerpColor, seg, smoothstep, type DayState, type RGB } from "@kit/color";
+import { clamp, dayState, lerp, lerpColor, seg, smoothstep, type Appearance, type DayState, type RGB } from "@kit/color";
 import { blendFrames, type FrameBlend } from "@kit/keyframes";
 
 /**
@@ -21,8 +21,8 @@ export const LUCK_PILLARS = [
 /** The four pillars of the sample chart: year, month, day, hour. */
 export const SAMPLE_PILLARS = ["乙亥", "戊子", "甲午", "庚午"] as const;
 
-/** Ages of the eight character frames in public/fengshui/char, as age-NN.webp (age 1 is the crawling child). */
-export const FRAME_AGES = [0, 1, 12, 22, 34, 45, 62, 80] as const;
+/** Ages of the seven character frames in public/fengshui/char, as age-NN.webp (age 1 is the crawling child). */
+export const FRAME_AGES = [0, 1, 12, 22, 34, 62, 80] as const;
 
 export const LIFE_SPAN = 85;
 
@@ -32,13 +32,12 @@ export const LIFE_SPAN = 85;
  */
 const AGE_STOPS: ReadonlyArray<readonly [walk: number, age: number]> = [
   [0, 0],
-  [0.1, 1],
-  [0.26, 12],
-  [0.4, 22],
-  [0.54, 34],
-  [0.67, 45],
-  [0.82, 62],
-  [0.96, 80],
+  [0.16, 1],
+  [0.38, 12],
+  [0.52, 22],
+  [0.68, 34],
+  [0.86, 62],
+  [0.97, 80],
   [1, LIFE_SPAN],
 ];
 
@@ -130,9 +129,9 @@ export interface SceneFrame {
   trailVisible: number;
 }
 
-export function sceneFrame(progress: number, g: SceneGeometry): SceneFrame {
+export function sceneFrame(progress: number, g: SceneGeometry, appearance: Appearance = "light"): SceneFrame {
   const p = clamp(progress, 0, 1);
-  const day = dayState(p);
+  const day = dayState(p, appearance);
 
   const fall = smoothstep(seg(p, 0.06, 0.44));
   const landed = smoothstep(seg(p, 0.44, 0.5));
@@ -158,14 +157,16 @@ export function sceneFrame(progress: number, g: SceneGeometry): SceneFrame {
     progress: p,
     day,
     nebulaOpacity: 1 - smoothstep(seg(p, 0.08, 0.55)),
-    inkWashOpacity: 0.16 * smoothstep(seg(p, 0.5, 0.78)),
+    // The ink wash belongs to the paper ending; the dark ending has none.
+    inkWashOpacity: appearance === "dark" ? 0 : 0.16 * smoothstep(seg(p, 0.5, 0.78)),
     vignette: smoothstep(seg(p, 0.2, 0.38)) * (1 - smoothstep(seg(p, 0.5, 0.68))),
     glow: smoothstep(seg(p, 0.3, 0.5)) * (1 - smoothstep(seg(p, 0.58, 0.74))),
-    starfieldAlpha: 1 - smoothstep(seg(p, 0.08, 0.5)),
+    // The dark look has the page's galaxy behind it, so the scene draws no stars of its own.
+    starfieldAlpha: appearance === "dark" ? 0 : 1 - smoothstep(seg(p, 0.08, 0.5)),
     star: {
       fall,
       point,
-      radius: lerp(3.4, 6.5, fall) * (1 - 0.7 * landed),
+      radius: lerp(5.2, 8, fall) * (1 - 0.7 * landed),
       alpha: 1 - smoothstep(seg(p, 0.46, 0.52)),
       landed,
       ring: ringProgress > 0 && ringProgress < 1 ? ringProgress : 0,
@@ -175,7 +176,8 @@ export function sceneFrame(progress: number, g: SceneGeometry): SceneFrame {
     sun: {
       size: sunSize,
       top: lerp(sunLow, g.height * 0.3 - sunSize / 2, climb),
-      opacity: 0.95 * clamp(rise * 3, 0, 1) * lerp(1, 0.13, smoothstep(seg(p, 0.56, 0.8))),
+      // On paper the sun stays as a faint disc; on the dark ending it sets completely.
+      opacity: 0.95 * clamp(rise * 3, 0, 1) * lerp(1, appearance === "dark" ? 0 : 0.13, smoothstep(seg(p, 0.56, 0.8))),
       color: lerpColor([246, 208, 120], [196, 84, 52], warm),
       glowAlpha: 0.42 * (1 - climb) * (1 - warm),
     },
@@ -214,3 +216,13 @@ export function easeToward(current: number, target: number, factor = 0.14, epsil
   const next = current + (target - current) * factor;
   return Math.abs(target - next) < epsilon ? target : next;
 }
+
+/**
+ * How strongly the galaxy behind the page is veiled, as a share of its full veil. At the start of the dark journey the veil is
+ * thin, so the galaxy is brighter and clearer; it thickens as the sky colours come in and is full once the scene is over.
+ */
+export function galaxyVeil(progress: number, appearance: Appearance = "light"): number {
+  if (appearance !== "dark") return 1;
+  return lerp(0.55, 1, smoothstep(seg(progress, 0.3, 0.78)));
+}
+

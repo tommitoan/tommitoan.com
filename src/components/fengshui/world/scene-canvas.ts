@@ -61,9 +61,11 @@ function drawGlow(ctx: CanvasRenderingContext2D, x: number, y: number, core: num
 }
 
 /** The guiding star: a bright gold core inside a wide halo, like the white stars of the sky but warmer and larger. */
-function drawStar(ctx: CanvasRenderingContext2D, x: number, y: number, radius: number, alpha: number): void {
-  drawGlow(ctx, x, y, radius * 0.95, radius * 11, 0.5, alpha);
-  drawGlow(ctx, x, y, radius * 0.6, radius * 4.5, 0.85, alpha);
+function drawStar(ctx: CanvasRenderingContext2D, x: number, y: number, radius: number, alpha: number, time: number): void {
+  // A wide, slowly breathing glow makes it the one star of the sky that is not a point.
+  drawGlow(ctx, x, y, 0, radius * 30, 0.14 + 0.07 * Math.sin(time / 650), alpha);
+  drawGlow(ctx, x, y, radius * 0.95, radius * 14, 0.62, alpha);
+  drawGlow(ctx, x, y, radius * 0.6, radius * 5, 0.95, alpha);
 }
 
 /** Five small gold glows that twinkle on their own beats around a point; the guiding star shines with them while it waits. */
@@ -92,7 +94,7 @@ export function drawGuidingStar(ctx: CanvasRenderingContext2D, frame: SceneFrame
       ctx.arc(point.x, point.y, radius * 0.7 * fade, 0, Math.PI * 2);
       ctx.fill();
     }
-    drawStar(ctx, star.point.x, star.point.y, radius, star.alpha);
+    drawStar(ctx, star.point.x, star.point.y, radius, star.alpha, time);
     drawSparkles(ctx, star.point.x, star.point.y, radius, time, star.alpha);
   }
   if (star.ring > 0) {

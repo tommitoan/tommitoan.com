@@ -9,6 +9,15 @@
   --kit-line: #8a7a5a;
   --kit-seal: #8b2e1f;
   --kit-gold: #f2d391;
+  /* A solid fill in the seal colour (buttons, badges) and the text that goes on it. In the light look the fill is the seal
+     itself; in the dark look the seal turns lighter to stay readable as text, so the fill keeps its own, darker red. */
+  --kit-seal-solid: var(--kit-seal);
+  --kit-on-seal: var(--kit-paper);
+  /* Soft versions for fills behind text, and the colour of shadows (an RGB triple, so it can take an alpha). */
+  --kit-card: #ffffff;
+  --kit-card-soft: rgba(255, 255, 255, 0.5);
+  --kit-card-hover: rgba(255, 255, 255, 0.85);
+  --kit-shadow: 59, 47, 32;
   --kit-night: #0c1024;
   --kit-wood: #267843;
   --kit-fire: #c43728;
@@ -30,6 +39,28 @@
   --kit-cover-ink: var(--kit-seal);
   --kit-cover-muted: var(--kit-muted);
   --kit-slat: var(--kit-seal);
+}
+/* The dark appearance: the page says data-theme="dark" (tommitoan.com) or data-kit-appearance="dark" (any site of the kit).
+   Paper becomes deep ink-blue, ink becomes warm paper, and the element colours and the seal are lifted to stay readable. */
+html[data-theme="dark"],
+html[data-kit-appearance="dark"] {
+  --kit-paper: #12152b;
+  --kit-surface: #1b1f3c;
+  --kit-ink: #ece3d0;
+  --kit-muted: #cdc7db;
+  --kit-line: #5a608f;
+  --kit-seal: #f6a08a;
+  --kit-seal-solid: #b4402c;
+  --kit-on-seal: #ffffff;
+  --kit-card: #232850;
+  --kit-card-soft: rgba(255, 255, 255, 0.05);
+  --kit-card-hover: rgba(255, 255, 255, 0.11);
+  --kit-shadow: 0, 0, 0;
+  --kit-wood: #5fd08c;
+  --kit-fire: #ff8672;
+  --kit-earth: #dba94f;
+  --kit-metal: #a9bfca;
+  --kit-water: #74b7f0;
 }
 html[data-kit-theme="night"] {
   --kit-cover-bg: #070b1d;

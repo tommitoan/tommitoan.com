@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useAppearance, type Appearance } from "@/lib/appearance";
 import { clamp, lerp, rgbString } from "@kit/color";
 import { createDayCycle } from "@kit/day-cycle";
 import { useFengShuiWorldCopy } from "@/components/fengshui/FengShuiLanguage";
 import { elementColor } from "./elements";
 import { drawGuidingStar, drawStarfield, makeStars } from "./scene-canvas";
-import { easeToward, FRAME_AGES, LUCK_PILLARS, luckMarkX, pinProgress, SAMPLE_PILLARS, sceneFrame, sceneGeometry, starCurve, type SceneGeometry } from "./scene-math";
+import { easeToward, FRAME_AGES, galaxyVeil, LUCK_PILLARS, luckMarkX, pinProgress, SAMPLE_PILLARS, sceneFrame, sceneGeometry, starCurve, type SceneGeometry } from "./scene-math";
 import { ScrollCue } from "./ScrollCue";
 import { StaticLife } from "./StaticLife";
 import { useWorldMode } from "./use-world-mode";
@@ -20,6 +21,11 @@ export function BirthScene() {
 
 function ScrollScene() {
   const copy = useFengShuiWorldCopy().scene;
+  // The look of the page: the journey ends on paper (light) or on deep ink (dark). The scene reads it at every paint, and a
+  // change of look repaints the scene where it stands.
+  const appearance = useAppearance();
+  const appearanceRef = useRef<Appearance>(appearance);
+  const repaintRef = useRef<(() => void) | null>(null);
   const wrapperRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const skyRef = useRef<HTMLCanvasElement>(null);
@@ -59,6 +65,8 @@ function ScrollScene() {
     if (!wrapper || !stage || !canvas || !ctx || !haze || !ink || !vignette || !glow || !sun || !base || !trail || !shadow || !figureA || !figureB || !starLabel || !cue) return;
 
     const dayCycle = createDayCycle({ paintBody: false, root: wrapper });
+    // The page's galaxy (a fixed layer outside this section): thinner veil at the start of the dark journey, so it is brighter.
+    const galaxy = document.querySelector<HTMLElement>(".fs-galaxy");
     const stars = makeStars(340);
     const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
     let geometry: SceneGeometry = sceneGeometry(stage.clientWidth, stage.clientHeight);
@@ -85,8 +93,9 @@ function ScrollScene() {
     };
 
     const paint = (progress: number, time: number) => {
-      const frame = sceneFrame(progress, geometry);
-      dayCycle.render(progress);
+      const frame = sceneFrame(progress, geometry, appearanceRef.current);
+      dayCycle.render(progress, appearanceRef.current);
+      galaxy?.style.setProperty("--fs-veil", galaxyVeil(progress, appearanceRef.current).toFixed(3));
 
       haze.style.opacity = String(frame.nebulaOpacity);
       ink.style.opacity = String(frame.inkWashOpacity);
@@ -155,6 +164,8 @@ function ScrollScene() {
       });
     };
 
+    repaintRef.current = () => paint(current, performance.now());
+
     const resize = () => {
       const width = stage.clientWidth;
       const height = stage.clientHeight;
@@ -202,9 +213,16 @@ function ScrollScene() {
       observer.disconnect();
       resizeObserver.disconnect();
       if (frameHandle) window.cancelAnimationFrame(frameHandle);
+      repaintRef.current = null;
+      galaxy?.style.removeProperty("--fs-veil");
       dayCycle.destroy();
     };
   }, []);
+
+  useEffect(() => {
+    appearanceRef.current = appearance;
+    repaintRef.current?.();
+  }, [appearance]);
 
   return (
     <section ref={wrapperRef} className="fs-scene" data-kit-section="Cảnh sinh ra / Birth" aria-label={copy.label}>

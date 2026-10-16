@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { NIGHT, PAPER } from "@kit/color";
+import { INK_NIGHT, NIGHT, PAPER } from "@kit/color";
 import { SOLAR_TERMS_VI } from "@kit/solar";
-import { arcPath, dayForLongitude, dayIndexOf, daysInYear, daysPerSecond, dialDay, dialState, isMonthOpener, JIE_INDEXES, longitudeAt, radialLabel, ringPoint, SOLAR_TERMS_HAN } from "./dial-math";
+import { arcPath, dayForLongitude, dayIndexOf, daysInYear, daysPerSecond, dialDay, dialState, isMonthOpener, JIE_INDEXES, longitudeAt, monthSpans, radialLabel, ringPoint, SOLAR_TERMS_HAN } from "./dial-math";
 import { marqueeAdvance, marqueeSkew, sixtyCycle, smoothVelocity } from "./marquee-math";
-import { ageAtWalk, bezier, easeToward, FRAME_AGES, LIFE_SPAN, luckMarkX, LUCK_PILLARS, pinProgress, sceneFrame, sceneGeometry, starCurve } from "./scene-math";
+import { ageAtWalk, bezier, easeToward, FRAME_AGES, galaxyVeil, LIFE_SPAN, luckMarkX, LUCK_PILLARS, pinProgress, sceneFrame, sceneGeometry, starCurve } from "./scene-math";
 import { ringRotation, storyStep, storyView } from "./story-math";
 
 const g = sceneGeometry(1200, 760);
@@ -33,6 +33,21 @@ describe("birth scene frame", () => {
     expect(f.nebulaOpacity).toBe(0);
     expect(f.inkWashOpacity).toBeCloseTo(0.16, 5);
     expect(f.marksReached.every(Boolean)).toBe(true);
+  });
+
+  it("ends on deep ink, not paper, in the dark look, and has no ink wash", () => {
+    const f = sceneFrame(1, g, "dark");
+    expect(f.day.sky).toEqual(INK_NIGHT);
+    expect(f.day.textMix).toBe(0);
+    expect(f.inkWashOpacity).toBe(0);
+    expect(f.sun.opacity).toBe(0);
+    expect(sceneFrame(1, g, "light").sun.opacity).toBeGreaterThan(0);
+    expect(f.figureX).toBeCloseTo(g.endX, 5);
+    // the beginning is the same night in both looks
+    expect(sceneFrame(0, g, "dark").day.sky).toEqual(NIGHT);
+    // the light look is the default and is unchanged
+    expect(sceneFrame(1, g).day.sky).toEqual(PAPER);
+    expect(sceneFrame(1, g, "light").inkWashOpacity).toBeCloseTo(0.16, 5);
   });
 
   it("the star lands where the figure starts, then melts into the newborn", () => {
@@ -343,15 +358,60 @@ describe("age along the walk", () => {
   });
 
   it("reaches each frame age at its stop, with the crawling child getting a real share", () => {
-    expect(ageAtWalk(0.1)).toBe(1);
-    expect(ageAtWalk(0.26)).toBe(12);
-    expect(ageAtWalk(0.67)).toBe(45);
-    expect(ageAtWalk(0.96)).toBe(80);
-    // more than a tenth of the walk happens before the child is one year old: the crawling frame is not a blink
-    expect(ageAtWalk(0.05)).toBeCloseTo(0.5, 5);
+    expect(ageAtWalk(0.16)).toBe(1);
+    expect(ageAtWalk(0.38)).toBe(12);
+    expect(ageAtWalk(0.68)).toBe(34);
+    expect(ageAtWalk(0.97)).toBe(80);
+    // the first years get over a third of the walk: the crawling child and the child are not a blink
+    expect(ageAtWalk(0.08)).toBeCloseTo(0.5, 5);
+    expect(ageAtWalk(0.38)).toBe(12);
   });
 
   it("keeps the frame ages sorted", () => {
     expect([...FRAME_AGES]).toEqual([...FRAME_AGES].sort((a, b) => a - b));
   });
 });
+
+describe("the galaxy behind the dark journey", () => {
+  it("is veiled thinly at the start, fully once the scene is over, and always fully in the light look", () => {
+    expect(galaxyVeil(0, "dark")).toBeCloseTo(0.55, 5);
+    expect(galaxyVeil(0.3, "dark")).toBeCloseTo(0.55, 5);
+    expect(galaxyVeil(1, "dark")).toBe(1);
+    let previous = 0;
+    for (let p = 0; p <= 1.0001; p += 0.02) {
+      const veil = galaxyVeil(p, "dark");
+      expect(veil).toBeGreaterThanOrEqual(previous - 1e-9);
+      previous = veil;
+    }
+    expect(galaxyVeil(0)).toBe(1);
+    expect(galaxyVeil(0.1, "light")).toBe(1);
+  });
+
+  it("draws no stars of its own in the dark look", () => {
+    expect(sceneFrame(0.2, g, "dark").starfieldAlpha).toBe(0);
+    expect(sceneFrame(0.2, g).starfieldAlpha).toBeGreaterThan(0);
+  });
+});
+
+describe("the twelve months of the dial", () => {
+  it("covers the whole year without a gap, in a leap year and a common year", () => {
+    for (const year of [2025, 2026, 2028]) {
+      const spans = monthSpans(year);
+      expect(spans).toHaveLength(12);
+      expect(spans[0]).toEqual({ month: 1, start: 0, days: 31 });
+      let next = 0;
+      for (const span of spans) {
+        expect(span.start).toBe(next);
+        next += span.days;
+      }
+      expect(next).toBe(daysInYear(year));
+    }
+    expect(monthSpans(2028)[1]!.days).toBe(29);
+    expect(monthSpans(2026)[1]!.days).toBe(28);
+  });
+
+  it("starts each month on the day index the dial uses", () => {
+    expect(monthSpans(2026)[9]).toEqual({ month: 10, start: dayIndexOf(2026, 10, 1), days: 31 });
+  });
+});
+

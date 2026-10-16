@@ -7,6 +7,7 @@ import { KitMount } from "@/components/fengshui/world/KitMount";
 import { WorldFooter } from "@/components/fengshui/world/WorldFooter";
 import { SkipLink } from "@/components/fengshui/world/SkipLink";
 import { WorldHeader } from "@/components/fengshui/world/WorldHeader";
+import { ThemeProvider } from "@/lib/theme";
 import { worldSans, worldSerif } from "../world-font";
 
 /**
@@ -18,10 +19,17 @@ const bootScript =
 
 export default function FengShuiLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
+    <ThemeProvider>
     <div className={`fs-world ${worldSerif.variable} ${worldSans.variable}`}>
       <script dangerouslySetInnerHTML={{ __html: bootScript }} />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link rel="stylesheet" href={hanFontHref()} precedence="default" />
+      <div className="fs-galaxy" aria-hidden="true">
+        <i className="fs-galaxy-stars fs-galaxy-stars-a" />
+        <i className="fs-galaxy-stars fs-galaxy-stars-b" />
+        <i className="fs-galaxy-stars fs-galaxy-stars-c" />
+        <i className="fs-galaxy-veil" />
+      </div>
       <KitMount />
       <SkipLink />
       <WorldHeader />
@@ -30,5 +38,6 @@ export default function FengShuiLayout({ children }: Readonly<{ children: React.
       </main>
       <WorldFooter />
     </div>
+    </ThemeProvider>
   );
 }

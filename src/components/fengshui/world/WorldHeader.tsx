@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FengShuiLanguageToggle } from "@/components/fengshui/FengShuiLanguage";
+import { WorldThemeToggle } from "@/components/fengshui/world/WorldThemeToggle";
 import { siteContent } from "@/content/site-content";
 
 /**
@@ -19,7 +20,7 @@ export function WorldHeader() {
   return (
     <header className="fs-header">
       <div className="fs-header-inner">
-        <Link href="/" className="fs-brand">
+        <Link href="/" prefetch={false} className="fs-brand">
           tommitoan
         </Link>
         <nav aria-label="Primary" className="fs-nav">
@@ -34,7 +35,10 @@ export function WorldHeader() {
             );
           })}
         </nav>
-        <FengShuiLanguageToggle />
+        <div className="fs-header-tools">
+          <WorldThemeToggle />
+          <FengShuiLanguageToggle />
+        </div>
       </div>
     </header>
   );
