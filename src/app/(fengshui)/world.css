@@ -1720,6 +1720,8 @@
 .fs-skip:focus { top: .6rem; }
 .fs-world main:focus { outline: none; }
 .fs-error { min-height: 70vh; display: flex; align-items: center; }
+/* An error or a missing page has no journey to replay, so the footer's replay row is left out. */
+.fs-world:has(.fs-error) .fs-replay-row { display: none; }
 
 /* The page fills the window: on a short page (the 404 page) the footer sits at the bottom and the last
    section grows to meet it, instead of leaving a dark band under the footer. */

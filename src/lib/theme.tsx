@@ -1,8 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-
-type Theme = "dark" | "light";
+import { readStoredTheme, resolveTheme, safeLocalStorage, saveTheme, type Theme } from "./theme-storage";
 
 type ThemeContextValue = {
   theme: Theme;
@@ -12,18 +11,18 @@ type ThemeContextValue = {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-const STORAGE_KEY = "tommitoan-theme";
-
-function getSystemTheme(): Theme {
-  if (typeof window === "undefined") return "dark";
-  return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+function systemPrefersLight(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.matchMedia("(prefers-color-scheme: light)").matches;
+  } catch {
+    return false;
+  }
 }
 
 function getInitialTheme(): Theme {
   if (typeof window === "undefined") return "dark";
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored === "light" || stored === "dark") return stored;
-  return getSystemTheme();
+  return resolveTheme(readStoredTheme(safeLocalStorage()), systemPrefersLight());
 }
 
 function applyTheme(theme: Theme) {
@@ -35,29 +34,32 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     applyTheme(theme);
-    localStorage.setItem(STORAGE_KEY, theme);
   }, [theme]);
 
+  // Without a saved choice the page follows the system setting while it is open.
   useEffect(() => {
-    const mq = window.matchMedia("(prefers-color-scheme: light)");
-    const handler = (e: MediaQueryListEvent) => {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (!stored) {
-        const next = e.matches ? "light" : "dark";
-        setThemeState(next);
-      }
+    let query: MediaQueryList;
+    try {
+      query = window.matchMedia("(prefers-color-scheme: light)");
+    } catch {
+      return;
+    }
+    const handler = (event: MediaQueryListEvent) => {
+      if (readStoredTheme(safeLocalStorage()) === null) setThemeState(event.matches ? "light" : "dark");
     };
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
+    query.addEventListener("change", handler);
+    return () => query.removeEventListener("change", handler);
   }, []);
 
+  // Only a deliberate choice is saved, so the first visit does not turn the system's pick into the visitor's.
   const setTheme = useCallback((next: Theme) => {
     setThemeState(next);
+    saveTheme(safeLocalStorage(), next);
   }, []);
 
   const toggleTheme = useCallback(() => {
-    setThemeState((prev) => (prev === "dark" ? "light" : "dark"));
-  }, []);
+    setTheme(theme === "dark" ? "light" : "dark");
+  }, [theme, setTheme]);
 
   const value = useMemo(() => ({ theme, setTheme, toggleTheme }), [theme, setTheme, toggleTheme]);
 

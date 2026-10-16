@@ -4,6 +4,10 @@ server {
   root /usr/share/nginx/html;
   index index.html;
 
+  # Redirects Nginx makes itself (a missing trailing slash) stay relative, so they do not name this container's port
+  # when a proxy or a TLS terminator sits in front.
+  absolute_redirect off;
+
   # Compress text assets; the static export is mostly HTML, JS, CSS and RSC payloads (.txt).
   gzip on;
   gzip_vary on;

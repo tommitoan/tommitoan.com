@@ -95,7 +95,7 @@ Homepage scene configuration lives in `src/components/gateway/gatewayHomeConfig.
 ### Page backgrounds
 
 - The `(content)` layout provides a shared space background + overlay for `/tech`, `/discover`, `/fengshui`.
-- The `/tech` page adds its own `tech-bg.png` fixed background and a custom star canvas config — these override the layout background intentionally.
+- The `/tech` page adds its own `tech-bg.webp` fixed background and a custom star canvas config — these override the layout background intentionally.
 - The gateway (`/`) manages its own full-screen background independently.
 
 ## Blog and About (moved)

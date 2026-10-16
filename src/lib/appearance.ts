@@ -11,9 +11,13 @@ function subscribe(listener: () => void): () => void {
   return () => observer.disconnect();
 }
 
-function snapshot(): Appearance {
-  const root = document.documentElement;
+/** The look a page root says it is in: `data-kit-appearance` wins over `data-theme`; anything but "light" is dark. */
+export function readAppearance(root: { dataset: DOMStringMap }): Appearance {
   return (root.dataset.kitAppearance ?? root.dataset.theme) === "light" ? "light" : "dark";
+}
+
+function snapshot(): Appearance {
+  return readAppearance(document.documentElement);
 }
 
 /**
