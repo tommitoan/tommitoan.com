@@ -21,10 +21,39 @@ export const LUCK_PILLARS = [
 /** The four pillars of the sample chart: year, month, day, hour. */
 export const SAMPLE_PILLARS = ["乙亥", "戊子", "甲午", "庚午"] as const;
 
-/** Ages of the six character frames in public/fengshui/char, as age-NN.webp. */
-export const FRAME_AGES = [0, 12, 22, 45, 62, 80] as const;
+/** Ages of the eight character frames in public/fengshui/char, as age-NN.webp (age 1 is the crawling child). */
+export const FRAME_AGES = [0, 1, 12, 22, 34, 45, 62, 80] as const;
 
 export const LIFE_SPAN = 85;
+
+/**
+ * How far through the walk (0 to 1) each frame age is reached. The stops are not evenly spread: the first years get a
+ * generous share, so the crawling child is on screen long enough to be seen, and every frame holds for a while.
+ */
+const AGE_STOPS: ReadonlyArray<readonly [walk: number, age: number]> = [
+  [0, 0],
+  [0.1, 1],
+  [0.26, 12],
+  [0.4, 22],
+  [0.54, 34],
+  [0.67, 45],
+  [0.82, 62],
+  [0.96, 80],
+  [1, LIFE_SPAN],
+];
+
+/** Age (0 to 85) at a point of the walk: straight lines between the stops, so every frame keeps its share of the scroll. */
+export function ageAtWalk(walk: number): number {
+  const t = clamp(walk, 0, 1);
+  for (let i = 1; i < AGE_STOPS.length; i += 1) {
+    const [w1, a1] = AGE_STOPS[i]!;
+    if (t <= w1) {
+      const [w0, a0] = AGE_STOPS[i - 1]!;
+      return lerp(a0, a1, (t - w0) / (w1 - w0));
+    }
+  }
+  return LIFE_SPAN;
+}
 
 export interface Point {
   x: number;
@@ -119,7 +148,7 @@ export function sceneFrame(progress: number, g: SceneGeometry): SceneFrame {
 
   const figureVisible = smoothstep(seg(p, 0.46, 0.54));
   const walk = seg(p, 0.62, 0.98);
-  const age = LIFE_SPAN * smoothstep(walk);
+  const age = ageAtWalk(walk);
   const figureX = lerp(g.startX, g.endX, age / LIFE_SPAN);
 
   const seal = (i: number): number => smoothstep(seg(p, 0.5 + i * 0.025, 0.58 + i * 0.025));

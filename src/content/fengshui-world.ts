@@ -112,8 +112,8 @@ export type WorldCopy = {
     animalLabel: string;
     hoursLabel: string;
     ringLabel: string;
-    /** Where the pillar stands in the cycle, with {n} for its number from 1 to 60. */
-    ringCaption: string;
+    /** The element of the pillar's Nạp Âm under its name, with {element}. */
+    ringElement: string;
     hint: string;
     note: string;
     /** What each place is used for in reading: a line for the stem and one for the branch of each pillar. */
@@ -221,10 +221,10 @@ const vi: WorldCopy = {
     note: "Hình tượng chỉ để ghi nhớ, không phải kết luận về ai. Tên Nạp Âm và cách giải theo truyền thống có nhiều dị bản.",
   },
   anatomy: {
-    eyebrow: "Giải phẫu",
+    eyebrow: "Luận giải",
     title: "Tám chữ của một lá số",
     description:
-      "Một lá số có bốn trụ, mỗi trụ là một Thiên Can nằm trên một Địa Chi: tám chữ. Rê chuột vào từng chữ để xem nó là gì và dùng để đọc điều gì. Vòng bên cạnh cho thấy cặp can chi đó đứng ở đâu trong sáu mươi cặp.",
+      "Một lá số có bốn trụ, mỗi trụ là một Thiên Can nằm trên một Địa Chi: tám chữ. Rê chuột vào từng chữ để xem nó là gì và dùng để đọc điều gì. Vòng bên cạnh cho thấy cặp can chi đó nằm ở đâu trong sáu mươi cặp, cùng Nạp Âm và ngũ hành của nó.",
     chartLabel: "Bốn trụ của lá số mẫu, tám chữ",
     stemRow: "Thiên Can",
     branchRow: "Địa Chi",
@@ -233,7 +233,7 @@ const vi: WorldCopy = {
     animalLabel: "Con giáp",
     hoursLabel: "Giờ",
     ringLabel: "Vòng sáu mươi cặp can chi, đánh dấu bốn trụ của lá số mẫu",
-    ringCaption: "Thứ {n} trong 60",
+    ringElement: "Hành {element}",
     hint: "Tự chạy mỗi vài giây; rê chuột vào một chữ để chọn và giữ lại.",
     note: "Cách gắn mỗi vị trí với đời sống là quy ước truyền thống, dùng để học cách đọc, không phải kết luận về ai.",
     roles: [
@@ -355,10 +355,10 @@ const en: WorldCopy = {
     note: "The imagery is only for remembering, not a verdict on anyone. Nayin names and their traditional explanations have many variants.",
   },
   anatomy: {
-    eyebrow: "Anatomy",
+    eyebrow: "Reading",
     title: "The eight characters of a chart",
     description:
-      "A chart has four pillars, each a heavenly stem over an earthly branch: eight characters. Move over each one to see what it is and what it is used for in reading. The ring beside it shows where that pair stands among the sixty.",
+      "A chart has four pillars, each a heavenly stem over an earthly branch: eight characters. Move over each one to see what it is and what it is used for in reading. The ring beside it shows where that pair stands among the sixty, with its Nayin and element.",
     chartLabel: "The four pillars of the sample chart, eight characters",
     stemRow: "Heavenly stem",
     branchRow: "Earthly branch",
@@ -367,7 +367,7 @@ const en: WorldCopy = {
     animalLabel: "Animal",
     hoursLabel: "Hours",
     ringLabel: "The ring of sixty stem and branch pairs, with the four pillars of the sample chart marked",
-    ringCaption: "No. {n} of 60",
+    ringElement: "{element} element",
     hint: "It moves on by itself every few seconds; move over a character to pick it and hold it.",
     note: "Tying each place to areas of life is a traditional convention, used here to learn how to read, not a verdict on anyone.",
     roles: [

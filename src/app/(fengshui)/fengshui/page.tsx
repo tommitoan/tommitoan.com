@@ -50,12 +50,12 @@ export default function FengShuiPage() {
       <DayMaster />
       <Branches />
       <Anatomy />
+      <Marquee />
       <NaYin />
       <FengShuiBasicsSection />
       <FengShuiPillarsSection />
       <FengShuiLanesSection />
       <FengShuiPrinciplesSection />
-      <Marquee />
       <FengShuiLinksSection />
     </>
   );

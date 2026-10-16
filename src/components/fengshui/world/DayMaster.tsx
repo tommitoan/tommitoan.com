@@ -106,22 +106,29 @@ export function DayMaster() {
           </div>
 
           <div className="fs-dm-picker" role="group" aria-label={copy.pickerLabel}>
-            {STEMS.map((stem, index) => (
-              <button
-                key={stem.vi}
-                type="button"
-                className="fs-dm-tile"
-                aria-pressed={index === selected}
-                onPointerEnter={(event) => event.pointerType === "mouse" && setSelected(index)}
-                onFocus={() => setSelected(index)}
-                onClick={() => setSelected(index)}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element -- small watercolour of the stem */}
-                <img src={stemImage(index)} alt="" width={56} height={55} loading="lazy" decoding="async" />
-                <span>{stemName(stem, language)}</span>
-                {index === selected ? <i className="fs-dm-timer" data-running={playing ? "true" : "false"} aria-hidden="true" /> : null}
-              </button>
-            ))}
+            <div className="fs-dm-track" data-paused={held ? "true" : undefined}>
+              {[false, true].map((clone) =>
+                STEMS.map((stem, index) => (
+                  <button
+                    key={`${clone ? "b" : "a"}${stem.vi}`}
+                    type="button"
+                    className="fs-dm-tile"
+                    data-clone={clone ? "true" : undefined}
+                    aria-hidden={clone ? true : undefined}
+                    tabIndex={clone ? -1 : undefined}
+                    aria-pressed={index === selected}
+                    onPointerEnter={(event) => event.pointerType === "mouse" && setSelected(index)}
+                    onFocus={() => setSelected(index)}
+                    onClick={() => setSelected(index)}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element -- small watercolour of the stem */}
+                    <img src={stemImage(index)} alt="" width={56} height={55} loading="lazy" decoding="async" />
+                    <span>{stemName(stem, language)}</span>
+                    {index === selected ? <i className="fs-dm-timer" data-running={playing ? "true" : "false"} aria-hidden="true" /> : null}
+                  </button>
+                )),
+              )}
+            </div>
           </div>
         </div>
 

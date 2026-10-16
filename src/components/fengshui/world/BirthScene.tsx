@@ -95,8 +95,8 @@ function ScrollScene() {
 
       ctx.clearRect(0, 0, geometry.width, geometry.height);
       drawStarfield(ctx, geometry.width, geometry.height, stars, time, frame.starfieldAlpha);
-      drawGuidingStar(ctx, frame, curve, curve[3], 1 + 0.12 * Math.sin(time / 200));
-      starLabel.style.transform = `translate(${frame.star.point.x + 16}px, ${frame.star.point.y - 12}px)`;
+      drawGuidingStar(ctx, frame, curve, curve[3], 1 + 0.2 * Math.sin(time / 170) + 0.06 * Math.sin(time / 53), time);
+      starLabel.style.transform = `translate(${frame.star.point.x + 30}px, ${frame.star.point.y + 22}px)`;
       starLabel.style.opacity = String(frame.star.labelOpacity);
 
       sun.style.width = `${frame.sun.size}px`;
@@ -288,6 +288,7 @@ function ScrollScene() {
           <small>{copy.thirdSmall}</small>
         </div>
         <span ref={starLabelRef} className="fs-scene-starlabel">
+          <i aria-hidden="true">✦</i>
           {copy.starLabel}
         </span>
       </div>

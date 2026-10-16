@@ -3,9 +3,11 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useFengShuiLanguage, useFengShuiWorldCopy } from "@/components/fengshui/FengShuiLanguage";
 import { BRANCHES, branchKind, branchName } from "@/content/fengshui-branches";
-import { stemKind, stemName, STEMS } from "@/content/fengshui-stems";
+import { NAYIN } from "@/content/fengshui-nayin";
+import { ELEMENT_NAMES, stemKind, stemName, STEMS } from "@/content/fengshui-stems";
 import { parsePillar, ringPoint, SAMPLE_CYCLE, SLOTS } from "./anatomy-math";
 import { elementColor } from "./elements";
+import { nayinOfPair } from "./nayin-math";
 import { RevealHeading } from "./RevealHeading";
 import { SAMPLE_PILLARS } from "./scene-math";
 import { useReducedMotion } from "./use-reduced-motion";
@@ -56,6 +58,7 @@ export function Anatomy() {
   const role = copy.roles[slot.pillar]![slot.part];
   const pillarLabel = `${stemName(stemInfo, language)} ${branchName(pillar.branch, language)}`;
   const focus = SAMPLE_CYCLE[slot.pillar]!;
+  const nayinInfo = NAYIN[nayinOfPair(focus)]!;
 
   const renderRow = (part: "stem" | "branch") => (
       <Fragment key={part}>
@@ -89,7 +92,7 @@ export function Anatomy() {
   );
 
   return (
-    <section ref={sectionRef} className="fs-band fs-band-paper fs-an" data-kit-section="Giải phẫu / Anatomy" aria-label={copy.title}>
+    <section ref={sectionRef} className="fs-band fs-band-paper fs-an" data-kit-section="Luận giải / Reading" aria-label={copy.title}>
       <div className="fs-wrap">
         <span className="fs-eyebrow">{copy.eyebrow}</span>
         <RevealHeading className="fs-title">{copy.title}</RevealHeading>
@@ -144,7 +147,7 @@ export function Anatomy() {
           <figure className="fs-an-ring">
             <svg viewBox="-110 -110 220 220" role="img" aria-label={copy.ringLabel}>
               <g className="fs-an-hand" style={{ transform: `rotate(${focus * 6}deg)` }}>
-                <line x1="0" y1="-22" x2="0" y2="-70" />
+                <line x1="0" y1="-38" x2="0" y2="-70" />
               </g>
               {Array.from({ length: 60 }, (_, n) => {
                 const point = ringPoint(n, 80);
@@ -160,11 +163,14 @@ export function Anatomy() {
                   </text>
                 );
               })}
-              <text className="fs-an-center" x="0" y="-4" textAnchor="middle">
+              <text className="fs-an-center" x="0" y="-9" textAnchor="middle">
                 {pillarLabel}
               </text>
-              <text className="fs-an-center-sub" x="0" y="16" textAnchor="middle">
-                {copy.ringCaption.replace("{n}", String(focus + 1))}
+              <text className="fs-an-center-nayin" x="0" y="8" textAnchor="middle">
+                {language === "en" ? nayinInfo.label : nayinInfo.name}
+              </text>
+              <text className="fs-an-center-sub" x="0" y="21" textAnchor="middle">
+                {copy.ringElement.replace("{element}", ELEMENT_NAMES[nayinInfo.element][language])}
               </text>
             </svg>
             <figcaption className="fs-note">{copy.hint}</figcaption>
