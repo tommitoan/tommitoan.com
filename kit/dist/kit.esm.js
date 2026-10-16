@@ -1,4 +1,4 @@
-/* tommitoan kit 0.8.0 */
+/* tommitoan kit 0.9.0 */
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -2065,7 +2065,7 @@ function createTransitions(options) {
 }
 
 // kit/src/version.ts
-var KIT_VERSION = "0.8.0";
+var KIT_VERSION = "0.9.0";
 
 // kit/src/wash.ts
 function mountWash(tier) {
