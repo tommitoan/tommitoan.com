@@ -3,7 +3,7 @@ import { INK_NIGHT, NIGHT, PAPER } from "@kit/color";
 import { SOLAR_TERMS_VI } from "@kit/solar";
 import { arcPath, dayForLongitude, dayIndexOf, daysInYear, daysPerSecond, dialDay, dialState, isMonthOpener, JIE_INDEXES, longitudeAt, radialLabel, ringPoint, SOLAR_TERMS_HAN } from "./dial-math";
 import { marqueeAdvance, marqueeSkew, sixtyCycle, smoothVelocity } from "./marquee-math";
-import { ageAtWalk, bezier, easeToward, FRAME_AGES, LIFE_SPAN, luckMarkX, LUCK_PILLARS, pinProgress, sceneFrame, sceneGeometry, starCurve } from "./scene-math";
+import { ageAtWalk, bezier, easeToward, FRAME_AGES, galaxyVeil, LIFE_SPAN, luckMarkX, LUCK_PILLARS, pinProgress, sceneFrame, sceneGeometry, starCurve } from "./scene-math";
 import { ringRotation, storyStep, storyView } from "./story-math";
 
 const g = sceneGeometry(1200, 760);
@@ -358,15 +358,38 @@ describe("age along the walk", () => {
   });
 
   it("reaches each frame age at its stop, with the crawling child getting a real share", () => {
-    expect(ageAtWalk(0.1)).toBe(1);
-    expect(ageAtWalk(0.26)).toBe(12);
-    expect(ageAtWalk(0.67)).toBe(45);
-    expect(ageAtWalk(0.96)).toBe(80);
-    // more than a tenth of the walk happens before the child is one year old: the crawling frame is not a blink
-    expect(ageAtWalk(0.05)).toBeCloseTo(0.5, 5);
+    expect(ageAtWalk(0.16)).toBe(1);
+    expect(ageAtWalk(0.38)).toBe(12);
+    expect(ageAtWalk(0.68)).toBe(34);
+    expect(ageAtWalk(0.97)).toBe(80);
+    // the first years get over a third of the walk: the crawling child and the child are not a blink
+    expect(ageAtWalk(0.08)).toBeCloseTo(0.5, 5);
+    expect(ageAtWalk(0.38)).toBe(12);
   });
 
   it("keeps the frame ages sorted", () => {
     expect([...FRAME_AGES]).toEqual([...FRAME_AGES].sort((a, b) => a - b));
   });
 });
+
+describe("the galaxy behind the dark journey", () => {
+  it("is veiled thinly at the start, fully once the scene is over, and always fully in the light look", () => {
+    expect(galaxyVeil(0, "dark")).toBeCloseTo(0.3, 5);
+    expect(galaxyVeil(0.3, "dark")).toBeCloseTo(0.3, 5);
+    expect(galaxyVeil(1, "dark")).toBe(1);
+    let previous = 0;
+    for (let p = 0; p <= 1.0001; p += 0.02) {
+      const veil = galaxyVeil(p, "dark");
+      expect(veil).toBeGreaterThanOrEqual(previous - 1e-9);
+      previous = veil;
+    }
+    expect(galaxyVeil(0)).toBe(1);
+    expect(galaxyVeil(0.1, "light")).toBe(1);
+  });
+
+  it("draws no stars of its own in the dark look", () => {
+    expect(sceneFrame(0.2, g, "dark").starfieldAlpha).toBe(0);
+    expect(sceneFrame(0.2, g).starfieldAlpha).toBeGreaterThan(0);
+  });
+});
+

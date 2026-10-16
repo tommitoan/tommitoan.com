@@ -1,4 +1,4 @@
-/* tommitoan kit 0.7.0 */
+/* tommitoan kit 0.8.0 */
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -173,8 +173,26 @@ function skyColor(progress, appearance = "light") {
   return stops[stops.length - 1][1];
 }
 var textMix = (lum) => smoothstep(seg(lum, 100, 140));
+var DARK_SKY_ALPHA = [
+  [0, 0],
+  [0.2, 0.15],
+  [0.42, 0.55],
+  [0.5, 0.62],
+  [0.62, 0.35],
+  [0.75, 0],
+  [1, 0]
+];
 function skyAlpha(progress, appearance = "light") {
-  return appearance === "dark" ? 1 - smoothstep(seg(progress, 0.5, 0.75)) : 1;
+  if (appearance !== "dark") return 1;
+  const p = clamp(progress, 0, 1);
+  for (let i = 1; i < DARK_SKY_ALPHA.length; i++) {
+    const [p1, a1] = DARK_SKY_ALPHA[i];
+    if (p <= p1) {
+      const [p0, a0] = DARK_SKY_ALPHA[i - 1];
+      return lerp(a0, a1, smoothstep(seg(p, p0, p1)));
+    }
+  }
+  return 0;
 }
 function dayState(progress, appearance = "light") {
   const p = clamp(progress, 0, 1);
@@ -2047,7 +2065,7 @@ function createTransitions(options) {
 }
 
 // kit/src/version.ts
-var KIT_VERSION = "0.7.0";
+var KIT_VERSION = "0.8.0";
 
 // kit/src/wash.ts
 function mountWash(tier) {

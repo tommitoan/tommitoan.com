@@ -384,7 +384,7 @@
 /* Birth scene (pinned) */
 .fs-scene {
   position: relative;
-  height: 520svh;
+  height: 600svh;
 }
 .fs-scene-stage {
   position: sticky;
@@ -2462,17 +2462,26 @@ html[data-kit-appearance="dark"] .fs-galaxy::before {
   /* Paler and whiter than the home page's galaxy: less colour, a lot more light. */
   filter: saturate(0.6) brightness(1.4) contrast(0.95);
 }
-/* A cool white haze like the atmosphere of the Feng Shui planet, and a deep-ink veil that keeps the text readable. */
+/* A cool white haze like the atmosphere of the Feng Shui planet. */
 html[data-theme="dark"] .fs-galaxy::after,
 html[data-kit-appearance="dark"] .fs-galaxy::after {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 3;
   background:
     radial-gradient(ellipse 80% 50% at 50% -6%, rgba(226, 234, 255, 0.22), rgba(226, 234, 255, 0) 70%),
     radial-gradient(ellipse 55% 45% at 88% 72%, rgba(214, 224, 250, 0.1), rgba(214, 224, 250, 0) 70%),
-    radial-gradient(ellipse 50% 40% at 8% 60%, rgba(206, 220, 255, 0.08), rgba(206, 220, 255, 0) 70%),
-    linear-gradient(to bottom, rgba(14, 17, 40, 0.76), rgba(14, 17, 40, 0.7) 45%, rgba(14, 17, 40, 0.8));
+    radial-gradient(ellipse 50% 40% at 8% 60%, rgba(206, 220, 255, 0.08), rgba(206, 220, 255, 0) 70%);
+}
+/* The deep-ink veil that keeps the text readable, over the stars. Its strength is a variable: the birth scene thins it at the start
+   of the journey, so the galaxy is brighter and clearer where the guiding star falls, and it is full everywhere else. */
+.fs-galaxy-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(to bottom, rgba(14, 17, 40, 0.76), rgba(14, 17, 40, 0.7) 45%, rgba(14, 17, 40, 0.8));
+  opacity: var(--fs-veil, 1);
 }
 /* Stars: one picture of stars (public/fengshui/stars.webp, it tiles without a seam) in three layers that drift all the time, each
    at its own size, speed and direction, like the stars of the home page. A layer is a little larger than the screen by one tile
@@ -2495,20 +2504,20 @@ html[data-kit-appearance="dark"] .fs-galaxy::after {
 }
 .fs-galaxy-stars-a {
   opacity: 0.4;
-  animation: fs-galaxy-drift-a 240s linear infinite;
+  animation: fs-galaxy-drift-a 85s linear infinite;
 }
 .fs-galaxy-stars-b {
   --tw: 800px;
   --th: 533px;
   opacity: 0.3;
   background-position: 310px 190px;
-  animation: fs-galaxy-drift-b 170s linear infinite;
+  animation: fs-galaxy-drift-b 60s linear infinite;
 }
 .fs-galaxy-stars-c {
   --tw: 1500px;
   --th: 1000px;
   background-position: 520px 410px;
-  animation: fs-galaxy-drift-c 420s linear infinite, fs-galaxy-twinkle 9s ease-in-out infinite;
+  animation: fs-galaxy-drift-c 150s linear infinite, fs-galaxy-twinkle 7s ease-in-out infinite;
 }
 @keyframes fs-galaxy-drift-a {
   to {
@@ -2573,5 +2582,10 @@ html[data-kit-appearance="dark"] .fs-ny-info,
 html[data-kit-appearance="dark"] .fs-term {
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
+}
+/* In the dark look the galaxy is the scene's sky: the scene's own haze and star dust are not needed. */
+html[data-theme="dark"] .fs-scene-haze,
+html[data-kit-appearance="dark"] .fs-scene-haze {
+  display: none;
 }
 

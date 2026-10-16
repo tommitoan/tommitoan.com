@@ -28,6 +28,7 @@ export default function FengShuiLayout({ children }: Readonly<{ children: React.
         <i className="fs-galaxy-stars fs-galaxy-stars-a" />
         <i className="fs-galaxy-stars fs-galaxy-stars-b" />
         <i className="fs-galaxy-stars fs-galaxy-stars-c" />
+        <i className="fs-galaxy-veil" />
       </div>
       <KitMount />
       <SkipLink />

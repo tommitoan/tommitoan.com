@@ -72,11 +72,31 @@ export function skyColor(progress: number, appearance: Appearance = "light"): RG
 export const textMix = (lum: number): number => smoothstep(seg(lum, 100, 140));
 
 /**
- * How opaque the sky is. The light look is always opaque. The dark look lets the sky thin out as the journey settles, so a page
- * that has its own background behind (a galaxy, for instance) shows through at the end instead of meeting a flat colour.
+ * How opaque the sky is. The light look is always opaque. The dark look lays its colours over whatever is behind (a galaxy, for
+ * instance): clear at the start, a veil of dusk and dawn colour in the middle, clear again at the end, so the page's own background
+ * is what the visitor sees at both ends and the journey is a tint passing over it.
  */
+const DARK_SKY_ALPHA: ReadonlyArray<readonly [number, number]> = [
+  [0, 0],
+  [0.2, 0.15],
+  [0.42, 0.55],
+  [0.5, 0.62],
+  [0.62, 0.35],
+  [0.75, 0],
+  [1, 0],
+];
+
 export function skyAlpha(progress: number, appearance: Appearance = "light"): number {
-  return appearance === "dark" ? 1 - smoothstep(seg(progress, 0.5, 0.75)) : 1;
+  if (appearance !== "dark") return 1;
+  const p = clamp(progress, 0, 1);
+  for (let i = 1; i < DARK_SKY_ALPHA.length; i++) {
+    const [p1, a1] = DARK_SKY_ALPHA[i];
+    if (p <= p1) {
+      const [p0, a0] = DARK_SKY_ALPHA[i - 1];
+      return lerp(a0, a1, smoothstep(seg(p, p0, p1)));
+    }
+  }
+  return 0;
 }
 
 export interface DayState {

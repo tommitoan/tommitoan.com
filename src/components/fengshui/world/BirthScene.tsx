@@ -7,7 +7,7 @@ import { createDayCycle } from "@kit/day-cycle";
 import { useFengShuiWorldCopy } from "@/components/fengshui/FengShuiLanguage";
 import { elementColor } from "./elements";
 import { drawGuidingStar, drawStarfield, makeStars } from "./scene-canvas";
-import { easeToward, FRAME_AGES, LUCK_PILLARS, luckMarkX, pinProgress, SAMPLE_PILLARS, sceneFrame, sceneGeometry, starCurve, type SceneGeometry } from "./scene-math";
+import { easeToward, FRAME_AGES, galaxyVeil, LUCK_PILLARS, luckMarkX, pinProgress, SAMPLE_PILLARS, sceneFrame, sceneGeometry, starCurve, type SceneGeometry } from "./scene-math";
 import { ScrollCue } from "./ScrollCue";
 import { StaticLife } from "./StaticLife";
 import { useWorldMode } from "./use-world-mode";
@@ -65,6 +65,8 @@ function ScrollScene() {
     if (!wrapper || !stage || !canvas || !ctx || !haze || !ink || !vignette || !glow || !sun || !base || !trail || !shadow || !figureA || !figureB || !starLabel || !cue) return;
 
     const dayCycle = createDayCycle({ paintBody: false, root: wrapper });
+    // The page's galaxy (a fixed layer outside this section): thinner veil at the start of the dark journey, so it is brighter.
+    const galaxy = document.querySelector<HTMLElement>(".fs-galaxy");
     const stars = makeStars(340);
     const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
     let geometry: SceneGeometry = sceneGeometry(stage.clientWidth, stage.clientHeight);
@@ -93,6 +95,7 @@ function ScrollScene() {
     const paint = (progress: number, time: number) => {
       const frame = sceneFrame(progress, geometry, appearanceRef.current);
       dayCycle.render(progress, appearanceRef.current);
+      galaxy?.style.setProperty("--fs-veil", galaxyVeil(progress, appearanceRef.current).toFixed(3));
 
       haze.style.opacity = String(frame.nebulaOpacity);
       ink.style.opacity = String(frame.inkWashOpacity);
@@ -211,6 +214,7 @@ function ScrollScene() {
       resizeObserver.disconnect();
       if (frameHandle) window.cancelAnimationFrame(frameHandle);
       repaintRef.current = null;
+      galaxy?.style.removeProperty("--fs-veil");
       dayCycle.destroy();
     };
   }, []);

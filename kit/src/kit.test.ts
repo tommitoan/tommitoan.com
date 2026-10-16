@@ -43,17 +43,19 @@ describe("colour math", () => {
     expect(skyColor(0.5)).toEqual(skyColor(0.5, "light"));
   });
 
-  it("the dark sky is opaque at first and thins out to nothing; the light sky is always opaque", () => {
-    expect(skyAlpha(0, "dark")).toBe(1);
-    expect(skyAlpha(0.5, "dark")).toBe(1);
-    expect(skyAlpha(0.75, "dark")).toBe(0);
+  it("the dark sky is clear at both ends and a veil in the middle; the light sky is always opaque", () => {
+    expect(skyAlpha(0, "dark")).toBe(0);
     expect(skyAlpha(1, "dark")).toBe(0);
-    let previous = 2;
+    expect(skyAlpha(0.75, "dark")).toBe(0);
+    expect(skyAlpha(0.5, "dark")).toBeCloseTo(0.62, 5);
+    // it never covers what is behind completely, and rises then falls
+    let peak = 0;
     for (let p = 0; p <= 1.0001; p += 0.02) {
       const alpha = skyAlpha(p, "dark");
-      expect(alpha).toBeLessThanOrEqual(previous + 1e-9);
-      previous = alpha;
+      expect(alpha).toBeLessThanOrEqual(0.62 + 1e-9);
+      peak = Math.max(peak, alpha);
     }
+    expect(peak).toBeGreaterThan(0.55);
     for (let p = 0; p <= 1; p += 0.25) expect(skyAlpha(p, "light")).toBe(1);
     expect(skyAlpha(0.6)).toBe(1);
   });
