@@ -281,9 +281,9 @@ export const gatewayHomeConfig = {
     glowStrength: 4.8,
   } satisfies GatewayLoaderConfig,
   transitions: {
-    routeDelayMs: 2400,
+    routeDelayMs: 3300,
     reducedMotionRouteDelayMs: 120,
-    zoomDurationSeconds: 1.4,
+    zoomDurationSeconds: 1.9,
     zoomScale: 3.5,
     zoomOffsetXByPortal: {
       tech: "40vw",
@@ -291,7 +291,7 @@ export const gatewayHomeConfig = {
       fengshui: "-40vw",
     } satisfies Record<GatewayHomeId, string>,
     zoomOffsetY: "30vh",
-    flashDelaySeconds: 2.0,
+    flashDelaySeconds: 2.8,
     flashDurationSeconds: 0.4,
   },
   row: {
@@ -359,6 +359,8 @@ export const gatewayHomeConfig = {
     assetSrc: "/gateway/characters/astronaut.webp",
     /** The astronaut facing the visitor, shown while he introduces a portal. Same canvas as assetSrc (1024 x 1536, transparent). */
     frontAssetSrc: "/gateway/characters/astronaut-front.webp",
+    /** The astronaut facing the visitor while a portal pulls him in: arms and legs reaching toward the camera. Same canvas again. */
+    pulledAssetSrc: "/gateway/characters/astronaut-pulled.webp",
     /** While he talks he turns round, grows and steps to one side: x is the distance from the middle (world units). */
     talk: { scale: 5.6, x: 2.15, y: -1.3 },
     camera: {
@@ -387,13 +389,14 @@ export const gatewayHomeConfig = {
       poseTiltSpeedX: 0.4,
     },
     warp: {
-      progressDamping: 1.5,
+      progressDamping: 1.0,
       targetOffsetX: 2.5,
       endY: 1.5,
       endZ: -3.8,
       endScale: 0.2,
-      spinSpeedZ: 5,
-      spinSpeedX: 3,
+      /** He keeps facing the visitor while he is pulled backward into the portal: a lean toward its side and a small wobble (radians). */
+      lean: 0.32,
+      wobble: 0.05,
     },
   },
   portals: [

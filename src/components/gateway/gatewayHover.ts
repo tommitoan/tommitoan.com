@@ -41,3 +41,14 @@ export function turnSquash(progress: number): number {
 export function canGuide(viewportWidth: number, reducedMotion: boolean): boolean {
   return !reducedMotion && viewportWidth >= 768;
 }
+
+/**
+ * How the astronaut is carried while he is pulled into a portal: he keeps facing the visitor, leans a little toward the side of
+ * the portal (`direction` is -1, 0 or 1) as the pull grows, and struggles with a small, quickening wobble. Returns the tilt in
+ * radians. `progress` is the pull, 0 to 1; `timeSeconds` drives the wobble.
+ */
+export function pulledTilt(direction: number, progress: number, timeSeconds: number, lean = 0.32, wobble = 0.05): number {
+  const p = Math.min(1, Math.max(0, progress));
+  return -direction * lean * p + Math.sin(timeSeconds * (10 + 14 * p)) * wobble * p;
+}
+

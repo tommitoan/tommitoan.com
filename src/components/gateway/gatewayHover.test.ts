@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { astronautSide, canGuide, expandedWidth, globeOpacity, turnSquash, typedText } from "./gatewayHover";
+import { astronautSide, canGuide, expandedWidth, globeOpacity, pulledTilt, turnSquash, typedText } from "./gatewayHover";
 
 describe("window width", () => {
   it("multiplies any CSS length, including a clamp()", () => {
@@ -49,3 +49,23 @@ describe("when the guide runs", () => {
     expect(canGuide(1440, true)).toBe(false);
   });
 });
+
+describe("being pulled into a portal", () => {
+  it("does not tilt before the pull starts", () => {
+    expect(pulledTilt(1, 0, 3)).toBeCloseTo(0, 10);
+    expect(pulledTilt(-1, 0, 7)).toBeCloseTo(0, 10);
+  });
+
+  it("leans toward the portal's side, and not at all for the middle one", () => {
+    // with the wobble at zero the lean is exact: left (-1) leans one way, right (1) the other
+    expect(pulledTilt(1, 1, 0, 0.3, 0)).toBeCloseTo(-0.3, 10);
+    expect(pulledTilt(-1, 1, 0, 0.3, 0)).toBeCloseTo(0.3, 10);
+    expect(pulledTilt(0, 1, 0, 0.3, 0)).toBeCloseTo(0, 10);
+  });
+
+  it("keeps the wobble small and the progress inside 0 to 1", () => {
+    for (let t = 0; t < 5; t += 0.1) expect(Math.abs(pulledTilt(0, 1, t))).toBeLessThanOrEqual(0.05 + 1e-9);
+    expect(pulledTilt(1, 5, 0, 0.3, 0)).toBeCloseTo(-0.3, 10);
+  });
+});
+

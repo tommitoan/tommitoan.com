@@ -5,7 +5,7 @@ import { TextureLoader } from "three";
 import { MathUtils } from "three";
 import type { Group, MeshBasicMaterial } from "three";
 import { gatewayHomeConfig } from "@/components/gateway/gatewayHomeConfig";
-import { turnSquash } from "@/components/gateway/gatewayHover";
+import { pulledTilt, turnSquash } from "@/components/gateway/gatewayHover";
 
 type Props = {
   isWarping?: boolean;
@@ -19,11 +19,13 @@ export function SpaceBackgroundAstronaut({ isWarping = false, targetIndex = 1, t
   const billboardRef = useRef<Group>(null);
   const poseRef = useRef<Group>(null);
   const materialRef = useRef<MeshBasicMaterial>(null);
-  const [back, front] = useLoader(TextureLoader, [gatewayHomeConfig.astronaut.assetSrc, gatewayHomeConfig.astronaut.frontAssetSrc]);
+  const [back, front, pulled] = useLoader(TextureLoader, [gatewayHomeConfig.astronaut.assetSrc, gatewayHomeConfig.astronaut.frontAssetSrc, gatewayHomeConfig.astronaut.pulledAssetSrc]);
   const astronautConfig = gatewayHomeConfig.astronaut;
 
   const warpProgress = useRef(0);
   const talkProgress = useRef(0);
+  // Where the pull starts: wherever he stands at the click, so he does not jump from the talking place to the resting one.
+  const pullFrom = useRef<{ x: number; y: number; scale: number } | null>(null);
   // The side he stands on is kept while he turns back, so he does not slide across the screen as he leaves.
   const lastSide = useRef<"left" | "right">("right");
 
@@ -39,28 +41,39 @@ export function SpaceBackgroundAstronaut({ isWarping = false, targetIndex = 1, t
     const time = state.clock.elapsedTime;
 
     if (isWarping) {
-      // The warp flies him into the portal with his back to us, as before, whatever he was doing a moment ago.
-      talkProgress.current = 0;
+      // The pull starts from where he stands: he is already facing us when he was talking, and stays facing us as he is
+      // dragged backward into the portal, arms and legs reaching toward the camera. No spinning.
+      if (!pullFrom.current) {
+        const talk = talkProgress.current;
+        const talkX = (lastSide.current === "left" ? -1 : 1) * astronautConfig.talk.x;
+        pullFrom.current = {
+          x: MathUtils.lerp(astronautConfig.placement.x, talkX, talk),
+          y: MathUtils.lerp(astronautConfig.placement.y, astronautConfig.talk.y, talk),
+          scale: MathUtils.lerp(astronautConfig.placement.scale, astronautConfig.talk.scale, talk),
+        };
+      }
+      const from = pullFrom.current;
       pose.scale.x = 1;
       const material = materialRef.current;
-      if (material && material.map !== back) {
-        material.map = back;
+      if (material && material.map !== pulled) {
+        material.map = pulled;
         material.needsUpdate = true;
       }
       warpProgress.current = MathUtils.damp(warpProgress.current, 1, astronautConfig.warp.progressDamping, delta);
+      const pull = warpProgress.current;
 
       const xDir = targetIndex === 0 ? -1 : targetIndex === 2 ? 1 : 0;
 
-      const scale = MathUtils.lerp(astronautConfig.placement.scale, astronautConfig.warp.endScale, warpProgress.current);
-      root.scale.setScalar(scale);
+      root.scale.setScalar(MathUtils.lerp(from.scale, astronautConfig.warp.endScale, pull));
+      root.position.y = MathUtils.lerp(from.y, astronautConfig.warp.endY, pull);
+      root.position.x = MathUtils.lerp(from.x, xDir * astronautConfig.warp.targetOffsetX, pull);
+      root.position.z = MathUtils.lerp(astronautConfig.placement.z, astronautConfig.warp.endZ, pull);
 
-      root.position.y = MathUtils.lerp(astronautConfig.placement.y, astronautConfig.warp.endY, warpProgress.current);
-      root.position.x = MathUtils.lerp(astronautConfig.placement.x, xDir * astronautConfig.warp.targetOffsetX, warpProgress.current);
-      root.position.z = MathUtils.lerp(astronautConfig.placement.z, astronautConfig.warp.endZ, warpProgress.current);
-
-      pose.rotation.z += delta * astronautConfig.warp.spinSpeedZ * warpProgress.current;
-      pose.rotation.x += delta * astronautConfig.warp.spinSpeedX * warpProgress.current;
+      billboard.quaternion.copy(state.camera.quaternion);
+      pose.rotation.x = 0;
+      pose.rotation.z = pulledTilt(xDir, pull, time, astronautConfig.warp.lean, astronautConfig.warp.wobble);
     } else {
+      pullFrom.current = null;
       warpProgress.current = MathUtils.damp(warpProgress.current, 0, astronautConfig.warp.progressDamping, delta);
       if (talkSide) lastSide.current = talkSide;
       talkProgress.current = MathUtils.damp(talkProgress.current, talkSide ? 1 : 0, 3.2, delta);
