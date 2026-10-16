@@ -4,7 +4,7 @@ import { DEFAULT_DRIFT, driftProgress, parseDrift, shouldMountDrift } from "./dr
 import { sampleTargets, shouldMountDust, stepParticle, type Particle } from "./dust";
 import { nextFrame, parseLifeFrames, shouldMountLife } from "./life";
 import { applyTheme, resolveTheme } from "./theme";
-import { dayState, luminance, seg, skyColor, smoothstep, textMix, NIGHT, PAPER } from "./color";
+import { dayState, luminance, seg, skyColor, smoothstep, textMix, INK_NIGHT, NIGHT, PAPER } from "./color";
 import { resolveTier } from "./env";
 import { blendFrames } from "./keyframes";
 import { pathHasPrefix, shouldCoverNavigation, shouldPlaySeal, shouldRevealArrival, originOf, type ClickInfo, type ArrivalInfo } from "./navigation";
@@ -29,6 +29,25 @@ describe("colour math", () => {
       const lum = luminance(skyColor(p));
       expect(lum).toBeGreaterThanOrEqual(previous - 1e-9);
       previous = lum;
+    }
+  });
+
+  it("the dark look starts at the same night and ends on deep ink, never on paper", () => {
+    expect(skyColor(0, "dark")).toEqual(NIGHT);
+    expect(skyColor(1, "dark")).toEqual(INK_NIGHT);
+    expect(skyColor(1, "dark")).not.toEqual(PAPER);
+    // it never gets bright: the dawn is a toned-down rose
+    for (let p = 0; p <= 1.0001; p += 0.02) expect(luminance(skyColor(p, "dark"))).toBeLessThan(125);
+    // and the default look is unchanged
+    expect(skyColor(1, "light")).toEqual(PAPER);
+    expect(skyColor(0.5)).toEqual(skyColor(0.5, "light"));
+  });
+
+  it("text stays light all through the dark journey", () => {
+    for (let p = 0; p <= 1.0001; p += 0.05) {
+      const state = dayState(p, "dark");
+      expect(state.textMix).toBe(0);
+      expect(state.fg[0]).toBeGreaterThan(200);
     }
   });
 

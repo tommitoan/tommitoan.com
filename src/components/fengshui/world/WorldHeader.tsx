@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FengShuiLanguageToggle } from "@/components/fengshui/FengShuiLanguage";
+import { WorldThemeToggle } from "@/components/fengshui/world/WorldThemeToggle";
 import { siteContent } from "@/content/site-content";
 
 /**
@@ -34,7 +35,10 @@ export function WorldHeader() {
             );
           })}
         </nav>
-        <FengShuiLanguageToggle />
+        <div className="fs-header-tools">
+          <WorldThemeToggle />
+          <FengShuiLanguageToggle />
+        </div>
       </div>
     </header>
   );

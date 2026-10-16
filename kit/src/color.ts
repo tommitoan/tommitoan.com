@@ -28,6 +28,11 @@ export const INK: RGB = [59, 47, 32];
 export const MOON: RGB = [238, 232, 255];
 export const MUTED_NIGHT: RGB = [167, 159, 196];
 export const MUTED_DAY: RGB = [102, 85, 63];
+/** Where the journey ends in the dark appearance: a deep ink-blue, not paper. */
+export const INK_NIGHT: RGB = [20, 22, 46];
+
+/** The two looks of the journey: it ends on paper (light) or on deep ink (dark). The night it starts from is the same. */
+export type Appearance = "light" | "dark";
 
 /** Sky colour at a progress value: night, dusk, dawn, golden morning, paper. */
 export const DAY_STOPS: ReadonlyArray<readonly [number, RGB]> = [
@@ -39,14 +44,28 @@ export const DAY_STOPS: ReadonlyArray<readonly [number, RGB]> = [
   [0.72, PAPER],
 ];
 
-export function skyColor(progress: number): RGB {
+/**
+ * The dark appearance keeps the dusk and a toned-down rose dawn, then settles on deep ink instead of rising to paper, so a visitor
+ * who chose a dark look is never lit up by a page that turns white.
+ */
+export const DARK_DAY_STOPS: ReadonlyArray<readonly [number, RGB]> = [
+  [0, NIGHT],
+  [0.28, [28, 28, 74]],
+  [0.42, [84, 64, 124]],
+  [0.5, [150, 92, 110]],
+  [0.6, [60, 46, 96]],
+  [0.72, INK_NIGHT],
+];
+
+export function skyColor(progress: number, appearance: Appearance = "light"): RGB {
+  const stops = appearance === "dark" ? DARK_DAY_STOPS : DAY_STOPS;
   const p = clamp(progress, 0, 1);
-  for (let i = 0; i < DAY_STOPS.length - 1; i++) {
-    const [p0, c0] = DAY_STOPS[i];
-    const [p1, c1] = DAY_STOPS[i + 1];
+  for (let i = 0; i < stops.length - 1; i++) {
+    const [p0, c0] = stops[i];
+    const [p1, c1] = stops[i + 1];
     if (p <= p1) return lerpColor(c0, c1, smoothstep(seg(p, p0, p1)));
   }
-  return DAY_STOPS[DAY_STOPS.length - 1][1];
+  return stops[stops.length - 1][1];
 }
 
 /** 0 when text must be light, 1 when it must be dark ink, switching around mid brightness. */
@@ -62,11 +81,12 @@ export interface DayState {
 }
 
 /** Everything the page needs for one position of the day cycle (0 night, 1 paper). */
-export function dayState(progress: number): DayState {
+export function dayState(progress: number, appearance: Appearance = "light"): DayState {
   const p = clamp(progress, 0, 1);
-  const sky = skyColor(p);
+  const sky = skyColor(p, appearance);
   const lum = luminance(sky);
-  const mix = textMix(lum);
+  // The dark look never gets a sky bright enough for dark text: the text stays light all the way.
+  const mix = appearance === "dark" ? 0 : textMix(lum);
   return {
     progress: p,
     sky,

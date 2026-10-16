@@ -1,4 +1,4 @@
-/* tommitoan kit 0.5.0 */
+/* tommitoan kit 0.6.0 */
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -145,6 +145,7 @@ var INK = [59, 47, 32];
 var MOON = [238, 232, 255];
 var MUTED_NIGHT = [167, 159, 196];
 var MUTED_DAY = [102, 85, 63];
+var INK_NIGHT = [20, 22, 46];
 var DAY_STOPS = [
   [0, NIGHT],
   [0.28, [28, 28, 74]],
@@ -153,21 +154,30 @@ var DAY_STOPS = [
   [0.6, [248, 208, 152]],
   [0.72, PAPER]
 ];
-function skyColor(progress) {
+var DARK_DAY_STOPS = [
+  [0, NIGHT],
+  [0.28, [28, 28, 74]],
+  [0.42, [84, 64, 124]],
+  [0.5, [150, 92, 110]],
+  [0.6, [60, 46, 96]],
+  [0.72, INK_NIGHT]
+];
+function skyColor(progress, appearance = "light") {
+  const stops = appearance === "dark" ? DARK_DAY_STOPS : DAY_STOPS;
   const p = clamp(progress, 0, 1);
-  for (let i = 0; i < DAY_STOPS.length - 1; i++) {
-    const [p0, c0] = DAY_STOPS[i];
-    const [p1, c1] = DAY_STOPS[i + 1];
+  for (let i = 0; i < stops.length - 1; i++) {
+    const [p0, c0] = stops[i];
+    const [p1, c1] = stops[i + 1];
     if (p <= p1) return lerpColor(c0, c1, smoothstep(seg(p, p0, p1)));
   }
-  return DAY_STOPS[DAY_STOPS.length - 1][1];
+  return stops[stops.length - 1][1];
 }
 var textMix = (lum) => smoothstep(seg(lum, 100, 140));
-function dayState(progress) {
+function dayState(progress, appearance = "light") {
   const p = clamp(progress, 0, 1);
-  const sky = skyColor(p);
+  const sky = skyColor(p, appearance);
   const lum = luminance(sky);
-  const mix = textMix(lum);
+  const mix = appearance === "dark" ? 0 : textMix(lum);
   return {
     progress: p,
     sky,
@@ -2034,7 +2044,7 @@ function createTransitions(options) {
 }
 
 // kit/src/version.ts
-var KIT_VERSION = "0.5.0";
+var KIT_VERSION = "0.6.0";
 
 // kit/src/wash.ts
 function mountWash(tier) {
@@ -2093,8 +2103,8 @@ function createDayCycle(options = {}) {
   const paintBody = options.paintBody ?? true;
   const bodyBefore = document.body.style.background;
   return {
-    render(progress) {
-      const state = dayState(progress);
+    render(progress, appearance = "light") {
+      const state = dayState(progress, appearance);
       root.style.setProperty("--kit-sky", rgbString(state.sky));
       root.style.setProperty("--kit-fg", rgbString(state.fg));
       root.style.setProperty("--kit-fg-muted", rgbString(state.muted));

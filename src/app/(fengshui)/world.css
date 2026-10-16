@@ -4,6 +4,10 @@
 .fs-world {
   --fs-serif: var(--font-world-serif), Georgia, "Times New Roman", serif;
   --fs-sans: var(--font-world-sans), var(--font-body), system-ui, sans-serif;
+  /* Lines and stops that need their own hue: the six harmony, the three harmony and the roadmap's gold. */
+  --fs-harmony: #2f9e5c;
+  --fs-triad: #2f6fbf;
+  --fs-gold-deep: #a9792b;
   position: relative;
   min-height: 100vh;
   overflow-x: clip;
@@ -126,8 +130,8 @@
   cursor: pointer;
 }
 .fs-lang-option[aria-pressed="true"] {
-  background: var(--kit-seal);
-  color: var(--kit-paper);
+  background: var(--kit-seal-solid);
+  color: var(--kit-on-seal);
 }
 .fs-footer {
   padding: 1.5rem 0;
@@ -160,8 +164,8 @@
 }
 .fs-replay:hover,
 .fs-replay:focus-visible {
-  background: var(--kit-seal);
-  color: var(--kit-paper);
+  background: var(--kit-seal-solid);
+  color: var(--kit-on-seal);
 }
 .fs-replay-arrow {
   display: inline-block;
@@ -196,7 +200,7 @@
   align-items: center;
   column-gap: 0.55rem;
   padding: 0.4rem 0.75rem;
-  border: 0.5px solid rgba(138, 122, 90, 0.5);
+  border: 0.5px solid color-mix(in srgb, var(--kit-line) 50%, transparent);
   border-radius: 8px;
   color: var(--kit-muted);
   line-height: 1.25;
@@ -305,7 +309,7 @@
 }
 .fs-number {
   font: 400 1.6rem/1 var(--fs-serif);
-  color: rgba(139, 46, 31, 0.4);
+  color: color-mix(in srgb, var(--kit-seal) 40%, transparent);
 }
 .fs-actions {
   display: flex;
@@ -322,14 +326,14 @@
   padding: 0.75rem 1.7rem;
   border: 1px solid var(--kit-seal);
   border-radius: 6px;
-  background: var(--kit-seal);
-  color: var(--kit-paper);
+  background: var(--kit-seal-solid);
+  color: var(--kit-on-seal);
   font-size: 0.95rem;
   font-weight: 500;
 }
 /* The link rule `.fs-world a { color: inherit }` would otherwise turn the label of a filled button dark on the seal red. */
 .fs-world .fs-btn:not(.fs-btn-ghost):not(.fs-btn-cta) {
-  color: var(--kit-paper);
+  color: var(--kit-on-seal);
 }
 .fs-btn-ghost {
   background: transparent;
@@ -509,8 +513,8 @@
 }
 .fs-scene-seal {
   padding: 6px 12px;
-  background: rgba(251, 245, 230, 0.92);
-  border: 0.5px solid #8a7a5a;
+  background: color-mix(in srgb, var(--kit-surface) 92%, transparent);
+  border: 0.5px solid var(--kit-line);
   border-radius: 4px;
   color: var(--kit-ink);
   text-align: center;
@@ -917,7 +921,7 @@
   flex: none;
   min-width: 1.6rem;
   font: 400 1.7rem/1.2 var(--fs-serif);
-  color: rgba(139, 46, 31, 0.4);
+  color: color-mix(in srgb, var(--kit-seal) 40%, transparent);
   transition: color 0.3s;
 }
 .fs-pr-text {
@@ -932,7 +936,7 @@
   border-color: var(--kit-seal);
   background: var(--kit-surface);
   color: var(--kit-ink);
-  box-shadow: 0 8px 24px rgba(59, 47, 32, 0.12);
+  box-shadow: 0 8px 24px rgba(var(--kit-shadow), 0.12);
 }
 .fs-pr-item[aria-pressed="true"]::before {
   transform: scaleY(1);
@@ -1209,7 +1213,7 @@
 .fs-story-slot[data-shown="true"] .fs-pillar {
   opacity: 1;
   transform: none;
-  box-shadow: 0 6px 16px rgba(59, 47, 32, 0.14);
+  box-shadow: 0 6px 16px rgba(var(--kit-shadow), 0.14);
 }
 @media (prefers-reduced-motion: reduce) {
   .fs-story-slot .fs-pillar {
@@ -1231,7 +1235,7 @@
   position: relative;
   flex: 1;
   height: 2px;
-  background: rgba(138, 122, 90, 0.3);
+  background: color-mix(in srgb, var(--kit-line) 30%, transparent);
 }
 .fs-story-count u {
   position: absolute;
@@ -1318,7 +1322,7 @@
   gap: 1rem;
   margin: 1.1rem 0 0.4rem;
   padding: 0.7rem;
-  background: rgba(255, 255, 255, 0.55);
+  background: var(--kit-card-soft);
   border: 1px solid var(--kit-line);
   border-radius: 10px;
 }
@@ -1356,8 +1360,8 @@
 }
 .fs-term[data-opens="true"] .fs-term-badge {
   border-color: var(--kit-seal);
-  background: var(--kit-seal);
-  color: var(--kit-paper);
+  background: var(--kit-seal-solid);
+  color: var(--kit-on-seal);
 }
 .fs-term-name {
   color: var(--kit-ink);
@@ -1420,8 +1424,8 @@
 .fs-dm-art {
   margin: 0;
   padding: 8px;
-  background: #fff;
-  box-shadow: 0 10px 28px rgba(59, 47, 32, 0.18);
+  background: var(--kit-card);
+  box-shadow: 0 10px 28px rgba(var(--kit-shadow), 0.18);
 }
 /* The ten paintings sit on top of each other; the one of the stem in focus fades in over the one that leaves. */
 .fs-dm-frame {
@@ -1493,7 +1497,7 @@
   padding: 0.35rem 0.2rem 0.45rem;
   border: 1px solid var(--kit-line);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--kit-card-soft);
   color: var(--kit-muted);
   font: 600 0.78rem/1.2 var(--fs-sans);
   cursor: pointer;
@@ -1505,11 +1509,11 @@
   height: auto;
 }
 .fs-dm-tile:hover {
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--kit-card-hover);
 }
 .fs-dm-tile[aria-pressed="true"] {
   border-color: var(--kit-seal);
-  background: #fff;
+  background: var(--kit-card);
   color: var(--kit-seal);
   box-shadow: 0 0 0 1px var(--kit-seal);
 }
@@ -1528,7 +1532,7 @@
   padding: 0.5rem 0.7rem;
   border: 1px solid var(--kit-line);
   border-radius: 6px;
-  background: #fff;
+  background: var(--kit-card);
   color: var(--kit-ink);
   font: inherit;
 }
@@ -1680,7 +1684,7 @@
 
 /* Roadmap: one line, three stops. The segment after a stop is solid when that stop is done and dashed when it is not. */
 .fs-road {
-  --fs-road-gold: #a9792b;
+  --fs-road-gold: var(--fs-gold-deep);
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0 1.5rem;
@@ -1704,7 +1708,7 @@
   border: 2px solid var(--kit-seal);
   border-radius: 50%;
   background: var(--kit-paper);
-  color: var(--kit-paper);
+  color: var(--kit-on-seal);
   font-size: 0.95rem;
   font-weight: 700;
 }
@@ -1725,7 +1729,7 @@
   border-top: 2px solid var(--fs-road-gold);
 }
 .fs-road-stop[data-status="done"] .fs-road-node {
-  background: var(--kit-seal);
+  background: var(--kit-seal-solid);
 }
 .fs-road-stop[data-status="next"] .fs-road-node::after {
   content: "";
@@ -1813,11 +1817,11 @@
 }
 @keyframes fs-road-pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(139, 46, 31, 0.4);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--kit-seal) 40%, transparent);
   }
   70%,
   100% {
-    box-shadow: 0 0 0 0.8rem rgba(139, 46, 31, 0);
+    box-shadow: 0 0 0 0.8rem color-mix(in srgb, var(--kit-seal) 0%, transparent);
   }
 }
 @media (max-width: 760px) {
@@ -1892,7 +1896,7 @@
   overflow: hidden;
   border: 1px solid var(--kit-line);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--kit-card-soft);
   color: var(--kit-muted);
   font: 600 0.78rem/1.2 var(--fs-sans);
   cursor: pointer;
@@ -1909,21 +1913,21 @@
   right: 0.35rem;
   padding: 0 0.4rem;
   border-radius: 999px;
-  background: var(--kit-seal);
-  color: var(--kit-paper);
+  background: var(--kit-seal-solid);
+  color: var(--kit-on-seal);
   font-size: 0.62rem;
   font-style: normal;
   letter-spacing: 0.04em;
   white-space: nowrap;
 }
 .fs-an-tile:hover {
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--kit-card-hover);
 }
 .fs-an-tile[aria-pressed="true"] {
   border-color: var(--kit-seal);
-  background: #fff;
+  background: var(--kit-card);
   color: var(--kit-seal);
-  box-shadow: 0 0 0 1px var(--kit-seal), 0 8px 20px rgba(59, 47, 32, 0.14);
+  box-shadow: 0 0 0 1px var(--kit-seal), 0 8px 20px rgba(var(--kit-shadow), 0.14);
   transform: translateY(-2px);
 }
 .fs-an-info {
@@ -2095,11 +2099,11 @@
   transition: opacity 0.3s;
 }
 .fs-br-harmony {
-  stroke: #2f9e5c;
+  stroke: var(--fs-harmony);
   stroke-width: 1.2;
 }
 .fs-br-triad {
-  stroke: #2f6fbf;
+  stroke: var(--fs-triad);
   stroke-width: 1;
 }
 .fs-br-clash {
@@ -2126,10 +2130,10 @@
   width: 1.8rem;
   margin-right: 0.45rem;
   vertical-align: middle;
-  border-top: 2px solid #2f9e5c;
+  border-top: 2px solid var(--fs-harmony);
 }
 .fs-br-legend span[data-kind="triad"]::before {
-  border-top-color: #2f6fbf;
+  border-top-color: var(--fs-triad);
 }
 .fs-br-legend span[data-kind="clash"]::before {
   border-top: 2px dashed var(--kit-seal);
@@ -2144,7 +2148,7 @@
   width: 100%;
   height: auto;
   border-radius: 10px;
-  box-shadow: 0 10px 28px rgba(59, 47, 32, 0.22);
+  box-shadow: 0 10px 28px rgba(var(--kit-shadow), 0.22);
   animation: fs-br-in 0.5s ease-out;
 }
 @keyframes fs-br-in {
@@ -2177,14 +2181,14 @@
   line-height: 1.1;
 }
 .fs-br-node:hover {
-  background: #fff;
+  background: var(--kit-card);
 }
 .fs-br-node[data-link="harmony"] {
-  border-color: #2f9e5c;
+  border-color: var(--fs-harmony);
   border-width: 2px;
 }
 .fs-br-node[data-link="triad"] {
-  border-color: #2f6fbf;
+  border-color: var(--fs-triad);
   border-width: 2px;
 }
 .fs-br-node[data-link="clash"] {
@@ -2194,9 +2198,9 @@
 .fs-br-node[aria-pressed="true"] {
   z-index: 1;
   border-color: var(--kit-seal);
-  background: #fff;
+  background: var(--kit-card);
   color: var(--kit-seal);
-  box-shadow: 0 0 0 1px var(--kit-seal), 0 6px 16px rgba(59, 47, 32, 0.2);
+  box-shadow: 0 0 0 1px var(--kit-seal), 0 6px 16px rgba(var(--kit-shadow), 0.2);
 }
 .fs-br-info {
   min-height: 26rem;
@@ -2314,7 +2318,7 @@
 .fs-ny-tile[aria-pressed="true"] {
   z-index: 1;
   border-color: var(--kit-seal);
-  box-shadow: 0 8px 20px rgba(59, 47, 32, 0.3);
+  box-shadow: 0 8px 20px rgba(var(--kit-shadow), 0.3);
   transform: scale(1.08);
 }
 .fs-ny-info {
@@ -2342,7 +2346,7 @@
   width: 100%;
   height: auto;
   border-radius: 8px;
-  box-shadow: 0 8px 22px rgba(59, 47, 32, 0.22);
+  box-shadow: 0 8px 22px rgba(var(--kit-shadow), 0.22);
   animation: fs-br-in 0.5s ease-out;
 }
 .fs-ny-info .fs-ny-pairs {
@@ -2384,3 +2388,50 @@
     animation: none;
   }
 }
+
+/* The dark appearance (data-theme="dark", set before first paint): the tokens come from the kit; what is here is what the kit
+   does not know: the hues of the harmony lines, the figures that were drawn in ink for a light ground, and the theme switch. */
+html[data-theme="dark"] .fs-world,
+html[data-kit-appearance="dark"] .fs-world {
+  --fs-harmony: #55d18a;
+  --fs-triad: #7db1f7;
+  --fs-gold-deep: #d9b062;
+}
+/* The ink wash of the paper ending has no place on a dark ground. */
+html[data-theme="dark"] .fs-scene-ink,
+html[data-kit-appearance="dark"] .fs-scene-ink {
+  display: none;
+}
+/* The character was drawn in sepia ink for a light ground: on the dark ground it gets a warm rim of light so its outline reads. */
+html[data-theme="dark"] .fs-scene-figure,
+html[data-theme="dark"] .fs-static-figure,
+html[data-kit-appearance="dark"] .fs-scene-figure,
+html[data-kit-appearance="dark"] .fs-static-figure {
+  filter: drop-shadow(0 0 1.5px rgba(255, 244, 220, 0.95)) drop-shadow(0 0 16px rgba(255, 226, 180, 0.38));
+}
+/* The theme switch in the header: a round button with a sun or a moon. */
+.fs-theme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid rgba(238, 232, 255, 0.18);
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(238, 232, 255, 0.82);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.fs-theme:hover,
+.fs-theme:focus-visible {
+  background: rgba(238, 232, 255, 0.12);
+  color: #fff;
+}
+.fs-header-tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+

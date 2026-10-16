@@ -1,4 +1,4 @@
-import { clamp, dayState, lerp, lerpColor, seg, smoothstep, type DayState, type RGB } from "@kit/color";
+import { clamp, dayState, lerp, lerpColor, seg, smoothstep, type Appearance, type DayState, type RGB } from "@kit/color";
 import { blendFrames, type FrameBlend } from "@kit/keyframes";
 
 /**
@@ -130,9 +130,9 @@ export interface SceneFrame {
   trailVisible: number;
 }
 
-export function sceneFrame(progress: number, g: SceneGeometry): SceneFrame {
+export function sceneFrame(progress: number, g: SceneGeometry, appearance: Appearance = "light"): SceneFrame {
   const p = clamp(progress, 0, 1);
-  const day = dayState(p);
+  const day = dayState(p, appearance);
 
   const fall = smoothstep(seg(p, 0.06, 0.44));
   const landed = smoothstep(seg(p, 0.44, 0.5));
@@ -158,7 +158,8 @@ export function sceneFrame(progress: number, g: SceneGeometry): SceneFrame {
     progress: p,
     day,
     nebulaOpacity: 1 - smoothstep(seg(p, 0.08, 0.55)),
-    inkWashOpacity: 0.16 * smoothstep(seg(p, 0.5, 0.78)),
+    // The ink wash belongs to the paper ending; the dark ending has none.
+    inkWashOpacity: appearance === "dark" ? 0 : 0.16 * smoothstep(seg(p, 0.5, 0.78)),
     vignette: smoothstep(seg(p, 0.2, 0.38)) * (1 - smoothstep(seg(p, 0.5, 0.68))),
     glow: smoothstep(seg(p, 0.3, 0.5)) * (1 - smoothstep(seg(p, 0.58, 0.74))),
     starfieldAlpha: 1 - smoothstep(seg(p, 0.08, 0.5)),

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useAppearance, type Appearance } from "@/lib/appearance";
 import { clamp, lerp, rgbString } from "@kit/color";
 import { createDayCycle } from "@kit/day-cycle";
 import { useFengShuiWorldCopy } from "@/components/fengshui/FengShuiLanguage";
@@ -20,6 +21,11 @@ export function BirthScene() {
 
 function ScrollScene() {
   const copy = useFengShuiWorldCopy().scene;
+  // The look of the page: the journey ends on paper (light) or on deep ink (dark). The scene reads it at every paint, and a
+  // change of look repaints the scene where it stands.
+  const appearance = useAppearance();
+  const appearanceRef = useRef<Appearance>(appearance);
+  const repaintRef = useRef<(() => void) | null>(null);
   const wrapperRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const skyRef = useRef<HTMLCanvasElement>(null);
@@ -85,8 +91,8 @@ function ScrollScene() {
     };
 
     const paint = (progress: number, time: number) => {
-      const frame = sceneFrame(progress, geometry);
-      dayCycle.render(progress);
+      const frame = sceneFrame(progress, geometry, appearanceRef.current);
+      dayCycle.render(progress, appearanceRef.current);
 
       haze.style.opacity = String(frame.nebulaOpacity);
       ink.style.opacity = String(frame.inkWashOpacity);
@@ -155,6 +161,8 @@ function ScrollScene() {
       });
     };
 
+    repaintRef.current = () => paint(current, performance.now());
+
     const resize = () => {
       const width = stage.clientWidth;
       const height = stage.clientHeight;
@@ -202,9 +210,15 @@ function ScrollScene() {
       observer.disconnect();
       resizeObserver.disconnect();
       if (frameHandle) window.cancelAnimationFrame(frameHandle);
+      repaintRef.current = null;
       dayCycle.destroy();
     };
   }, []);
+
+  useEffect(() => {
+    appearanceRef.current = appearance;
+    repaintRef.current?.();
+  }, [appearance]);
 
   return (
     <section ref={wrapperRef} className="fs-scene" data-kit-section="Cảnh sinh ra / Birth" aria-label={copy.label}>

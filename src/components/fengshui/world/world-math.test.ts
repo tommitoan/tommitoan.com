@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { NIGHT, PAPER } from "@kit/color";
+import { INK_NIGHT, NIGHT, PAPER } from "@kit/color";
 import { SOLAR_TERMS_VI } from "@kit/solar";
 import { arcPath, dayForLongitude, dayIndexOf, daysInYear, daysPerSecond, dialDay, dialState, isMonthOpener, JIE_INDEXES, longitudeAt, radialLabel, ringPoint, SOLAR_TERMS_HAN } from "./dial-math";
 import { marqueeAdvance, marqueeSkew, sixtyCycle, smoothVelocity } from "./marquee-math";
@@ -33,6 +33,19 @@ describe("birth scene frame", () => {
     expect(f.nebulaOpacity).toBe(0);
     expect(f.inkWashOpacity).toBeCloseTo(0.16, 5);
     expect(f.marksReached.every(Boolean)).toBe(true);
+  });
+
+  it("ends on deep ink, not paper, in the dark look, and has no ink wash", () => {
+    const f = sceneFrame(1, g, "dark");
+    expect(f.day.sky).toEqual(INK_NIGHT);
+    expect(f.day.textMix).toBe(0);
+    expect(f.inkWashOpacity).toBe(0);
+    expect(f.figureX).toBeCloseTo(g.endX, 5);
+    // the beginning is the same night in both looks
+    expect(sceneFrame(0, g, "dark").day.sky).toEqual(NIGHT);
+    // the light look is the default and is unchanged
+    expect(sceneFrame(1, g).day.sky).toEqual(PAPER);
+    expect(sceneFrame(1, g, "light").inkWashOpacity).toBeCloseTo(0.16, 5);
   });
 
   it("the star lands where the figure starts, then melts into the newborn", () => {
