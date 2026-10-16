@@ -1,6 +1,5 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import {
   DEFAULT_FENGSHUI_LANGUAGE,
   fengshuiContent,
@@ -8,51 +7,11 @@ import {
   type FengShuiLanguage,
 } from "@/content/fengshui-content";
 import { worldContent, type WorldCopy } from "@/content/fengshui-world";
+import { setSiteLanguage, useSiteLanguage } from "@/lib/site-language";
 
-const STORAGE_KEY = "fengshuiLanguage";
-
-// The choice lives in module state so it still works when storage is blocked;
-// localStorage only carries it across visits.
-let override: FengShuiLanguage | null = null;
-const listeners = new Set<() => void>();
-
-function isLanguage(value: string | null): value is FengShuiLanguage {
-  return value === "vi" || value === "en";
-}
-
-function readLanguage(): FengShuiLanguage {
-  if (override) return override;
-  try {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (isLanguage(stored)) return stored;
-  } catch {
-    // Blocked storage: fall back to the default language.
-  }
-  return DEFAULT_FENGSHUI_LANGUAGE;
-}
-
-function subscribe(listener: () => void) {
-  listeners.add(listener);
-  window.addEventListener("storage", listener);
-  return () => {
-    listeners.delete(listener);
-    window.removeEventListener("storage", listener);
-  };
-}
-
-function setLanguage(language: FengShuiLanguage) {
-  override = language;
-  try {
-    window.localStorage.setItem(STORAGE_KEY, language);
-  } catch {
-    // Blocked storage: the choice still applies until the page closes.
-  }
-  listeners.forEach((listener) => listener());
-}
-
-/** Vietnamese is the server and first-render language; a stored choice applies after hydration. */
+/** Vietnamese is the server and first-render language; after hydration a stored choice applies, or the browser's own language and time zone decide (see site-language.ts). */
 export function useFengShuiLanguage(): FengShuiLanguage {
-  return useSyncExternalStore(subscribe, readLanguage, () => DEFAULT_FENGSHUI_LANGUAGE);
+  return useSiteLanguage(DEFAULT_FENGSHUI_LANGUAGE);
 }
 
 export function useFengShuiCopy(): FengShuiCopy {
@@ -69,7 +28,7 @@ export function FengShuiLanguageToggle() {
   const copy = fengshuiContent[language].language;
 
   const option = (value: FengShuiLanguage, label: string) => (
-    <button type="button" lang={value} aria-pressed={language === value} onClick={() => setLanguage(value)} className="fs-lang-option">
+    <button type="button" lang={value} aria-pressed={language === value} onClick={() => setSiteLanguage(value)} className="fs-lang-option">
       {label}
     </button>
   );

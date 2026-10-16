@@ -96,9 +96,6 @@ export interface GatewayHomePortal {
   id: GatewayHomeId;
   label: string;
   href: string;
-  description: string;
-  /** What the astronaut says while this portal is hovered. One or two short sentences. */
-  speech: string;
   theme: {
     hoverGradientClass: string;
     glowColor: string;
@@ -404,8 +401,6 @@ export const gatewayHomeConfig = {
       id: "tech",
       label: "Tech",
       href: "/tech",
-      description: "Dive into software, engineering, and digital tools.",
-      speech: "This is the engineering desk: Go services, cloud systems and the tools behind them. Shall we step in?",
       theme: {
         hoverGradientClass: "from-fuchsia-600/40 to-purple-500/0",
         glowColor: "rgba(192, 38, 211, 0.6)",
@@ -444,8 +439,6 @@ export const gatewayHomeConfig = {
       id: "discover",
       label: "Discover",
       href: "/discover",
-      description: "Explore our curated collections and discoveries.",
-      speech: "The lab: a homelab, experiments and the channels where ideas get tested. Want a look around?",
       theme: {
         hoverGradientClass: "from-cyan-500/40 to-sky-400/0",
         glowColor: "rgba(34, 211, 238, 0.6)",
@@ -478,8 +471,6 @@ export const gatewayHomeConfig = {
       id: "fengshui",
       label: "Feng Shui",
       href: "/fengshui",
-      description: "Balance energy and explore spatial harmony.",
-      speech: "Here Ba-zi meets code. A star falls, a person grows, and a chart tells the story. Ready to see yours?",
       theme: {
         hoverGradientClass: "from-slate-100/20 to-white/0",
         glowColor: "rgba(205, 220, 255, 0.92)",
