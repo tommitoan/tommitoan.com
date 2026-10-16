@@ -16,7 +16,7 @@ const KB = 1024;
 
 // Budgets in kilobytes of gzip, for scripts + styles together. Headroom is about 10% over the measured size.
 const BUDGETS = [
-  { name: "Feng Shui world home", pages: ["fengshui/index.html"], scripts: 290, styles: 24 }, // 21 KB measured: the clock, the pinned dial, the scroll cue and the Bazica card
+  { name: "Feng Shui world home", pages: ["fengshui/index.html"], scripts: 310, styles: 28 }, // 23 KB of styles measured: the clock, the pinned dial, the day master, the chart anatomy, the branch ring and the Bazica card
   { name: "404 page", pages: ["404.html"], scripts: 200, styles: 24 }, // shares the world stylesheet
   { name: "Gateway (3D scene)", pages: ["index.html"], scripts: 520, styles: 16 },
   { name: "Tech and Discover pages", pages: ["tech/index.html", "discover/index.html"], scripts: 280, styles: 16 },
@@ -27,6 +27,7 @@ const FILES = [
   { glob: /^\/fengshui\/char\/.*\.webp$/, max: 90, label: "character frames" },
   { glob: /^\/fengshui\/terms\/.*\.webp$/, max: 30, label: "solar term paintings" },
   { glob: /^\/fengshui\/stems\/.*\.webp$/, max: 60, label: "heavenly stem paintings" },
+  { glob: /^\/fengshui\/branches\/.*\.webp$/, max: 40, label: "earthly branch paintings" },
   { glob: /^\/gateway\/.*\.webp$/, max: 600, label: "gateway images" },
 ];
 

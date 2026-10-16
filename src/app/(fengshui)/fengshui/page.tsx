@@ -9,6 +9,8 @@ import { BirthScene } from "@/components/fengshui/world/BirthScene";
 import { DayMaster } from "@/components/fengshui/world/DayMaster";
 import { Marquee } from "@/components/fengshui/world/Marquee";
 import { SolarDial } from "@/components/fengshui/world/SolarDial";
+import { Anatomy } from "@/components/fengshui/world/Anatomy";
+import { Branches } from "@/components/fengshui/world/Branches";
 import { StorySection } from "@/components/fengshui/world/StorySection";
 
 export const metadata = createMetadata({
@@ -45,6 +47,8 @@ export default function FengShuiPage() {
       <StorySection />
       <SolarDial />
       <DayMaster />
+      <Branches />
+      <Anatomy />
       <FengShuiBasicsSection />
       <FengShuiPillarsSection />
       <FengShuiLanesSection />
