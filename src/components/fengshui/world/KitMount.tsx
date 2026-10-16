@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { init } from "@kit";
 import { consumeWarpArrival } from "@/components/gateway/warpArrival";
+import { startFresh } from "./fresh-start";
 import { setKit } from "./kit-handle";
 import { BAZI_ORIGIN } from "@/lib/sister-site";
 
@@ -28,6 +29,8 @@ export function KitMount() {
   const warped = useRef<boolean | null>(null);
   useEffect(() => {
     if (warped.current === null) warped.current = consumeWarpArrival(window.location.pathname);
+    // A reload, or a click on the gateway's route, starts the journey at its first frame.
+    const stopFresh = startFresh(window, window.history);
     // The kit's inertial scrolling is off here: the page scrolls the way the browser scrolls it.
     const kit = init({ family: SISTER_ORIGINS, transitionPaths: KIT_PATHS, theme: "night", effects: { clock: false, cursor: CURSOR_TRIAL, seal: !warped.current, smooth: false } });
     setKit(kit);
@@ -40,6 +43,7 @@ export function KitMount() {
       document.removeEventListener("dragstart", stopDrag);
       setKit(null);
       kit.destroy();
+      stopFresh();
     };
   }, []);
   return null;

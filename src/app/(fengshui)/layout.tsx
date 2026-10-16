@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import "@kit/kit.css";
 import "./world.css";
+import { FRESH_START_SNIPPET } from "@/components/fengshui/world/fresh-start";
 import { hanFontHref } from "@/components/fengshui/world/han";
 import { KitMount } from "@/components/fengshui/world/KitMount";
 import { WorldFooter } from "@/components/fengshui/world/WorldFooter";
@@ -12,10 +13,11 @@ import { worldSans, worldSerif } from "../world-font";
 
 /**
  * Adds the cover before first paint when the visitor arrives from the sister site. The night look is set first, so the
- * cover is the dark sky and not the paper the shared stylesheet uses by default.
+ * cover is the dark sky and not the paper the shared stylesheet uses by default. Scroll restoration is turned off at the
+ * same moment, so a reload does not bring the page back to where it was left.
  */
 const bootScript =
-  'document.documentElement.setAttribute("data-kit-theme","night");' + readFileSync(path.join(process.cwd(), "kit/dist/kit-boot.js"), "utf8");
+  FRESH_START_SNIPPET + 'document.documentElement.setAttribute("data-kit-theme","night");' + readFileSync(path.join(process.cwd(), "kit/dist/kit-boot.js"), "utf8");
 
 export default function FengShuiLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
