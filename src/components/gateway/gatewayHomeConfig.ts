@@ -96,7 +96,6 @@ export interface GatewayHomePortal {
   id: GatewayHomeId;
   label: string;
   href: string;
-  description: string;
   theme: {
     hoverGradientClass: string;
     glowColor: string;
@@ -154,7 +153,7 @@ const FENG_SHUI_WIND_PALETTE: WindBandPalette[] = [
 export const gatewayHomeConfig = {
   spaceTheme: {
     background: {
-      imageSrc: "/gateway/backgrounds/space-bg.png",
+      imageSrc: "/gateway/backgrounds/space-bg.webp",
       overlayImage:
         "radial-gradient(circle_at_top,rgba(77,150,255,0.10),transparent_28%),radial-gradient(circle_at_80%_20%,rgba(176,87,255,0.08),transparent_24%),linear-gradient(180deg,rgba(3,7,17,0.45)_0%,rgba(7,16,28,0.45)_100%)",
       vignetteImage: "radial-gradient(ellipse_at_center,transparent_0%,#000_100%)",
@@ -282,9 +281,9 @@ export const gatewayHomeConfig = {
     glowStrength: 4.8,
   } satisfies GatewayLoaderConfig,
   transitions: {
-    routeDelayMs: 2400,
+    routeDelayMs: 3300,
     reducedMotionRouteDelayMs: 120,
-    zoomDurationSeconds: 1.4,
+    zoomDurationSeconds: 1.9,
     zoomScale: 3.5,
     zoomOffsetXByPortal: {
       tech: "40vw",
@@ -292,7 +291,7 @@ export const gatewayHomeConfig = {
       fengshui: "-40vw",
     } satisfies Record<GatewayHomeId, string>,
     zoomOffsetY: "30vh",
-    flashDelaySeconds: 2.0,
+    flashDelaySeconds: 2.8,
     flashDurationSeconds: 0.4,
   },
   row: {
@@ -337,6 +336,13 @@ export const gatewayHomeConfig = {
     planetGlowBlurPx: 24,
     planetGlowRestBlurPx: 16,
     overlayOpacity: 0.06,
+    /** Opacity of the windows that are not hovered; how long it takes the hovered one to grow (hoverExpandFactor says how much; the other two share what is left of the row). */
+    dimOpacity: 0.28,
+    expandSeconds: 0.7,
+    /** The planet in the hovered, widened window is a little larger. */
+    expandedPlanetScale: 1.06,
+    /** The planet in a window that gives way is smaller, so it still fits the narrower frame. */
+    squeezedPlanetScale: 0.62,
   },
   hoverBackdrop: {
     insetXPercent: 18,
@@ -351,7 +357,13 @@ export const gatewayHomeConfig = {
     heightPercent: 75,
   } satisfies PlanetStageConfig,
   astronaut: {
-    assetSrc: "/gateway/characters/astronaut.png",
+    assetSrc: "/gateway/characters/astronaut.webp",
+    /** The astronaut facing the visitor, shown while he introduces a portal. Same canvas as assetSrc (1024 x 1536, transparent). */
+    frontAssetSrc: "/gateway/characters/astronaut-front.webp",
+    /** The astronaut facing the visitor while a portal pulls him in: arms and legs reaching toward the camera. Same canvas again. */
+    pulledAssetSrc: "/gateway/characters/astronaut-pulled.webp",
+    /** While he talks he turns round, grows and steps to one side: x is the distance from the middle (world units). */
+    talk: { scale: 5.6, x: 2.15, y: -1.3 },
     camera: {
       position: [0, 0, 5] as [number, number, number],
       fov: 50,
@@ -378,13 +390,14 @@ export const gatewayHomeConfig = {
       poseTiltSpeedX: 0.4,
     },
     warp: {
-      progressDamping: 1.5,
+      progressDamping: 1.0,
       targetOffsetX: 2.5,
       endY: 1.5,
       endZ: -3.8,
       endScale: 0.2,
-      spinSpeedZ: 5,
-      spinSpeedX: 3,
+      /** He keeps facing the visitor while he is pulled backward into the portal: a lean toward its side and a small wobble (radians). */
+      lean: 0.32,
+      wobble: 0.05,
     },
   },
   portals: [
@@ -392,21 +405,20 @@ export const gatewayHomeConfig = {
       id: "tech",
       label: "Tech",
       href: "/tech",
-      description: "Dive into software, engineering, and digital tools.",
       theme: {
         hoverGradientClass: "from-fuchsia-600/40 to-purple-500/0",
         glowColor: "rgba(192, 38, 211, 0.6)",
         borderColorClass: "border-fuchsia-500/50",
         frameBg: "radial-gradient(ellipse at 50% 55%, rgba(192,38,211,0.10) 0%, rgba(50,0,70,0.55) 45%, rgba(0,0,0,0.88) 100%)",
-        frameImageSrc: "/gateway/backgrounds/tech-bg.png",
+        frameImageSrc: "/gateway/backgrounds/tech-bg.webp",
       },
       planet: {
         ...makePortalPlanetLayout({ mobileRem: 7.75, viewport: 14.5, desktopRem: 16 }),
-        diffuse: "/gateway/textures/planets/earth-atmosphere.jpg",
-        normal: "/gateway/textures/planets/earth-normal.jpg",
-        specular: "/gateway/textures/planets/earth-specular.jpg",
-        clouds: "/gateway/textures/planets/earth-clouds.png",
-        lights: "/gateway/textures/planets/earth-lights.png",
+        diffuse: "/gateway/textures/planets/earth-atmosphere.webp",
+        normal: "/gateway/textures/planets/earth-normal.webp",
+        specular: "/gateway/textures/planets/earth-specular.webp",
+        clouds: "/gateway/textures/planets/earth-clouds.webp",
+        lights: "/gateway/textures/planets/earth-lights.webp",
         colorTint: "#dd88ff",
         atmosphereColor: "#9933dd",
         ambientIntensity: 4.4,
@@ -431,7 +443,6 @@ export const gatewayHomeConfig = {
       id: "discover",
       label: "Discover",
       href: "/discover",
-      description: "Explore our curated collections and discoveries.",
       theme: {
         hoverGradientClass: "from-cyan-500/40 to-sky-400/0",
         glowColor: "rgba(34, 211, 238, 0.6)",
@@ -440,10 +451,10 @@ export const gatewayHomeConfig = {
       },
       planet: {
         ...makePortalPlanetLayout({ mobileRem: 7.75, viewport: 14.5, desktopRem: 16 }),
-        diffuse: "/gateway/textures/planets/earth-atmosphere.jpg",
-        normal: "/gateway/textures/planets/earth-normal.jpg",
-        specular: "/gateway/textures/planets/earth-specular.jpg",
-        clouds: "/gateway/textures/planets/earth-clouds.png",
+        diffuse: "/gateway/textures/planets/earth-atmosphere.webp",
+        normal: "/gateway/textures/planets/earth-normal.webp",
+        specular: "/gateway/textures/planets/earth-specular.webp",
+        clouds: "/gateway/textures/planets/earth-clouds.webp",
         colorTint: "#66eeff",
         atmosphereColor: "#0099cc",
         ambientIntensity: 4.4,
@@ -464,7 +475,6 @@ export const gatewayHomeConfig = {
       id: "fengshui",
       label: "Feng Shui",
       href: "/fengshui",
-      description: "Balance energy and explore spatial harmony.",
       theme: {
         hoverGradientClass: "from-slate-100/20 to-white/0",
         glowColor: "rgba(205, 220, 255, 0.92)",
@@ -473,10 +483,10 @@ export const gatewayHomeConfig = {
       },
       planet: {
         ...makePortalPlanetLayout({ mobileRem: 7.75, viewport: 14.5, desktopRem: 16 }),
-        diffuse: "/gateway/textures/planets/earth-atmosphere.jpg",
-        normal: "/gateway/textures/planets/earth-normal.jpg",
-        specular: "/gateway/textures/planets/earth-specular.jpg",
-        clouds: "/gateway/textures/planets/earth-clouds-hires.jpg",
+        diffuse: "/gateway/textures/planets/earth-atmosphere.webp",
+        normal: "/gateway/textures/planets/earth-normal.webp",
+        specular: "/gateway/textures/planets/earth-specular.webp",
+        clouds: "/gateway/textures/planets/earth-clouds-hires.webp",
         crystalBall: true,
         colorTint: "#c8ddf4",
         atmosphereColor: "#b8ccee",

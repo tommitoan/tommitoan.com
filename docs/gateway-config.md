@@ -259,8 +259,8 @@ To change color, edit the `palette` hues and lightness values.
 
 ## Asset Paths
 
-- background: `public/gateway/backgrounds/space-bg.png`
-- astronaut: `public/gateway/characters/astronaut.png`
+- background: `public/gateway/backgrounds/space-bg.webp`
+- astronaut: `public/gateway/characters/astronaut.webp`
 - planet textures: `public/gateway/textures/planets/`
 - pedestal textures: `public/gateway/textures/pedestals/`
 

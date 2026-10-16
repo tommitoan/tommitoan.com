@@ -1,0 +1,2673 @@
+/* The Feng Shui world: a night hero, a scene that turns the sky into paper, then paper bands. All colours come from
+   the shared kit tokens (--kit-*), so the look matches bazi.tommitoan.com. Everything is scoped under .fs-world. */
+
+.fs-world {
+  --fs-serif: var(--font-world-serif), Georgia, "Times New Roman", serif;
+  --fs-sans: var(--font-world-sans), var(--font-body), system-ui, sans-serif;
+  /* Lines and stops that need their own hue: the six harmony, the three harmony and the roadmap's gold. */
+  --fs-harmony: #2f9e5c;
+  --fs-triad: #2f6fbf;
+  --fs-gold-deep: #a9792b;
+  position: relative;
+  min-height: 100vh;
+  overflow-x: clip;
+  background: var(--kit-night);
+  color: var(--kit-ink);
+  font-family: var(--fs-sans);
+  line-height: 1.65;
+}
+.fs-world a {
+  color: inherit;
+  text-decoration: none;
+}
+/* The text of this world is not for selecting or dragging (a visitor still gets the page's links and buttons). */
+.fs-world,
+.fs-world * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.fs-world img,
+.fs-world a,
+.fs-world svg,
+.fs-world canvas {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+.fs-world input,
+.fs-world textarea {
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+.fs-world :focus-visible {
+  outline: 2px solid var(--kit-gold);
+  outline-offset: 2px;
+}
+.fs-band-paper :focus-visible,
+.fs-static-paper :focus-visible,
+.fs-footer :focus-visible {
+  outline-color: var(--kit-seal);
+}
+.fs-han {
+  font-family: "Noto Serif SC", "Noto Serif CJK SC", "Songti SC", "Source Han Serif SC", serif;
+  font-weight: 400;
+}
+.fs-wrap {
+  position: relative;
+  width: min(1120px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+.fs-narrow {
+  max-width: 760px;
+}
+
+/* Header and footer */
+.fs-header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+  background: rgba(8, 10, 26, 0.72);
+  backdrop-filter: blur(12px);
+  border-bottom: 0.5px solid rgba(238, 232, 255, 0.12);
+  color: #eee8ff;
+}
+.fs-header-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem 1rem;
+  width: min(1120px, calc(100% - 2rem));
+  margin-inline: auto;
+  padding: 0.55rem 0;
+}
+.fs-brand {
+  font-family: var(--font-brand), cursive;
+  font-size: 1.7rem;
+  line-height: 1;
+  color: #fff;
+}
+.fs-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+  font-size: 0.85rem;
+}
+.fs-nav a {
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  color: rgba(238, 232, 255, 0.82);
+  transition: background 0.2s, color 0.2s;
+}
+.fs-nav a:hover {
+  background: rgba(238, 232, 255, 0.08);
+  color: #fff;
+}
+/* The site-wide light-theme rule for the current link lives in the utilities layer and is !important.
+   Among important declarations an earlier layer wins, so this one sits in the components layer. */
+@layer theme, base, components, utilities;
+@layer components {
+  .fs-world .fs-nav a[aria-current="page"] {
+    background: rgba(238, 232, 255, 0.14) !important;
+    color: #fff !important;
+  }
+}
+.fs-lang {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid rgba(238, 232, 255, 0.18);
+  border-radius: 999px;
+}
+.fs-lang-option {
+  padding: 0.2rem 0.75rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(238, 232, 255, 0.82);
+  font: 600 0.75rem/1.4 var(--fs-sans);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+.fs-lang-option[aria-pressed="true"] {
+  background: var(--kit-seal-solid);
+  color: var(--kit-on-seal);
+}
+.fs-footer {
+  padding: 1.5rem 0;
+  background: var(--kit-paper);
+  border-top: 0.5px solid var(--kit-line);
+  color: var(--kit-muted);
+  font-size: 0.85rem;
+}
+/* "Experience the journey again": a quiet pill with an arrow that rises a little on hover, bottom right above the footer. */
+.fs-replay-row {
+  padding: 1.8rem 0 1.4rem;
+  background: var(--kit-paper);
+}
+.fs-replay-row .fs-wrap {
+  display: flex;
+  justify-content: flex-end;
+}
+.fs-replay {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1.4rem;
+  border: 1px solid var(--kit-seal);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--kit-seal);
+  font: 600 0.9rem/1.2 var(--fs-sans);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.fs-replay:hover,
+.fs-replay:focus-visible {
+  background: var(--kit-seal-solid);
+  color: var(--kit-on-seal);
+}
+.fs-replay-arrow {
+  display: inline-block;
+  font-size: 1.1rem;
+  transition: transform 0.25s;
+}
+.fs-replay:hover .fs-replay-arrow,
+.fs-replay:focus-visible .fs-replay-arrow {
+  transform: translateY(-3px);
+}
+.fs-footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+.fs-footer p {
+  margin: 0;
+}
+.fs-clock {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+.fs-clock-hour {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 0.55rem;
+  padding: 0.4rem 0.75rem;
+  border: 0.5px solid color-mix(in srgb, var(--kit-line) 50%, transparent);
+  border-radius: 8px;
+  color: var(--kit-muted);
+  line-height: 1.25;
+}
+.fs-clock-hour .fs-han {
+  grid-row: 1 / span 2;
+  color: var(--kit-muted);
+  font-size: 1.5rem;
+}
+.fs-clock-hour small {
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+}
+.fs-clock-hour span {
+  font-size: 0.85rem;
+}
+.fs-clock-hour em {
+  display: none;
+}
+/* The current double-hour: brighter, with the countdown and a thin bar for how far through it we are. */
+.fs-clock-hour[data-now="true"] {
+  overflow: hidden;
+  padding-bottom: 0.55rem;
+  border-color: var(--kit-seal);
+  background: color-mix(in srgb, var(--kit-seal) 7%, transparent);
+  color: var(--kit-ink);
+}
+.fs-clock-hour[data-now="true"] .fs-han {
+  color: var(--kit-seal);
+  font-size: 2rem;
+}
+.fs-clock-count {
+  color: var(--kit-seal);
+  font-size: 1.3rem !important;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  line-height: 1.1;
+}
+.fs-clock-count em {
+  display: inline;
+  color: var(--kit-muted);
+  font-size: 0.7rem;
+  font-style: normal;
+  font-weight: 400;
+}
+.fs-clock-bar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--kit-seal);
+  transform-origin: 0 50%;
+}
+@media (max-width: 760px) {
+  .fs-clock-hour:not([data-now="true"]) {
+    flex: 1 1 8rem;
+  }
+}
+
+/* Shared text and buttons */
+.fs-eyebrow {
+  display: block;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--kit-seal);
+}
+.fs-hero .fs-eyebrow {
+  color: var(--kit-gold);
+}
+.fs-title {
+  margin: 0.5rem 0 0.8rem;
+  font: 400 clamp(1.7rem, 4vw, 2.6rem) / 1.15 var(--fs-serif);
+  text-wrap: balance;
+}
+.fs-copy {
+  max-width: 62ch;
+  color: var(--kit-muted);
+}
+.fs-lead {
+  margin: 0 0 1rem;
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+.fs-lead:last-child {
+  margin-bottom: 0;
+}
+.fs-note {
+  margin: 1rem 0 0;
+  padding-top: 0.8rem;
+  border-top: 0.5px solid var(--kit-line);
+  color: var(--kit-muted);
+  font-size: 0.78rem;
+}
+.fs-link {
+  display: inline-block;
+  margin-top: 0.6rem;
+  color: var(--kit-seal);
+  font-weight: 500;
+}
+.fs-kicker {
+  display: block;
+  color: var(--kit-seal);
+  font-size: 0.78rem;
+}
+.fs-number {
+  font: 400 1.6rem/1 var(--fs-serif);
+  color: color-mix(in srgb, var(--kit-seal) 40%, transparent);
+}
+.fs-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.6rem;
+}
+.fs-actions-center {
+  justify-content: center;
+}
+.fs-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.75rem 1.7rem;
+  border: 1px solid var(--kit-seal);
+  border-radius: 6px;
+  background: var(--kit-seal-solid);
+  color: var(--kit-on-seal);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+/* The link rule `.fs-world a { color: inherit }` would otherwise turn the label of a filled button dark on the seal red. */
+.fs-world .fs-btn:not(.fs-btn-ghost):not(.fs-btn-cta) {
+  color: var(--kit-on-seal);
+}
+.fs-btn-ghost {
+  background: transparent;
+  border-color: currentColor;
+  color: inherit;
+}
+/* Short night heroes (the error pages) */
+.fs-hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 78vh;
+  padding: 7.5rem 0 5rem;
+  background: var(--kit-night);
+  color: #eee8ff;
+}
+.fs-hero-title {
+  margin: 0.6rem 0 1rem;
+  font: 400 clamp(2.2rem, 5.6vw, 4rem) / 1.1 var(--fs-serif);
+  text-wrap: balance;
+}
+.fs-hero-copy {
+  max-width: 46ch;
+  color: rgba(238, 232, 255, 0.78);
+}
+.fs-pillar {
+  padding: 0.6rem 0.2rem;
+  background: var(--kit-surface);
+  border: 0.5px solid var(--kit-line);
+  border-radius: 6px;
+  color: var(--kit-ink);
+  text-align: center;
+}
+.fs-pillar small {
+  display: block;
+  color: var(--kit-muted);
+  font-size: 0.7rem;
+}
+.fs-pillar b {
+  display: block;
+  font-size: 2.1rem;
+  font-weight: 400;
+  line-height: 1.15;
+}
+.fs-pillar b span {
+  display: block;
+}
+
+/* Birth scene (pinned) */
+.fs-scene {
+  position: relative;
+  height: 600svh;
+}
+.fs-scene-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  min-height: 560px;
+  overflow: hidden;
+  /* The sky may thin out at the end of the dark journey (--kit-sky-a), so the galaxy behind shows through. */
+  background: color-mix(in srgb, var(--kit-sky, #0c1024) calc(var(--kit-sky-a, 1) * 100%), transparent);
+  color: var(--kit-fg, #eee8ff);
+}
+.fs-scene-stage > * {
+  position: absolute;
+}
+/* The night: near-black with a pale, whitish haze like the atmosphere of the Feng Shui planet on the gateway, and the
+   star dust drawn on the canvas. It fades out as the sky turns to day. */
+.fs-scene-haze {
+  inset: 0;
+  background:
+    radial-gradient(ellipse 62% 46% at 50% -6%, rgba(205, 220, 255, 0.22), rgba(205, 220, 255, 0) 70%),
+    radial-gradient(circle at 84% 20%, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0) 32%),
+    radial-gradient(circle at 12% 72%, rgba(184, 204, 238, 0.09), rgba(184, 204, 238, 0) 40%);
+}
+.fs-scene-ink {
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+  opacity: 0;
+  filter: sepia(1) saturate(0.55) contrast(0.8) brightness(1.35);
+  mix-blend-mode: multiply;
+  mask-image: linear-gradient(to bottom, #000 78%, transparent);
+}
+.fs-scene-vignette {
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(10, 12, 34, 0.85), rgba(10, 12, 34, 0) 65%);
+  opacity: 0;
+}
+.fs-scene-glow {
+  inset: 0;
+  background: radial-gradient(ellipse 80% 62% at 50% 100%, rgba(255, 176, 110, 0.95), rgba(255, 176, 110, 0) 70%);
+  opacity: 0;
+}
+.fs-scene-sky {
+  left: 0;
+  top: 0;
+}
+.fs-scene-sun {
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  top: 100%;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+}
+.fs-scene-base,
+.fs-scene-trail,
+.fs-scene-mark,
+.fs-scene-shadow,
+.fs-scene-figure,
+.fs-scene-starlabel {
+  left: 0;
+  top: 0;
+}
+.fs-scene-base {
+  height: 0;
+  border-top: 1.2px dotted var(--kit-line);
+  opacity: 0;
+}
+.fs-scene-trail {
+  height: 0;
+  border-top: 2.2px solid var(--kit-ink);
+  opacity: 0;
+}
+.fs-scene-mark {
+  width: 0;
+  opacity: 0;
+  color: var(--kit-muted);
+  font-size: 0.7rem;
+}
+.fs-scene-mark i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1.5px;
+  height: 12px;
+  background: var(--kit-ink);
+  transform: translateX(-50%);
+}
+.fs-scene-mark span,
+.fs-scene-mark b {
+  position: absolute;
+  left: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.fs-scene-mark span {
+  top: 18px;
+}
+.fs-scene-mark b {
+  top: 34px;
+  color: var(--kit-ink);
+  font-size: 1rem;
+}
+.fs-scene-shadow {
+  height: 8px;
+  border-radius: 50%;
+  background: var(--kit-ink);
+  opacity: 0;
+}
+.fs-scene-figure {
+  width: 0;
+  height: 0;
+  object-fit: contain;
+  object-position: 50% 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+.fs-scene-seals {
+  left: 0;
+  right: 0;
+  top: 92px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+.fs-scene-seal {
+  padding: 6px 12px;
+  background: color-mix(in srgb, var(--kit-surface) 92%, transparent);
+  border: 0.5px solid var(--kit-line);
+  border-radius: 4px;
+  color: var(--kit-ink);
+  text-align: center;
+  opacity: 0;
+}
+.fs-scene-seal small {
+  display: block;
+  color: var(--kit-muted);
+  font-size: 0.7rem;
+}
+.fs-scene-seal b {
+  font-size: 1.6rem;
+  line-height: 1.1;
+}
+.fs-scene-text {
+  left: 0;
+  right: 0;
+  top: 176px;
+  padding: 0 1.25rem;
+  text-align: center;
+  opacity: 0;
+}
+.fs-scene-text-first {
+  top: 104px;
+  opacity: 1;
+}
+.fs-scene-text p {
+  margin: 0;
+  font: 400 clamp(1.5rem, 4.4vw, 2.7rem) / 1.2 var(--fs-serif);
+  text-wrap: balance;
+}
+.fs-scene-text small {
+  display: block;
+  margin-top: 0.6rem;
+  font-size: 0.82rem;
+  opacity: 0.8;
+}
+.fs-scene-cue {
+  left: 50%;
+  bottom: 2.2rem;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+/* Scroll cue: a mouse whose wheel runs down, and chevrons that fall after it. */
+.fs-cue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  color: rgba(238, 243, 255, 0.85);
+  pointer-events: none;
+}
+.fs-cue-static {
+  margin-top: 1.6rem;
+}
+.fs-cue-mouse {
+  position: relative;
+  width: 26px;
+  height: 42px;
+  border: 1.5px solid currentColor;
+  border-radius: 14px;
+}
+.fs-cue-mouse i {
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  width: 3px;
+  height: 8px;
+  margin-left: -1.5px;
+  border-radius: 2px;
+  background: currentColor;
+  animation: fs-cue-wheel 1.8s ease-in-out infinite;
+}
+.fs-cue-chevrons {
+  display: grid;
+  justify-items: center;
+}
+.fs-cue-chevrons i {
+  width: 11px;
+  height: 11px;
+  margin-top: -4px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  opacity: 0;
+  transform: rotate(45deg);
+  animation: fs-cue-fall 1.8s ease-in-out infinite;
+}
+.fs-cue-chevrons i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.fs-cue-chevrons i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes fs-cue-wheel {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  25% {
+    opacity: 1;
+  }
+  80%,
+  100% {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+}
+@keyframes fs-cue-fall {
+  0% {
+    opacity: 0;
+    transform: translateY(-5px) rotate(45deg);
+  }
+  45% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(6px) rotate(45deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fs-cue-mouse i {
+    animation: none;
+  }
+  .fs-cue-chevrons i {
+    opacity: 0.7;
+    animation: none;
+  }
+}
+.fs-scene-starlabel {
+  z-index: 2;
+  color: #fff4d2;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  text-shadow: 0 0 10px rgba(255, 214, 140, 0.9), 0 0 22px rgba(255, 190, 90, 0.55), 0 1px 2px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+}
+/* The sparkle before the words twinkles on its own beat. */
+.fs-scene-starlabel i {
+  display: inline-block;
+  margin-right: 0.35rem;
+  color: var(--kit-gold);
+  font-style: normal;
+  animation: fs-star-twinkle 1.6s ease-in-out infinite;
+}
+@keyframes fs-star-twinkle {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.8) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.35) rotate(25deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fs-scene-starlabel i {
+    animation: none;
+  }
+}
+
+/* Static version of the scene (phones, reduced motion, search engines) */
+.fs-static-band {
+  padding: 4.5rem 0;
+  text-align: center;
+}
+.fs-static-night {
+  /* The same night as the pinned scene: near-black, a pale haze, and a little star dust. */
+  padding-top: 9rem;
+  background:
+    radial-gradient(ellipse 62% 46% at 50% 0%, rgba(205, 220, 255, 0.2), rgba(205, 220, 255, 0) 70%),
+    radial-gradient(circle at 84% 24%, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0) 32%),
+    radial-gradient(1.4px 1.4px at 12% 22%, rgba(236, 243, 255, 0.9), transparent 60%),
+    radial-gradient(1.2px 1.2px at 28% 64%, rgba(236, 243, 255, 0.8), transparent 60%),
+    radial-gradient(1.6px 1.6px at 47% 14%, rgba(236, 243, 255, 0.9), transparent 60%),
+    radial-gradient(1.2px 1.2px at 63% 48%, rgba(236, 243, 255, 0.7), transparent 60%),
+    radial-gradient(1.5px 1.5px at 76% 80%, rgba(236, 243, 255, 0.85), transparent 60%),
+    radial-gradient(1.2px 1.2px at 91% 36%, rgba(236, 243, 255, 0.8), transparent 60%),
+    var(--kit-night);
+  color: #eee8ff;
+}
+.fs-static-dawn {
+  background: linear-gradient(#d9998a, #f1cfa6);
+  color: var(--kit-ink);
+}
+.fs-static-paper {
+  background: var(--kit-paper);
+  color: var(--kit-ink);
+}
+.fs-static-inner {
+  display: grid;
+  justify-items: center;
+  gap: 0.8rem;
+}
+.fs-static-title {
+  margin: 0.4rem 0 0;
+  font: 400 clamp(1.5rem, 5vw, 2.4rem) / 1.2 var(--fs-serif);
+  text-wrap: balance;
+}
+.fs-static-inner p {
+  margin: 0;
+  opacity: 0.85;
+}
+.fs-static-label {
+  color: var(--kit-gold);
+  font-size: 0.8rem;
+}
+.fs-static-figure {
+  width: min(200px, 50vw);
+  height: auto;
+}
+.fs-static-figure-small {
+  width: min(130px, 40vw);
+}
+.fs-static-pair {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+.fs-static-pillars {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(64px, 84px));
+  gap: 0.5rem;
+}
+.fs-static-luck {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  gap: 0.5rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.fs-static-luck li {
+  padding: 0.4rem;
+  background: var(--kit-surface);
+  border: 0.5px solid var(--kit-line);
+  border-radius: 6px;
+  font-size: 0.75rem;
+}
+.fs-static-luck b {
+  display: block;
+  font-size: 1.2rem;
+}
+
+/* Paper bands */
+.fs-band {
+  padding: 5rem 0;
+}
+.fs-band-paper {
+  background: var(--kit-paper);
+  color: var(--kit-ink);
+}
+.fs-heading {
+  max-width: 62ch;
+}
+.fs-grid {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 2.5rem;
+}
+.fs-grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.fs-grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.fs-grid-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+@media (max-width: 1060px) {
+  .fs-grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.fs-panel {
+  padding: 1.5rem;
+  background: var(--kit-surface);
+  border: 0.5px solid var(--kit-line);
+  border-radius: 6px;
+}
+.fs-card {
+  height: 100%;
+}
+.fs-card h3 {
+  margin: 0 0 0.6rem;
+  font: 400 1.3rem/1.3 var(--fs-serif);
+}
+.fs-card p {
+  margin: 0 0 0.8rem;
+  color: var(--kit-muted);
+}
+.fs-points {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.fs-points li {
+  position: relative;
+  padding-left: 1.1rem;
+  font-size: 0.92rem;
+}
+.fs-points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--kit-seal);
+}
+.fs-glossary {
+  margin-top: 1.25rem;
+}
+.fs-glossary h3 {
+  margin: 0;
+  font: 400 1.2rem/1.3 var(--fs-serif);
+}
+.fs-glossary dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem 2rem;
+  margin: 1rem 0 0;
+}
+.fs-glossary dt {
+  color: var(--kit-seal);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.fs-glossary dd {
+  margin: 0.2rem 0 0;
+  color: var(--kit-muted);
+  font-size: 0.88rem;
+}
+/* Principles: three lines, the one in focus lit, a big numeral behind them and a thin bar that fills before the next takes over. */
+.fs-pr-stage {
+  position: relative;
+  margin-top: 2rem;
+}
+.fs-pr-mark {
+  position: absolute;
+  top: -2.2rem;
+  right: 0;
+  z-index: 0;
+  color: var(--kit-seal);
+  font: 400 clamp(6rem, 16vw, 11rem) / 1 var(--fs-serif);
+  font-variant-numeric: tabular-nums;
+  opacity: 0.1;
+  pointer-events: none;
+  animation: fs-pr-mark-in 0.6s ease-out;
+}
+@keyframes fs-pr-mark-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+.fs-pr-list {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.fs-pr-item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.1rem;
+  width: 100%;
+  padding: 1.1rem 1.3rem;
+  overflow: hidden;
+  border: 0.5px solid var(--kit-line);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--kit-muted);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s;
+}
+.fs-pr-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background: var(--kit-seal);
+  transform: scaleY(0);
+  transition: transform 0.35s;
+}
+.fs-pr-num {
+  flex: none;
+  min-width: 1.6rem;
+  font: 400 1.7rem/1.2 var(--fs-serif);
+  color: color-mix(in srgb, var(--kit-seal) 40%, transparent);
+  transition: color 0.3s;
+}
+.fs-pr-text {
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+.fs-pr-item:hover {
+  border-color: var(--kit-seal);
+  color: var(--kit-ink);
+}
+.fs-pr-item[aria-pressed="true"] {
+  border-color: var(--kit-seal);
+  background: var(--kit-surface);
+  color: var(--kit-ink);
+  box-shadow: 0 8px 24px rgba(var(--kit-shadow), 0.12);
+}
+.fs-pr-item[aria-pressed="true"]::before {
+  transform: scaleY(1);
+}
+.fs-pr-item[aria-pressed="true"] .fs-pr-num {
+  color: var(--kit-seal);
+}
+@media (prefers-reduced-motion: reduce) {
+  .fs-pr-mark {
+    animation: none;
+  }
+}
+/* The call to try Bazica Web: a card in the look of the other panels (paper in the light look, dark glass in the dark one), with a
+   quiet light running round its edge, a pulsing badge and a larger filled button. It takes its colours from the kit's tokens. */
+.fs-cta {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 3.4rem 1.5rem 3.2rem;
+  border-radius: 14px;
+  text-align: center;
+  color: var(--kit-ink);
+  /* Opaque, so the light running round the edge does not show through the card. */
+  --fs-cta-fill: var(--kit-surface);
+  box-shadow: 0 18px 48px rgba(var(--kit-shadow), 0.22);
+}
+html[data-theme="dark"] .fs-cta,
+html[data-kit-appearance="dark"] .fs-cta {
+  --fs-cta-fill: #181d42;
+}
+.fs-cta::before {
+  content: "";
+  position: absolute;
+  inset: -80%;
+  z-index: -2;
+  background: conic-gradient(from 0deg, transparent 0 78%, color-mix(in srgb, var(--kit-seal) 70%, transparent) 92%, transparent 100%);
+  animation: fs-cta-spin 9s linear infinite;
+}
+.fs-cta::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  border-radius: 13px;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 0%, color-mix(in srgb, var(--kit-seal) 14%, transparent), transparent 72%),
+    var(--fs-cta-fill);
+}
+@keyframes fs-cta-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.fs-cta .fs-eyebrow {
+  color: var(--kit-seal);
+}
+.fs-cta .fs-copy {
+  margin-inline: auto;
+  color: var(--kit-muted);
+}
+.fs-cta-title {
+  margin: 0.4rem 0 0.8rem;
+  color: var(--kit-ink);
+  font-size: clamp(2.2rem, 5.4vw, 3.3rem);
+}
+.fs-cta-accent {
+  color: var(--kit-seal);
+}
+.fs-cta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 1.1rem;
+  padding: 0.35rem 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--kit-seal) 55%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--kit-seal) 12%, transparent);
+  color: var(--kit-seal);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.fs-cta-badge i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--kit-seal);
+  animation: fs-cta-dot 1.6s ease-out infinite;
+}
+@keyframes fs-cta-dot {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--kit-seal) 70%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 10px transparent;
+  }
+}
+.fs-cta-free {
+  margin: 0.6rem 0 0;
+  color: var(--kit-muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.fs-cta .fs-actions {
+  margin-top: 1.8rem;
+  align-items: center;
+}
+/* The main button: the same filled seal as every other button of the world, larger, with a light sweeping across it. */
+.fs-btn-cta {
+  position: relative;
+  overflow: hidden;
+  gap: 0.5rem;
+  padding: 0.95rem 2.2rem;
+  font-size: 1.08rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: filter 0.2s;
+}
+.fs-btn-cta::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -40%;
+  width: 30%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: skewX(-20deg);
+  animation: fs-cta-shine 3.6s ease-in-out infinite;
+}
+.fs-world .fs-btn-cta {
+  color: var(--kit-on-seal);
+}
+.fs-btn-cta:hover,
+.fs-btn-cta:focus-visible {
+  filter: brightness(1.08);
+}
+.fs-cta .fs-btn-ghost {
+  border-color: var(--kit-line);
+  color: var(--kit-ink);
+  transition: background 0.2s;
+}
+.fs-cta .fs-btn-ghost:hover,
+.fs-cta .fs-btn-ghost:focus-visible {
+  background: var(--kit-card-hover, rgba(127, 127, 127, 0.12));
+}
+@keyframes fs-cta-shine {
+  0%,
+  55% {
+    left: -40%;
+  }
+  100% {
+    left: 140%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fs-cta::before,
+  .fs-cta-badge i,
+  .fs-btn-cta::after {
+    animation: none;
+  }
+}
+
+/* Story (pinned) */
+.fs-story {
+  position: relative;
+  height: 340svh;
+}
+.fs-story-stage {
+  position: sticky;
+  top: 0;
+  display: grid;
+  align-items: center;
+  height: 100svh;
+  min-height: 520px;
+  background: var(--kit-paper);
+  color: var(--kit-ink);
+}
+.fs-story-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
+  gap: 2rem;
+  align-items: center;
+}
+.fs-ring {
+  position: relative;
+  width: 100%;
+  max-width: 280px;
+  aspect-ratio: 1;
+  margin-inline: auto;
+}
+.fs-ring svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 50%;
+}
+.fs-ring circle,
+.fs-ring line {
+  fill: none;
+  stroke: var(--kit-line);
+  stroke-width: 0.8;
+}
+.fs-ring .fs-ring-arc {
+  stroke: var(--kit-seal);
+  stroke-width: 2.2;
+}
+.fs-ring-glyph {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--kit-seal);
+  font-size: 84px;
+}
+.fs-story-steps {
+  display: grid;
+}
+.fs-story-step {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.45s, transform 0.45s;
+  pointer-events: none;
+}
+.fs-story-step[data-active="true"] {
+  opacity: 1;
+  transform: none;
+}
+.fs-story-step h3 {
+  margin: 0.2rem 0 0.4rem;
+  font: 400 1.6rem/1.25 var(--fs-serif);
+}
+.fs-story-step p {
+  max-width: 46ch;
+  margin: 0;
+  color: var(--kit-muted);
+}
+/* The four pillar cards: each slot is an empty outline until its step is done, then the card drops in. */
+.fs-story-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 6.2rem));
+  gap: 0.6rem;
+  margin-top: 1.2rem;
+}
+.fs-story-slot {
+  border: 1px dashed var(--kit-line);
+  border-radius: 6px;
+  min-height: 5.6rem;
+}
+.fs-story-slot .fs-pillar {
+  height: 100%;
+  opacity: 0;
+  transform: translateY(-14px) scale(0.92);
+  transition: opacity 0.5s, transform 0.55s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+.fs-story-slot[data-shown="true"] {
+  border-color: transparent;
+}
+.fs-story-slot[data-shown="true"] .fs-pillar {
+  opacity: 1;
+  transform: none;
+  box-shadow: 0 6px 16px rgba(var(--kit-shadow), 0.14);
+}
+@media (prefers-reduced-motion: reduce) {
+  .fs-story-slot .fs-pillar {
+    transition: none;
+  }
+}
+.fs-story-count {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.4rem;
+  font-size: 0.85rem;
+}
+.fs-story-count b {
+  color: var(--kit-seal);
+  font: 400 1.6rem/1 var(--fs-serif);
+}
+.fs-story-count i {
+  position: relative;
+  flex: 1;
+  height: 2px;
+  background: color-mix(in srgb, var(--kit-line) 30%, transparent);
+}
+.fs-story-count u {
+  position: absolute;
+  inset: 0;
+  background: var(--kit-seal);
+  text-decoration: none;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+.fs-story-card {
+  display: grid;
+  gap: 0.3rem;
+}
+.fs-story-card h3 {
+  margin: 0;
+  font: 400 1.3rem/1.3 var(--fs-serif);
+}
+.fs-story-card p {
+  margin: 0;
+  color: var(--kit-muted);
+}
+.fs-story-card-glyph {
+  color: var(--kit-seal);
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+/* Solar-terms dial */
+.fs-dial {
+  display: grid;
+  grid-template-columns: minmax(0, 460px) minmax(0, 1fr);
+  gap: 2rem;
+  align-items: center;
+}
+.fs-dial-ring {
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: pointer;
+  /* A finger can scrub the ring sideways while the page still scrolls up and down. */
+  touch-action: pan-y;
+}
+.fs-dial-hint {
+  margin: 0.4rem 0 0;
+  color: var(--kit-muted);
+  font-size: 0.8rem;
+}
+.fs-dial-term {
+  fill: var(--kit-muted);
+  font-size: 10.5px;
+  transition: fill 0.25s;
+}
+.fs-dial-term[data-opens="true"] {
+  fill: var(--kit-ink);
+}
+/* The term the Sun is in: larger and in seal red. */
+.fs-dial-term[data-current="true"] {
+  fill: var(--kit-seal);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+.fs-dial-centre {
+  fill: var(--kit-ink);
+  font: 400 30px var(--fs-serif);
+  text-anchor: middle;
+}
+.fs-dial-centre-date {
+  fill: var(--kit-muted);
+  font: 500 13px var(--fs-sans);
+  letter-spacing: 0.06em;
+  text-anchor: middle;
+  font-variant-numeric: tabular-nums;
+}
+.fs-dial-centre-sub {
+  fill: var(--kit-seal);
+  font: 600 12px var(--fs-sans);
+  text-anchor: middle;
+}
+/* The card of the current term: its painting, whether it opens a Ba-zi month, and a line of imagery. */
+.fs-term {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 1rem;
+  margin: 1.1rem 0 0.4rem;
+  padding: 0.7rem;
+  background: var(--kit-card-soft);
+  border: 1px solid var(--kit-line);
+  border-radius: 10px;
+}
+.fs-term[data-opens="true"] {
+  border-color: var(--kit-seal);
+}
+.fs-term-image {
+  display: block;
+  width: 121px;
+  height: auto;
+  border-radius: 4px;
+  animation: fs-term-in 0.5s ease both;
+}
+@keyframes fs-term-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+.fs-term figcaption {
+  display: grid;
+  gap: 0.2rem;
+  line-height: 1.4;
+}
+.fs-term-badge {
+  justify-self: start;
+  padding: 0.05rem 0.6rem;
+  border: 1px solid var(--kit-line);
+  border-radius: 999px;
+  color: var(--kit-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.fs-term[data-opens="true"] .fs-term-badge {
+  border-color: var(--kit-seal);
+  background: var(--kit-seal-solid);
+  color: var(--kit-on-seal);
+}
+.fs-term-name {
+  color: var(--kit-ink);
+  font: 400 1.35rem/1.2 var(--fs-serif);
+}
+.fs-term small {
+  color: var(--kit-muted);
+  font-size: 0.8rem;
+}
+.fs-term-imagery {
+  font-size: 0.92rem;
+}
+.fs-term-role {
+  color: var(--kit-muted);
+  font-size: 0.8rem;
+}
+.fs-dial-label {
+  display: block;
+  margin-top: 0.9rem;
+  color: var(--kit-muted);
+  font-size: 0.85rem;
+}
+.fs-dial-label b,
+.fs-dial-out b {
+  color: var(--kit-seal);
+  font-weight: 500;
+}
+/* The year as twelve cells, each as wide as its days, above the slider: a month that is over is filled, the current one fills as
+   its days pass, and the two dots are its two solar terms (the red one opens a Ba-zi month). */
+.fs-dial-months {
+  display: grid;
+  gap: 3px;
+  margin: 0.55rem 0 0.35rem;
+  padding: 0;
+  list-style: none;
+}
+.fs-dial-months li {
+  min-width: 0;
+}
+.fs-dial-month {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 0.18rem;
+  width: 100%;
+  padding: 0.4rem 0 0.5rem;
+  overflow: hidden;
+  border: 1px solid var(--kit-line);
+  border-radius: 7px;
+  background: var(--kit-card-soft);
+  color: var(--kit-muted);
+  font: 600 0.72rem/1 var(--fs-sans);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.fs-dial-month u {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--kit-seal) calc(var(--fill, 0) * 100%), transparent calc(var(--fill, 0) * 100%));
+  opacity: 0.85;
+}
+.fs-dial-month-dots {
+  display: inline-flex;
+  gap: 3px;
+  height: 5px;
+}
+.fs-dial-month-dots i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--kit-line);
+}
+.fs-dial-month-dots i[data-opens="true"] {
+  background: var(--kit-seal);
+}
+.fs-dial-month[data-state="past"] {
+  color: var(--kit-ink);
+  border-color: color-mix(in srgb, var(--kit-seal) 45%, var(--kit-line));
+}
+.fs-dial-month:hover,
+.fs-dial-month:focus-visible {
+  background: var(--kit-card-hover);
+  color: var(--kit-ink);
+}
+.fs-dial-month[data-state="now"] {
+  border-color: var(--kit-seal);
+  background: var(--kit-card);
+  color: var(--kit-ink);
+  box-shadow: 0 0 0 1px var(--kit-seal), 0 4px 14px rgba(var(--kit-shadow), 0.22);
+}
+.fs-dial-month[data-state="now"] .fs-dial-month-name {
+  color: var(--kit-seal);
+}
+@media (max-width: 760px) {
+  .fs-dial-month {
+    font-size: 0.62rem;
+  }
+  .fs-dial-month-name {
+    letter-spacing: -0.02em;
+  }
+}
+.fs-dial-range {
+  width: 100%;
+  accent-color: var(--kit-seal);
+}
+.fs-dial-out {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1rem 0 0;
+}
+.fs-dial-out > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.75rem;
+}
+.fs-dial-out dt {
+  min-width: 11ch;
+  color: var(--kit-muted);
+  font-size: 0.85rem;
+}
+.fs-dial-out dd {
+  margin: 0;
+}
+
+/* Day Master */
+.fs-dm-stage {
+  display: grid;
+  grid-template-columns: minmax(0, min(340px, 31svh)) minmax(0, 1fr);
+  gap: 2rem;
+  align-items: center;
+  margin-top: 1.2rem;
+}
+.fs-dm-art {
+  margin: 0;
+  padding: 8px;
+  background: var(--kit-card);
+  box-shadow: 0 10px 28px rgba(var(--kit-shadow), 0.18);
+}
+/* The ten paintings sit on top of each other; the one of the stem in focus fades in over the one that leaves. */
+.fs-dm-frame {
+  position: relative;
+  aspect-ratio: 378 / 369;
+}
+.fs-dm-art img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+.fs-dm-art img[data-shown] {
+  opacity: 1;
+}
+.fs-dm-info {
+  animation: fs-dm-info-in 0.5s ease both;
+}
+@keyframes fs-dm-info-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.fs-dm-info p {
+  margin: 0.6rem 0 0;
+  max-width: 52ch;
+}
+.fs-dm-kind {
+  color: var(--kit-seal);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.fs-dm-name {
+  margin: 0.1rem 0 0;
+  color: var(--kit-ink);
+  font: 400 clamp(2.4rem, 5vw, 3.4rem) / 1.1 var(--fs-serif);
+}
+.fs-dm-info .fs-dm-title {
+  margin-top: 0.2rem;
+  color: var(--kit-seal);
+  font: 400 1.2rem/1.3 var(--fs-serif);
+}
+/* The ten stems run along a belt from left to right without stopping, moved by script one frame at a time; the stem in the
+   middle is the one shown above, and the pointer in the section holds the belt still. */
+.fs-dm-picker {
+  margin-top: 1.2rem;
+  overflow: hidden;
+  padding: 0.3rem 0;
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.fs-dm-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+.fs-dm-tile {
+  flex: none;
+  width: 5.2rem;
+  margin-right: 0.5rem;
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  justify-items: center;
+  gap: 0.25rem;
+  padding: 0.35rem 0.2rem 0.45rem;
+  border: 1px solid var(--kit-line);
+  border-radius: 8px;
+  background: var(--kit-card-soft);
+  color: var(--kit-muted);
+  font: 600 0.78rem/1.2 var(--fs-sans);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.fs-dm-tile img {
+  width: 100%;
+  max-width: 56px;
+  height: auto;
+}
+.fs-dm-tile:hover {
+  background: var(--kit-card-hover);
+}
+.fs-dm-tile[aria-pressed="true"] {
+  border-color: var(--kit-seal);
+  background: var(--kit-card);
+  color: var(--kit-seal);
+  box-shadow: 0 0 0 1px var(--kit-seal);
+}
+.fs-dm-finder {
+  margin-top: 1.2rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--kit-line);
+}
+.fs-dm-finder label {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--kit-muted);
+  font-size: 0.9rem;
+}
+.fs-dm-date {
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--kit-line);
+  border-radius: 6px;
+  background: var(--kit-card);
+  color: var(--kit-ink);
+  font: inherit;
+}
+.fs-dm-found {
+  min-height: 1.6em;
+  margin: 0.7rem 0 0;
+  color: var(--kit-seal);
+  font-weight: 600;
+}
+.fs-dm-finder .fs-note {
+  margin-top: 0.2rem;
+}
+/* Less motion: no belt, the ten stems sit in a wrapped row and the copy is hidden. */
+@media (prefers-reduced-motion: reduce) {
+  .fs-dm-picker {
+    mask-image: none;
+  }
+  .fs-dm-track {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: auto;
+  }
+  .fs-dm-art img,
+  .fs-dm-info {
+    transition: none;
+    animation: none;
+  }
+  .fs-dm-tile {
+    margin-right: 0;
+  }
+  .fs-dm-tile[data-clone] {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .fs-dm-stage {
+    grid-template-columns: 1fr;
+  }
+  .fs-dm-art {
+    max-width: 320px;
+    margin-inline: auto;
+  }
+  .fs-dm-tile {
+    width: 4.4rem;
+  }
+  .fs-term {
+    grid-template-columns: 1fr;
+  }
+  .fs-term-image {
+    width: 100px;
+  }
+}
+
+/* Marquee */
+.fs-marquee {
+  overflow: hidden;
+  padding-bottom: 3rem;
+}
+.fs-marquee-row {
+  margin-top: 0.9rem;
+  padding-block: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  white-space: nowrap;
+  border-block: 0.5px solid var(--kit-line);
+}
+.fs-marquee-row::-webkit-scrollbar {
+  display: none;
+}
+.fs-marquee-track {
+  display: inline-block;
+  will-change: transform;
+}
+.fs-marquee-item {
+  display: inline-block;
+  padding-inline: 1rem;
+  font-size: 3.2rem;
+  line-height: 1.25;
+}
+
+@media (max-width: 760px) {
+  .fs-hero {
+    padding-top: 9rem;
+  }
+  .fs-story-grid,
+  .fs-dial,
+  .fs-grid-2,
+  .fs-grid-3,
+  .fs-grid-4,
+  .fs-glossary dl {
+    grid-template-columns: 1fr;
+  }
+  .fs-band {
+    padding: 3.5rem 0;
+  }
+  .fs-nav {
+    order: 3;
+    width: 100%;
+  }
+}
+
+/* Short heroes (the error pages) */
+.fs-hero-compact { min-height: 0; padding: 7.5rem 0 3.5rem; }
+.fs-hero-compact .fs-hero-title { font-size: clamp(1.9rem, 4.6vw, 3rem); }
+.fs-hero-compact .fs-hero-copy { max-width: 60ch; }
+
+/* Skip link and the error page */
+.fs-skip { position: fixed; left: .8rem; top: -4rem; z-index: 120; padding: .6rem 1rem; background: var(--kit-paper); color: var(--kit-ink); border: 2px solid var(--kit-seal); border-radius: 6px; font-size: .9rem; transition: top .15s; }
+.fs-skip:focus { top: .6rem; }
+.fs-world main:focus { outline: none; }
+.fs-error { min-height: 70vh; display: flex; align-items: center; }
+/* An error or a missing page has no journey to replay, so the footer's replay row is left out. */
+.fs-world:has(.fs-error) .fs-replay-row { display: none; }
+
+/* The page fills the window: on a short page (the 404 page) the footer sits at the bottom and the last
+   section grows to meet it, instead of leaving a dark band under the footer. */
+.fs-world { display: flex; flex-direction: column; min-height: 100svh; }
+.fs-world > main { display: flex; flex: 1 0 auto; flex-direction: column; }
+.fs-world > main > * { flex-shrink: 0; }
+.fs-world > main > :last-child { flex-grow: 1; }
+
+/* On a phone the fixed header wraps to two rows (about 127 px), so the short heroes start lower than their desktop 7.5rem. */
+@media (max-width: 760px) {
+  .fs-hero-compact { padding-top: 9.5rem; }
+}
+
+
+/* Why: each card opens with a big number that counts up when it comes into view. */
+.fs-reason {
+  display: flex;
+  flex-direction: column;
+}
+.fs-card .fs-reason-figure {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0 0 1.1rem;
+  padding-bottom: 1rem;
+  border-bottom: 0.5px solid var(--kit-line);
+  color: var(--kit-muted);
+}
+.fs-reason-figure b {
+  color: var(--kit-seal);
+  font: 400 clamp(2.2rem, 3.4vw, 3rem) / 1 var(--fs-serif);
+  font-variant-numeric: tabular-nums;
+}
+.fs-reason-figure > span {
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+
+/* Roadmap: one line, three stops. The segment after a stop is solid when that stop is done and dashed when it is not. */
+.fs-road {
+  --fs-road-gold: var(--fs-gold-deep);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 1.5rem;
+  margin: 3rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.fs-road-stop {
+  position: relative;
+  padding-top: 3.4rem;
+}
+.fs-road-node {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border: 2px solid var(--kit-seal);
+  border-radius: 50%;
+  background: var(--kit-paper);
+  color: var(--kit-on-seal);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+.fs-road-stop::before {
+  content: "";
+  position: absolute;
+  top: calc(1.05rem - 1px);
+  left: 2.1rem;
+  right: calc(-1.5rem);
+  height: 0;
+  border-top: 2px dashed var(--kit-line);
+  transform-origin: left center;
+}
+.fs-road-stop:last-child::before {
+  display: none;
+}
+.fs-road-stop[data-status="done"]::before {
+  border-top: 2px solid var(--fs-road-gold);
+}
+.fs-road-stop[data-status="done"] .fs-road-node {
+  background: var(--kit-seal-solid);
+}
+.fs-road-stop[data-status="next"] .fs-road-node::after {
+  content: "";
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: var(--kit-seal);
+}
+.fs-road-stop[data-status="later"] .fs-road-node {
+  border: 2px dashed var(--kit-muted);
+}
+.fs-road-badge {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  padding: 0.15rem 0.7rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  color: var(--kit-seal);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.fs-road-stop[data-status="later"] .fs-road-badge {
+  color: var(--kit-muted);
+}
+.fs-road-stop h3 {
+  margin: 0 0 0.9rem;
+  font: 400 1.35rem/1.3 var(--fs-serif);
+}
+.fs-road-items {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.fs-road-items li {
+  padding: 0.6rem 0.9rem;
+  background: var(--kit-surface);
+  border: 0.5px solid var(--kit-line);
+  border-radius: 6px;
+  font-size: 0.92rem;
+}
+.fs-road-stop[data-status="later"] .fs-road-items li {
+  border-style: dashed;
+  color: var(--kit-muted);
+}
+
+/* The drawing-in only runs when the script has armed the line (no script or less motion: everything is simply there). */
+.fs-road[data-armed] .fs-road-node {
+  transform: scale(0.4);
+  opacity: 0;
+}
+.fs-road[data-armed] .fs-road-stop::before {
+  transform: scaleX(0);
+}
+.fs-road[data-armed] .fs-road-badge,
+.fs-road[data-armed] .fs-road-stop h3,
+.fs-road[data-armed] .fs-road-items li {
+  opacity: 0;
+  transform: translateY(12px);
+}
+.fs-road[data-drawn] .fs-road-node {
+  transform: none;
+  opacity: 1;
+  transition: transform 0.5s cubic-bezier(0.34, 1.5, 0.64, 1), opacity 0.3s;
+  transition-delay: calc(var(--i) * 0.7s);
+}
+.fs-road[data-drawn] .fs-road-stop::before {
+  transform: none;
+  transition: transform 0.7s ease-out;
+  transition-delay: calc(var(--i) * 0.7s + 0.35s);
+}
+.fs-road[data-drawn] .fs-road-badge,
+.fs-road[data-drawn] .fs-road-stop h3,
+.fs-road[data-drawn] .fs-road-items li {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.5s, transform 0.5s;
+  transition-delay: calc(var(--i) * 0.7s + 0.2s + var(--j, 0) * 0.12s);
+}
+.fs-road[data-drawn] .fs-road-stop[data-status="next"] .fs-road-node {
+  animation: fs-road-pulse 2.4s ease-out 2.2s infinite;
+}
+@keyframes fs-road-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--kit-seal) 40%, transparent);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 0.8rem color-mix(in srgb, var(--kit-seal) 0%, transparent);
+  }
+}
+@media (max-width: 760px) {
+  .fs-road {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .fs-road-stop {
+    padding: 0 0 0 3.3rem;
+  }
+  .fs-road-stop::before {
+    top: 2.1rem;
+    left: calc(1.05rem - 1px);
+    right: auto;
+    bottom: -2rem;
+    height: auto;
+    border-top: 0;
+    border-left: 2px dashed var(--kit-line);
+    transform-origin: center top;
+  }
+  .fs-road-stop[data-status="done"]::before {
+    border-top: 0;
+    border-left: 2px solid var(--fs-road-gold);
+  }
+  .fs-road[data-armed]:not([data-drawn]) .fs-road-stop::before {
+    transform: scaleY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fs-road-stop[data-status="next"] .fs-road-node {
+    animation: none;
+  }
+}
+
+/* Anatomy: the eight characters of the sample chart as tiles, an info card for the one in focus, and the ring of sixty. */
+.fs-an-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  gap: 2rem 2.5rem;
+  align-items: start;
+  margin-top: 1.6rem;
+}
+.fs-an-chart {
+  display: grid;
+  grid-template-columns: auto repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
+  align-items: stretch;
+}
+.fs-an-head {
+  color: var(--kit-muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+.fs-an-rowlabel {
+  align-self: center;
+  max-width: 4.6rem;
+  padding-right: 0.3rem;
+  color: var(--kit-muted);
+  font-size: 0.74rem;
+  line-height: 1.3;
+}
+.fs-an-tile {
+  position: relative;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 0.15rem;
+  min-height: 6rem;
+  padding: 0.5rem 0.2rem;
+  overflow: hidden;
+  border: 1px solid var(--kit-line);
+  border-radius: 8px;
+  background: var(--kit-card-soft);
+  color: var(--kit-muted);
+  font: 600 0.78rem/1.2 var(--fs-sans);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+.fs-an-tile b {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 400;
+  line-height: 1.1;
+}
+.fs-an-tile em {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.35rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: var(--kit-seal-solid);
+  color: var(--kit-on-seal);
+  font-size: 0.62rem;
+  font-style: normal;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.fs-an-tile:hover {
+  background: var(--kit-card-hover);
+}
+.fs-an-tile[aria-pressed="true"] {
+  border-color: var(--kit-seal);
+  background: var(--kit-card);
+  color: var(--kit-seal);
+  box-shadow: 0 0 0 1px var(--kit-seal), 0 8px 20px rgba(var(--kit-shadow), 0.14);
+  transform: translateY(-2px);
+}
+.fs-an-info {
+  min-height: 15.5rem;
+  margin-top: 1.2rem;
+  padding: 1.2rem 1.4rem;
+  background: var(--kit-surface);
+  border: 0.5px solid var(--kit-line);
+  border-radius: 6px;
+}
+.fs-an-info p {
+  margin: 0.6rem 0 0;
+  color: var(--kit-muted);
+}
+.fs-an-eyebrow {
+  color: var(--kit-seal);
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.fs-an-head-line {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+.fs-an-glyph {
+  font-size: 3.4rem;
+  font-weight: 400;
+  line-height: 1;
+}
+.fs-an-head-line h3 {
+  margin: 0;
+  font: 400 1.5rem/1.2 var(--fs-serif);
+}
+.fs-an-info .fs-an-kind {
+  margin: 0.1rem 0 0;
+}
+.fs-an-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.4rem;
+  color: var(--kit-ink);
+  font-size: 0.9rem;
+}
+.fs-an-ring {
+  display: grid;
+  gap: 0.6rem;
+  justify-items: center;
+  max-width: 24rem;
+  margin: 0 auto;
+}
+.fs-an-ring svg {
+  width: 100%;
+  height: auto;
+}
+.fs-an-ring circle {
+  fill: var(--kit-line);
+  r: 1.6;
+  transition: r 0.4s, fill 0.4s;
+}
+.fs-an-ring circle[data-state="sample"] {
+  fill: var(--kit-muted);
+  r: 3.2;
+}
+.fs-an-ring circle[data-state="focus"] {
+  fill: var(--kit-seal);
+  r: 5.5;
+}
+.fs-an-hand {
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.fs-an-hand line {
+  stroke: var(--kit-seal);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  opacity: 0.55;
+}
+.fs-an-mark {
+  fill: var(--kit-muted);
+  font: 600 7px var(--fs-sans);
+  transition: fill 0.3s;
+}
+.fs-an-mark[data-active="true"] {
+  fill: var(--kit-seal);
+}
+.fs-an-center {
+  fill: var(--kit-ink);
+  font: 400 14px var(--fs-serif);
+}
+.fs-an-center-nayin {
+  fill: var(--kit-seal);
+  font: 600 8px var(--fs-sans);
+}
+.fs-an-center-sub {
+  fill: var(--kit-muted);
+  font: 500 6.5px var(--fs-sans);
+}
+.fs-an-ring figcaption {
+  text-align: center;
+}
+@media (max-width: 760px) {
+  .fs-an-grid {
+    grid-template-columns: 1fr;
+  }
+  .fs-an-chart {
+    gap: 0.4rem;
+  }
+  .fs-an-rowlabel {
+    max-width: 3.4rem;
+    font-size: 0.66rem;
+  }
+  .fs-an-tile {
+    min-height: 5rem;
+    padding-top: 0.9rem;
+    font-size: 0.68rem;
+  }
+  .fs-an-tile em {
+    top: 0.2rem;
+    right: 50%;
+    padding: 0 0.3rem;
+    font-size: 0.54rem;
+    transform: translateX(50%);
+  }
+  .fs-an-info {
+    min-height: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fs-an-hand,
+  .fs-an-ring circle {
+    transition: none;
+  }
+  .fs-an-tile {
+    transition: none;
+  }
+}
+
+/* Earthly branches: a ring of twelve with the painting in the middle, and the facts of the one in focus. */
+.fs-br-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: 2rem 2.5rem;
+  align-items: center;
+  margin-top: 1.6rem;
+}
+.fs-br-ring {
+  margin-bottom: 2.4rem;
+  position: relative;
+  width: 100%;
+  max-width: 30rem;
+  aspect-ratio: 1;
+  margin: 0 auto;
+}
+.fs-br-ring svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.fs-br-orbit {
+  fill: none;
+  stroke: var(--kit-line);
+  stroke-width: 0.3;
+}
+.fs-br-harmony,
+.fs-br-clash {
+  stroke-linecap: round;
+  transition: opacity 0.3s;
+}
+.fs-br-harmony {
+  stroke: var(--fs-harmony);
+  stroke-width: 1.2;
+}
+.fs-br-triad {
+  stroke: var(--fs-triad);
+  stroke-width: 1;
+}
+.fs-br-clash {
+  stroke: var(--kit-seal);
+  stroke-width: 0.9;
+  stroke-dasharray: 2.4 1.6;
+}
+/* Under the ring: what the two kinds of line mean. */
+.fs-br-legend {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2.2rem;
+  display: flex;
+  justify-content: center;
+  gap: 1.6rem;
+  margin: 0;
+  color: var(--kit-muted);
+  font-size: 0.78rem;
+}
+.fs-br-legend span::before {
+  content: "";
+  display: inline-block;
+  width: 1.8rem;
+  margin-right: 0.45rem;
+  vertical-align: middle;
+  border-top: 2px solid var(--fs-harmony);
+}
+.fs-br-legend span[data-kind="triad"]::before {
+  border-top-color: var(--fs-triad);
+}
+.fs-br-legend span[data-kind="clash"]::before {
+  border-top: 2px dashed var(--kit-seal);
+}
+.fs-br-art {
+  float: right;
+  width: 11rem;
+  margin: 0 0 0.6rem 1rem;
+}
+.fs-br-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(var(--kit-shadow), 0.22);
+  animation: fs-br-in 0.5s ease-out;
+}
+@keyframes fs-br-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+.fs-br-node {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  width: 17%;
+  aspect-ratio: 1;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--kit-line);
+  border-radius: 50%;
+  background: var(--kit-paper);
+  color: var(--kit-muted);
+  font: 600 0.62rem/1.1 var(--fs-sans);
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, color 0.2s;
+}
+.fs-br-node b {
+  font-size: clamp(1.1rem, 2.6vw, 1.6rem);
+  font-weight: 400;
+  line-height: 1.1;
+}
+.fs-br-node:hover {
+  background: var(--kit-card);
+}
+.fs-br-node[data-link="harmony"] {
+  border-color: var(--fs-harmony);
+  border-width: 2px;
+}
+.fs-br-node[data-link="triad"] {
+  border-color: var(--fs-triad);
+  border-width: 2px;
+}
+.fs-br-node[data-link="clash"] {
+  border-style: dashed;
+  border-color: var(--kit-seal);
+}
+.fs-br-node[aria-pressed="true"] {
+  z-index: 1;
+  border-color: var(--kit-seal);
+  background: var(--kit-card);
+  color: var(--kit-seal);
+  box-shadow: 0 0 0 1px var(--kit-seal), 0 6px 16px rgba(var(--kit-shadow), 0.2);
+}
+/* In the dark look the branch in focus is the lit one: a warm, bright disc with dark ink on it and a glow, bigger than the rest,
+   so it is plainly the one to read (the linked branches only have a coloured ring). */
+html[data-theme="dark"] .fs-br-node[aria-pressed="true"],
+html[data-kit-appearance="dark"] .fs-br-node[aria-pressed="true"] {
+  z-index: 2;
+  border: 2px solid #fff3d2;
+  background: radial-gradient(circle at 50% 32%, #fffaf0, #f4dca4 78%);
+  color: #3a2a12;
+  transform: translate(-50%, -50%) scale(1.22);
+  box-shadow: 0 0 0 4px rgba(242, 211, 145, 0.32), 0 0 26px 6px rgba(242, 211, 145, 0.55), 0 10px 24px rgba(0, 0, 0, 0.45);
+}
+html[data-theme="dark"] .fs-br-node[aria-pressed="true"] b,
+html[data-kit-appearance="dark"] .fs-br-node[aria-pressed="true"] b {
+  color: #3a2a12 !important;
+  font-weight: 600;
+}
+.fs-br-info {
+  min-height: 26rem;
+  padding: 1.2rem 1.4rem;
+  background: var(--kit-surface);
+  border: 0.5px solid var(--kit-line);
+  border-radius: 6px;
+}
+.fs-br-info p {
+  margin: 0.6rem 0 0;
+  color: var(--kit-muted);
+}
+.fs-br-facts,
+.fs-br-caution {
+  clear: both;
+}
+.fs-br-facts .fs-br-wide {
+  grid-column: 1 / -1;
+}
+.fs-br-info .fs-br-imagery {
+  color: var(--kit-ink);
+  font: italic 400 1.05rem/1.5 var(--fs-serif);
+}
+.fs-br-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem 1.2rem;
+  margin: 1rem 0 0;
+}
+.fs-br-facts dt {
+  color: var(--kit-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.fs-br-facts dd {
+  margin: 0.1rem 0 0;
+  font-size: 0.92rem;
+}
+.fs-br-caution {
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--kit-line);
+  font-size: 0.88rem;
+}
+.fs-br-caution b {
+  color: var(--kit-ink);
+}
+.fs-br-hint {
+  margin-top: 1rem;
+  text-align: center;
+}
+@media (max-width: 760px) {
+  .fs-br-grid {
+    grid-template-columns: 1fr;
+  }
+  .fs-br-node {
+    width: 18%;
+    font-size: 0.5rem;
+  }
+  .fs-br-art {
+    width: 8.5rem;
+  }
+  .fs-br-info {
+    min-height: 0;
+  }
+  .fs-br-facts {
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fs-br-node,
+  .fs-br-harmony,
+  .fs-br-clash {
+    transition: none;
+  }
+  .fs-br-art img {
+    animation: none;
+  }
+}
+
+/* Nạp Âm: thirty paintings in cycle order as a grid, and the one in focus explained beside it. */
+.fs-ny-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 2rem 2.5rem;
+  align-items: start;
+  margin-top: 1.6rem;
+}
+.fs-ny-tiles {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+.fs-ny-tile {
+  position: relative;
+  padding: 0;
+  overflow: hidden;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  background: var(--kit-surface);
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.fs-ny-tile img {
+  display: block;
+  width: 100%;
+  height: auto;
+  opacity: 0.78;
+  transition: opacity 0.2s;
+}
+.fs-ny-tile:hover img,
+.fs-ny-tile[aria-pressed="true"] img {
+  opacity: 1;
+}
+.fs-ny-tile[aria-pressed="true"] {
+  z-index: 1;
+  border-color: var(--kit-seal);
+  box-shadow: 0 8px 20px rgba(var(--kit-shadow), 0.3);
+  transform: scale(1.08);
+}
+.fs-ny-info {
+  min-height: 30rem;
+  padding: 1.2rem 1.4rem;
+  background: var(--kit-surface);
+  border: 0.5px solid var(--kit-line);
+  border-radius: 6px;
+}
+.fs-ny-info p {
+  margin: 0.6rem 0 0;
+  color: var(--kit-muted);
+}
+.fs-ny-info h3 {
+  margin: 0.3rem 0 0;
+  font: 400 1.6rem/1.2 var(--fs-serif);
+}
+.fs-ny-art {
+  float: right;
+  width: 11rem;
+  margin: 0 0 0.6rem 1rem;
+}
+.fs-ny-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 8px 22px rgba(var(--kit-shadow), 0.22);
+  animation: fs-br-in 0.5s ease-out;
+}
+.fs-ny-info .fs-ny-pairs {
+  color: var(--kit-ink);
+}
+.fs-ny-info .fs-ny-question {
+  clear: both;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--kit-line);
+  font-size: 0.92rem;
+}
+.fs-ny-question b {
+  color: var(--kit-ink);
+}
+.fs-ny-info .fs-ny-sample {
+  color: var(--kit-seal);
+  font-size: 0.88rem;
+}
+@media (max-width: 760px) {
+  .fs-ny-grid {
+    grid-template-columns: 1fr;
+  }
+  .fs-ny-tiles {
+    gap: 0.35rem;
+  }
+    .fs-ny-art {
+    width: 8.5rem;
+  }
+  .fs-ny-info {
+    min-height: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fs-ny-tile,
+  .fs-ny-tile img {
+    transition: none;
+  }
+  .fs-ny-art img {
+    animation: none;
+  }
+}
+
+/* The dark appearance (data-theme="dark", set before first paint): the tokens come from the kit; what is here is what the kit
+   does not know: the hues of the harmony lines, the figures that were drawn in ink for a light ground, and the theme switch. */
+html[data-theme="dark"] .fs-world,
+html[data-kit-appearance="dark"] .fs-world {
+  --fs-harmony: #55d18a;
+  --fs-triad: #7db1f7;
+  --fs-gold-deep: #d9b062;
+}
+/* The ink wash of the paper ending has no place on a dark ground. */
+html[data-theme="dark"] .fs-scene-ink,
+html[data-kit-appearance="dark"] .fs-scene-ink {
+  display: none;
+}
+/* The character was drawn in sepia ink for a light ground: on the dark ground it gets a warm rim of light so its outline reads. */
+html[data-theme="dark"] .fs-scene-figure,
+html[data-theme="dark"] .fs-static-figure,
+html[data-kit-appearance="dark"] .fs-scene-figure,
+html[data-kit-appearance="dark"] .fs-static-figure {
+  filter: drop-shadow(0 0 1.5px rgba(255, 244, 220, 0.95)) drop-shadow(0 0 16px rgba(255, 226, 180, 0.38));
+}
+/* The theme switch in the header: a round button with a sun or a moon. */
+.fs-theme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid rgba(238, 232, 255, 0.18);
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(238, 232, 255, 0.82);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.fs-theme:hover,
+.fs-theme:focus-visible {
+  background: rgba(238, 232, 255, 0.12);
+  color: #fff;
+}
+.fs-header-tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* The galaxy of the home page and the Tech page, in the dark look: the same picture, paler and whiter (less colour, more light,
+   a cool white haze like the atmosphere of the Feng Shui planet), under a deep-ink veil that keeps the text readable. It stays
+   fixed while the page scrolls over it. In the light look it is not there, and the picture is not even downloaded. */
+.fs-world {
+  isolation: isolate;
+}
+.fs-galaxy {
+  display: none;
+}
+html[data-theme="dark"] .fs-galaxy,
+html[data-kit-appearance="dark"] .fs-galaxy {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+html[data-theme="dark"] .fs-galaxy::before,
+html[data-kit-appearance="dark"] .fs-galaxy::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* A copy of the gateway's picture, so it can be re-rendered (whiter, greyer) without touching the gateway and the Tech page. */
+  background: url("/fengshui/galaxy.webp") center / cover no-repeat;
+  /* Paler and whiter than the home page's galaxy: less colour, a lot more light. */
+  filter: saturate(0.55) brightness(1.4) contrast(0.95);
+}
+/* A cool white haze like the atmosphere of the Feng Shui planet. */
+html[data-theme="dark"] .fs-galaxy::after,
+html[data-kit-appearance="dark"] .fs-galaxy::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -6%, rgba(226, 234, 255, 0.22), rgba(226, 234, 255, 0) 70%),
+    radial-gradient(ellipse 55% 45% at 88% 72%, rgba(214, 224, 250, 0.1), rgba(214, 224, 250, 0) 70%),
+    radial-gradient(ellipse 50% 40% at 8% 60%, rgba(206, 220, 255, 0.08), rgba(206, 220, 255, 0) 70%);
+}
+/* The deep-ink veil that keeps the text readable, over the stars. Its strength is a variable: the birth scene thins it at the start
+   of the journey, so the galaxy is brighter and clearer where the guiding star falls, and it is full everywhere else. */
+.fs-galaxy-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(to bottom, rgba(14, 17, 40, 0.76), rgba(14, 17, 40, 0.7) 45%, rgba(14, 17, 40, 0.8));
+  opacity: var(--fs-veil, 1);
+}
+/* Stars: one picture of stars (public/fengshui/stars.webp, it tiles without a seam) in three layers that drift all the time, each
+   at its own size, speed and direction, like the stars of the home page. A layer is a little larger than the screen by one tile
+   and moves by exactly one tile, so the loop has no seam; only `transform` and `opacity` change, so the browser animates it
+   without the page's scripts. The stars are kept faint on purpose: they are a backdrop, not what the eye should follow. */
+.fs-galaxy {
+  overflow: hidden;
+}
+.fs-galaxy-stars {
+  --tw: 1200px;
+  --th: 800px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% + var(--tw));
+  height: calc(100% + var(--th));
+  background-image: url("/fengshui/stars.webp");
+  background-size: var(--tw) var(--th);
+  will-change: transform;
+}
+.fs-galaxy-stars-a {
+  opacity: 0.4;
+  animation: fs-galaxy-drift-a 85s linear infinite;
+}
+.fs-galaxy-stars-b {
+  --tw: 800px;
+  --th: 533px;
+  opacity: 0.3;
+  background-position: 310px 190px;
+  animation: fs-galaxy-drift-b 60s linear infinite;
+}
+.fs-galaxy-stars-c {
+  --tw: 1500px;
+  --th: 1000px;
+  background-position: 520px 410px;
+  animation: fs-galaxy-drift-c 150s linear infinite, fs-galaxy-twinkle 7s ease-in-out infinite;
+}
+@keyframes fs-galaxy-drift-a {
+  to {
+    transform: translate3d(-1200px, -800px, 0);
+  }
+}
+@keyframes fs-galaxy-drift-b {
+  to {
+    transform: translate3d(-800px, 0, 0);
+  }
+}
+@keyframes fs-galaxy-drift-c {
+  to {
+    transform: translate3d(0, -1000px, 0);
+  }
+}
+@keyframes fs-galaxy-twinkle {
+  0%,
+  100% {
+    opacity: 0.12;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fs-galaxy-stars {
+    animation: none;
+    will-change: auto;
+  }
+  .fs-galaxy-stars-c {
+    opacity: 0.25;
+  }
+}
+/* In the dark look the bands, the footer and the pinned story let the galaxy through, and cards turn into dark glass. */
+html[data-theme="dark"] .fs-world,
+html[data-kit-appearance="dark"] .fs-world {
+  --kit-surface: rgba(22, 26, 54, 0.72);
+  --kit-card: rgba(32, 38, 78, 0.8);
+}
+html[data-theme="dark"] .fs-band-paper,
+html[data-theme="dark"] .fs-footer,
+html[data-theme="dark"] .fs-replay-row,
+html[data-theme="dark"] .fs-static-paper,
+html[data-theme="dark"] .fs-story-stage,
+html[data-kit-appearance="dark"] .fs-band-paper,
+html[data-kit-appearance="dark"] .fs-footer,
+html[data-kit-appearance="dark"] .fs-replay-row,
+html[data-kit-appearance="dark"] .fs-static-paper,
+html[data-kit-appearance="dark"] .fs-story-stage {
+  background: transparent;
+}
+html[data-theme="dark"] .fs-panel,
+html[data-theme="dark"] .fs-an-info,
+html[data-theme="dark"] .fs-br-info,
+html[data-theme="dark"] .fs-ny-info,
+html[data-theme="dark"] .fs-term,
+html[data-kit-appearance="dark"] .fs-panel,
+html[data-kit-appearance="dark"] .fs-an-info,
+html[data-kit-appearance="dark"] .fs-br-info,
+html[data-kit-appearance="dark"] .fs-ny-info,
+html[data-kit-appearance="dark"] .fs-term {
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+/* In the dark look the galaxy is the scene's sky: the scene's own haze and star dust are not needed. */
+html[data-theme="dark"] .fs-scene-haze,
+html[data-kit-appearance="dark"] .fs-scene-haze {
+  display: none;
+}
+
+

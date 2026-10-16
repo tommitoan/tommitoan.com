@@ -1,36 +1,73 @@
 "use client";
 
-import { Reveal } from "@/components/tech/Reveal";
-import { SectionHeading } from "@/components/tech/SectionHeading";
+import { useEffect, useRef, useState } from "react";
 import { useFengShuiCopy } from "@/components/fengshui/FengShuiLanguage";
+import { useReducedMotion } from "@/components/fengshui/world/use-reduced-motion";
+import { WorldHeading } from "@/components/fengshui/world/WorldHeading";
 
+/** How long each principle stays in focus while the section plays by itself. */
+const AUTOPLAY_MS = 5000;
+
+/**
+ * The principles one at a time: the one in focus is lit, then the next takes over. Moving the pointer
+ * over a principle (or focusing it) lights it at once and holds it while the pointer stays in the list. All three are always
+ * on the page in full, so nothing depends on the show.
+ */
 export function FengShuiPrinciplesSection() {
   const copy = useFengShuiCopy();
+  const reduced = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  const [selected, setSelected] = useState(0);
+  const [visible, setVisible] = useState(false);
+  const [held, setHeld] = useState(false);
+  const count = copy.principles.length;
+  const playing = !reduced && visible && !held;
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const observer = new IntersectionObserver((entries) => setVisible(entries[0]?.isIntersecting ?? false), { threshold: 0.4 });
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!playing) return;
+    const timer = window.setTimeout(() => setSelected((current) => (current + 1) % count), AUTOPLAY_MS);
+    return () => window.clearTimeout(timer);
+  }, [playing, selected, count]);
 
   return (
-    <section className="cv-section-shell">
-      <Reveal>
-        <SectionHeading
-          eyebrow={copy.principlesHeading.eyebrow}
-          title={
-            <>
-              {copy.principlesHeading.title}{" "}
-              <span className="cv-gradient-text-primary">{copy.principlesHeading.accent}</span>
-            </>
-          }
-        />
-      </Reveal>
-
-      <div className="mt-12 cv-panel rounded-[1.75rem] p-6 md:p-8">
-        <div className="space-y-5">
-          {copy.principles.map((principle, index) => (
-            <div key={principle} className="flex gap-4">
-              <span className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-violet-500/20 bg-violet-500/10 text-sm font-semibold text-violet-400">
-                {index + 1}
-              </span>
-              <p className="text-lg leading-8 text-slate-300">{principle}</p>
-            </div>
-          ))}
+    <section ref={sectionRef} className="fs-band fs-band-paper" data-kit-section="Nguyên tắc / Principles">
+      <div className="fs-wrap fs-narrow">
+        <WorldHeading eyebrow={copy.principlesHeading.eyebrow} title={`${copy.principlesHeading.title} ${copy.principlesHeading.accent}`} />
+        <div className="fs-pr-stage">
+          <span key={selected} className="fs-pr-mark" aria-hidden="true">
+            {String(selected + 1).padStart(2, "0")}
+          </span>
+          <ol
+            className="fs-pr-list"
+            onPointerEnter={(event) => event.pointerType === "mouse" && setHeld(true)}
+            onPointerLeave={() => setHeld(false)}
+            onFocusCapture={() => setHeld(true)}
+            onBlurCapture={() => setHeld(false)}
+          >
+            {copy.principles.map((principle, index) => (
+              <li key={principle}>
+                <button
+                  type="button"
+                  className="fs-pr-item"
+                  aria-pressed={index === selected}
+                  onPointerEnter={(event) => event.pointerType === "mouse" && setSelected(index)}
+                  onFocus={() => setSelected(index)}
+                  onClick={() => setSelected(index)}
+                >
+                  <span className="fs-pr-num">{index + 1}</span>
+                  <span className="fs-pr-text">{principle}</span>
+                </button>
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
     </section>

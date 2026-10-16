@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { gatewayBody, gatewayDisplay } from "../gateway-font";
 
 export default function GatewayLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   useEffect(() => {
@@ -8,7 +9,7 @@ export default function GatewayLayout({ children }: Readonly<{ children: React.R
   }, []);
 
   return (
-    <main className="relative min-h-screen text-white">
+    <main className={`relative min-h-screen text-white ${gatewayBody.variable} ${gatewayDisplay.variable}`}>
       {children}
     </main>
   );

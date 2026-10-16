@@ -453,3 +453,26 @@ select:focus-visible {
     scroll-behavior: auto !important;
   }
 }
+
+/* The home page: Vietnamese-capable body font, set on the section so the astronaut's bubble and the toggle inherit it. */
+.space-gateway-shell {
+  font-family: var(--font-gateway-body), var(--font-body), system-ui, sans-serif;
+}
+
+/* The glint that circles the home page's loading ring: a short bright arc, masked to the ring's track and turned by the compositor. */
+.gateway-loader-glint {
+  background: conic-gradient(from 0deg, transparent 0 82%, rgba(103, 232, 249, 0.45) 98%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle closest-side, transparent 0 68%, #000 71% 85%, transparent 88%);
+  mask-image: radial-gradient(circle closest-side, transparent 0 68%, #000 71% 85%, transparent 88%);
+  animation: gateway-loader-turn 1.6s linear infinite;
+}
+@keyframes gateway-loader-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gateway-loader-glint {
+    animation: none;
+  }
+}

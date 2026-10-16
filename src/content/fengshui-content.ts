@@ -1,13 +1,26 @@
+import { BAZI_ORIGIN } from "@/lib/sister-site";
+
 export type FengShuiLanguage = "vi" | "en";
 
 export type FengShuiPillar = {
   title: string;
   description: string;
+  /** The number shown big on the card; it counts up when the card comes into view. */
+  figure: number;
+  /** What the number counts, in a few words. */
+  unit: string;
+  /** Written right after the number, for a floor such as "+" in "400+". */
+  suffix?: string;
 };
+
+export type FengShuiLaneStatus = "done" | "next" | "later";
 
 export type FengShuiLane = {
   title: string;
   items: string[];
+  status: FengShuiLaneStatus;
+  /** The short stop label on the roadmap line (Now, Next, Later). */
+  badge: string;
 };
 
 export type FengShuiTerm = {
@@ -28,7 +41,6 @@ export type FengShuiCopy = {
   description: string;
   primaryCta: string;
   repoCta: string;
-  intro: string[];
   basics: {
     eyebrow: string;
     title: string;
@@ -57,7 +69,9 @@ export type FengShuiCopy = {
 
 /** The live Bazica Web app and the open-source library behind it. */
 export const fengshuiLinks = {
-  app: "https://bazi.tommitoan.com/",
+  app: `${BAZI_ORIGIN}/`,
+  /** The calculator page; the hero button goes straight to it. */
+  chart: `${BAZI_ORIGIN}/chart`,
   repo: "https://github.com/tommitoan/bazica",
 };
 
@@ -69,10 +83,6 @@ const vi: FengShuiCopy = {
     "Góc này dành cho Bazica, Bát Tự và mảng phong thuỷ mà mình hay tò mò — làm mãi rồi thành code, giao diện và những sản phẩm thử nghiệm.",
   primaryCta: "Mở Bazica Web →",
   repoCta: "Xem trên GitHub →",
-  intro: [
-    "Với mình, đây không phải phần phụ bên cạnh công việc lập trình. Nó là một hướng sản phẩm thật: vừa tìm hiểu kiến thức nền, vừa viết code, vừa phải làm sao cho dễ hiểu và dễ dùng.",
-    "Bazica là sản phẩm đầu tiên mình làm đến nơi đến chốn: một thư viện Go mã nguồn mở và trang bazi.tommitoan.com, nơi bạn nhập ngày giờ sinh là xem được lá số ngay.",
-  ],
   basics: {
     eyebrow: "Cơ sở",
     title: "Hiểu nhanh về",
@@ -138,19 +148,33 @@ const vi: FengShuiCopy = {
   pillarsHeading: { eyebrow: "Lý do", title: "Vì sao mình", accent: "làm điều này" },
   pillars: [
     {
-      title: "Vì sao có trang này",
+      title: "Mỗi lá số một cách luận giải",
       description:
-        "Đây là chỗ cho phần việc nằm giữa lập trình, diễn giải và thiết kế sản phẩm: lấy những lĩnh vực ít người làm phần mềm rồi biến chúng thành công cụ dùng được lâu dài.",
+        "Bốn trụ ghép lại cho ra 518.400 lá số khác nhau. Mỗi lá có cấu trúc riêng, nên phải được luận giải riêng thay vì đọc theo khuôn mẫu.",
+      figure: 518400,
+      unit: "lá số khác nhau, từ 60 × 12 × 60 × 12 của bốn trụ",
     },
     {
       title: "Bazica cho thấy điều gì",
       description:
         "Mình có thể chuyển quy tắc của một lĩnh vực thành code rõ ràng, đưa ra một sản phẩm công khai dùng được, và theo nó đến cùng thay vì bỏ dở ở mức thử nghiệm.",
+      figure: 255669,
+      unit: "ngày sinh Bazica tính được, từ 1700 đến 2399",
     },
     {
-      title: "Sắp tới",
+      title: "Những lá số đã xem",
       description:
-        "Thêm bài giải thích, kể rõ hơn về sản phẩm, và có thể có thêm công cụ về Bát Tự, lịch và phong thuỷ nếu giao diện vẫn giữ được sự gọn gàng.",
+        "Tính đến năm 2026, mình đã xem và luận giải lá số cho hơn 400 khách hàng. Đó là kinh nghiệm thật đứng sau phần mềm này.",
+      figure: 400,
+      suffix: "+",
+      unit: "khách hàng mình đã xem lá số, tính đến năm 2026",
+    },
+    {
+      title: "Từ nghề đến phần mềm",
+      description:
+        "Mười năm xem và luận giải lá số Bát Tự là nền để mình viết Bazica cho đúng và dễ đọc.",
+      figure: 10,
+      unit: "năm kinh nghiệm xem và luận giải lá số Bát Tự",
     },
   ],
   lanesHeading: { eyebrow: "Lộ trình", title: "Hướng đi", accent: "tiếp theo" },
@@ -158,14 +182,20 @@ const vi: FengShuiCopy = {
     {
       title: "Đã có",
       items: ["Thư viện Bazica (Go)", "Bazica Web — bazi.tommitoan.com", "Mã nguồn công khai trên GitHub"],
+      status: "done",
+      badge: "Bây giờ",
     },
     {
       title: "Tiếp theo",
       items: ["Bài giải thích từng bước", "Bản xuất PDF đẹp hơn", "Ghi chú kiến thức công khai"],
+      status: "next",
+      badge: "Kế tiếp",
     },
     {
       title: "Xa hơn",
       items: ["Công cụ tính toán tương tác", "Giao diện hỗ trợ học Bát Tự", "Hệ sinh thái sản phẩm đầy đủ hơn"],
+      status: "later",
+      badge: "Sau này",
     },
   ],
   principlesHeading: { eyebrow: "Nguyên tắc", title: "Cách mình", accent: "làm" },
@@ -193,10 +223,6 @@ const en: FengShuiCopy = {
     "This route is for Bazica, Ba-zi, and the broader curiosity around Feng Shui that keeps turning into code, interfaces, and product experiments.",
   primaryCta: "Open Bazica Web →",
   repoCta: "View on GitHub →",
-  intro: [
-    "I do not treat this lane as decoration beside the engineering work. It is a real product direction where domain research, technical implementation, and careful simplification meet.",
-    "Bazica is the first serious proof point: an open-source Go library and the live app at bazi.tommitoan.com that turn a niche symbolic system into something people can actually test and use.",
-  ],
   basics: {
     eyebrow: "Basics",
     title: "A quick look at",
@@ -262,19 +288,33 @@ const en: FengShuiCopy = {
   pillarsHeading: { eyebrow: "Pillars", title: "Why", accent: "this matters" },
   pillars: [
     {
-      title: "Why this route exists",
+      title: "Every chart is read on its own",
       description:
-        "It gives a proper home to the part of my work that sits between engineering, interpretation, and product design. It is where unusual domains get turned into durable software surfaces.",
+        "The four pillars combine into 518,400 different charts. Each has its own structure, so each has to be interpreted on its own instead of being read from a template.",
+      figure: 518400,
+      unit: "different charts, from 60 × 12 × 60 × 12 across the four pillars",
     },
     {
       title: "What Bazica proves",
       description:
         "It proves I can encode domain rules clearly, ship a usable public artifact, and keep a focused product coherent instead of leaving it as an experiment forever.",
+      figure: 255669,
+      unit: "birth dates Bazica computes, from 1700 to 2399",
     },
     {
-      title: "What comes next",
+      title: "Charts I have read",
       description:
-        "More explainers, richer product storytelling, and possibly additional tools around Ba-zi, calendar systems, and Feng Shui workflows if the surface stays clear enough.",
+        "By 2026 I have read and interpreted charts for more than 400 clients. That is the real experience behind this software.",
+      figure: 400,
+      suffix: "+",
+      unit: "clients whose charts I have read, up to 2026",
+    },
+    {
+      title: "From the craft to the software",
+      description:
+        "Ten years of reading and interpreting Ba-zi charts is the ground I wrote Bazica on, so it is correct and easy to read.",
+      figure: 10,
+      unit: "years of experience reading and interpreting Ba-zi charts",
     },
   ],
   lanesHeading: { eyebrow: "Roadmap", title: "Where this is", accent: "headed" },
@@ -282,14 +322,20 @@ const en: FengShuiCopy = {
     {
       title: "Current artifact",
       items: ["Bazica Go library", "Bazica Web — bazi.tommitoan.com", "Public GitHub repository"],
+      status: "done",
+      badge: "Now",
     },
     {
       title: "Likely next layer",
       items: ["Guided explainers", "More polished visual outputs", "Public-facing domain notes"],
+      status: "next",
+      badge: "Next",
     },
     {
       title: "Longer horizon",
       items: ["Interactive calculators", "Teaching-oriented interfaces", "A stronger product ecosystem"],
+      status: "later",
+      badge: "Later",
     },
   ],
   principlesHeading: { eyebrow: "Principles", title: "How it", accent: "gets built" },

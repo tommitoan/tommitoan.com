@@ -10,6 +10,10 @@ type MetadataOptions = {
     index?: boolean;
     follow?: boolean;
   };
+  /** Other-language versions of the page, as paths by language code, for hreflang. */
+  languages?: Record<string, string>;
+  /** Marks the page as an article published on this ISO date. */
+  article?: { publishedTime: string };
   image?: {
     url: string;
     width: number;
@@ -22,7 +26,7 @@ const BASE = siteContent.siteMeta.domain;
 const defaultSocialImage = `${BASE}/social-card.png`;
 
 export function createMetadata(options: MetadataOptions = {}): Metadata {
-  const { title, description, path = "/", keywords, robots, image } = options;
+  const { title, description, path = "/", keywords, robots, image, languages, article } = options;
   const pageDescription = description ?? siteContent.siteMeta.description;
   const pageUrl = `${BASE}${path}`;
   const displayTitle = title ?? siteContent.siteMeta.title;
@@ -32,11 +36,13 @@ export function createMetadata(options: MetadataOptions = {}): Metadata {
     : { url: defaultSocialImage, width: 1200, height: 630, alt: `${displayTitle} — Tommi Toan` };
 
   return {
-    title,
+    // Without a title of its own the page keeps the layout's default; an explicit undefined here would remove the title tag.
+    ...(title ? { title } : {}),
     description: pageDescription,
     metadataBase: new URL(BASE),
     alternates: {
       canonical: path,
+      ...(languages ? { languages } : {}),
     },
     ...(keywords ? { keywords } : {}),
     ...(robots ? { robots } : {}),
@@ -45,7 +51,7 @@ export function createMetadata(options: MetadataOptions = {}): Metadata {
       description: pageDescription,
       url: pageUrl,
       siteName: siteContent.siteMeta.title,
-      type: "website",
+      ...(article ? { type: "article" as const, publishedTime: article.publishedTime } : { type: "website" as const }),
       locale: "en_US",
       images: [ogImage],
     },

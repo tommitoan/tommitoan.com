@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { SpaceBackgroundAstronaut } from "@/components/canvas/SpaceBackgroundAstronaut";
@@ -9,6 +9,15 @@ import { PlanetSphereClient } from "@/components/gateway/PlanetSphereClient";
 import { GatewayLoadingScreen } from "@/components/gateway/GatewayLoadingScreen";
 import { MatrixRainCanvas } from "@/components/gateway/MatrixRainCanvas";
 import { AuroraCanvas } from "@/components/gateway/AuroraCanvas";
+import { AstronautSpeech } from "@/components/gateway/AstronautSpeech";
+import { completedWork } from "@/components/gateway/gatewayLoader";
+import { GatewayLanguageToggle } from "@/components/gateway/GatewayLanguageToggle";
+import { GatewayPortalInfo } from "@/components/gateway/GatewayPortalInfo";
+import { GATEWAY_UI, portalCopy, portalTitle } from "@/components/gateway/gatewayCopy";
+import { hasSeenGateway, markGatewaySeen, subscribeNever } from "@/components/gateway/gatewaySession";
+import { useSiteLanguage } from "@/lib/site-language";
+import { astronautSide, canGuide, expandedWidth, globeOpacity, hoverExpandFactor, squeezeFactor, windowWidth } from "@/components/gateway/gatewayHover";
+import { markWarpArrival } from "@/components/gateway/warpArrival";
 import {
   createAnchorStyle,
   createFrameStyle,
@@ -68,21 +77,41 @@ function buildPlanetGlow(
   ].join(' ');
 }
 
+function subscribeToResize(onChange: () => void): () => void {
+  window.addEventListener("resize", onChange);
+  return () => window.removeEventListener("resize", onChange);
+}
+
+function readViewportWidth(): number {
+  return window.innerWidth;
+}
+
 export function SpaceGatewayHome() {
   const router = useRouter();
   const reducedMotion = useReducedMotion();
+  // English is the first render; a stored choice applies after hydration, and without one the browser's language and time zone decide.
+  const language = useSiteLanguage("en");
+  const ui = GATEWAY_UI[language];
   const [hoveredPortal, setHoveredPortal] = useState<GatewayHomeId | null>(null);
   const [selected, setSelected] = useState<GatewayHomeId | null>(null);
-  const [loadingProgress, setLoadingProgress] = useState(0);
   const [isGatewayReady, setIsGatewayReady] = useState(false);
+  // A visitor coming back from another route skips the ring (the server and the first render say "not seen", so they agree).
+  const returning = useSyncExternalStore(subscribeNever, hasSeenGateway, () => false);
+  const pageReady = isGatewayReady || returning;
   const [assetsReady, setAssetsReady] = useState(false);
-  const [isLoaderFinishing, setIsLoaderFinishing] = useState(false);
+  const [astronautReady, setAstronautReady] = useState(false);
+  // The planets start one after another, so the first frames of the loader are not lost to all three starting at once.
+  const [planetsStarted, setPlanetsStarted] = useState(0);
+  // A part that never gets ready (no WebGL, a failed download) must not keep the loader on screen for good.
+  const [gaveUp, setGaveUp] = useState(false);
   const [readyPlanets, setReadyPlanets] = useState<Record<GatewayHomeId, boolean>>({
     tech: false,
     discover: false,
     fengshui: false,
   });
   const timeoutRef = useRef<number | null>(null);
+  // The window width, so the hover guide switches on and off as the window is resized.
+  const viewportWidth = useSyncExternalStore(subscribeToResize, readViewportWidth, () => 0);
 
   const activePortal = selected
     ? gatewayHomeConfig.portals.find((item) => item.id === selected) ?? null
@@ -102,19 +131,12 @@ export function SpaceGatewayHome() {
   useEffect(() => {
     let cancelled = false;
 
+    // Only what the first screen needs gates the loader: the sky and the astronaut. Planet textures and the
+    // Tech frame image load afterwards, so the gateway opens before the planets are ready.
     const assetUrls = new Set<string>([
       gatewayHomeConfig.spaceTheme.background.imageSrc,
       gatewayHomeConfig.astronaut.assetSrc,
     ]);
-
-    for (const portal of gatewayHomeConfig.portals) {
-      assetUrls.add(portal.planet.diffuse);
-      if (portal.planet.normal) assetUrls.add(portal.planet.normal);
-      if (portal.planet.specular) assetUrls.add(portal.planet.specular);
-      if (portal.planet.clouds) assetUrls.add(portal.planet.clouds);
-      if ("lights" in portal.planet && portal.planet.lights) assetUrls.add(portal.planet.lights);
-      if (portal.theme.frameImageSrc) assetUrls.add(portal.theme.frameImageSrc);
-    }
 
     const preloadImage = (src: string) =>
       new Promise<void>((resolve) => {
@@ -125,58 +147,34 @@ export function SpaceGatewayHome() {
       });
 
     const tasks: Array<Promise<void>> = [
-      import("@/components/gateway/PlanetSphere").then(() => undefined),
       import("@/components/tech/StarsBackground").then(() => undefined),
       Promise.all(Array.from(assetUrls).map(preloadImage)).then(() => undefined),
     ];
 
-    Promise.all(tasks).then(() => {
-      if (cancelled) return;
-      setAssetsReady(true);
-    });
+    // A chunk that fails to load must not keep the loader on screen for good: the page opens either way.
+    Promise.all(tasks)
+      .catch(() => undefined)
+      .then(() => {
+        if (cancelled) return;
+        setAssetsReady(true);
+      });
 
     return () => {
       cancelled = true;
     };
   }, []);
 
+  // Start the planets one after another once the first screen's pictures are in.
   useEffect(() => {
-    const totalPlanets = gatewayHomeConfig.portals.length;
-    const loadedPlanets = Object.values(readyPlanets).filter(Boolean).length;
-    if (loadedPlanets === totalPlanets && assetsReady && loadingProgress >= 100) {
-      setIsLoaderFinishing(true);
-      const timeout = window.setTimeout(() => {
-        setIsGatewayReady(true);
-      }, 350);
-      return () => window.clearTimeout(timeout);
-    }
-  }, [readyPlanets, assetsReady, loadingProgress]);
+    if (!assetsReady) return;
+    const timers = [0, 1, 2].map((index) => window.setTimeout(() => setPlanetsStarted(index + 1), index * 260));
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
+  }, [assetsReady]);
 
   useEffect(() => {
-    if (isGatewayReady || loadingProgress >= 100) {
-      return;
-    }
-
-    const interval = window.setInterval(() => {
-      setLoadingProgress((current) => {
-        const totalPlanets = gatewayHomeConfig.portals.length;
-        const loadedPlanets = Object.values(readyPlanets).filter(Boolean).length;
-        const systemReady = assetsReady && loadedPlanets === totalPlanets;
-
-        if (current >= 100) {
-          return 100;
-        }
-
-        if (!systemReady) {
-          return Math.min(current + 1, 99);
-        }
-
-        return Math.min(current + 4, 100);
-      });
-    }, 16);
-
-    return () => window.clearInterval(interval);
-  }, [readyPlanets, assetsReady, loadingProgress, isGatewayReady]);
+    const timer = window.setTimeout(() => setGaveUp(true), 12000);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   const handlePlanetReady = (portalId: GatewayHomeId) => {
     setReadyPlanets((current) => {
@@ -190,9 +188,21 @@ export function SpaceGatewayHome() {
     });
   };
 
+  // The hovered window grows where it stands, so the pointer is always still inside it; the others are pushed aside.
+  const enterPortal = (id: GatewayHomeId) => {
+    if (!selected) setHoveredPortal(id);
+  };
+
+  const leavePortal = (id: GatewayHomeId) => {
+    // Moving from one window to the next can report the new one before the old one ends; only the old one clears itself.
+    if (!selected) setHoveredPortal((current) => (current === id ? null : current));
+  };
+
   const handleSelect = (item: GatewayHomePortal) => {
     if (selected) return;
     setSelected(item.id);
+    // The Feng Shui world opens with its seal on a fresh page load only; a warp has just done the opening.
+    markWarpArrival(item.href);
     const delay = reducedMotion
       ? gatewayHomeConfig.transitions.reducedMotionRouteDelayMs
       : gatewayHomeConfig.transitions.routeDelayMs;
@@ -205,6 +215,22 @@ export function SpaceGatewayHome() {
     ? gatewayHomeConfig.transitions.zoomOffsetXByPortal[activePortal.id]
     : "0vw";
   const debug = gatewayHomeConfig.debug;
+  // The loader fills as the parts of the page are really ready, and finishes only when the visitor can see all of it.
+  const completed = gaveUp
+    ? 100
+    : completedWork({
+        assets: assetsReady,
+        astronaut: astronautReady || !debug.showAstronaut,
+        planets: debug.showPlanets ? Object.values(readyPlanets).filter(Boolean).length : 3,
+      });
+  const guide = canGuide(viewportWidth, !!reducedMotion);
+  // The hovered window grows enough for its text, and the other two share what is left of the row.
+  const expandFactor = hoverExpandFactor(viewportWidth);
+  const hoveredSlot = hoveredPortal ? gatewayHomeConfig.portals.findIndex((item) => item.id === hoveredPortal) : null;
+  // The astronaut introduces the portal under the pointer, when there is room and motion for it.
+  const talking = !!hoveredPortal && !selected && guide;
+  const hoveredInfo = hoveredPortal ? gatewayHomeConfig.portals.find((item) => item.id === hoveredPortal) ?? null : null;
+  const hoveredCopy = hoveredInfo ? portalCopy(hoveredInfo.id, language) : null;
 
   return (
     <section className="space-gateway-shell relative w-full h-screen overflow-hidden text-white">
@@ -258,35 +284,55 @@ export function SpaceGatewayHome() {
               const isHovered = hoveredPortal === gateway.id;
               const isSelected = selected === gateway.id;
 
+              const frameSizeStyle = createFrameStyle({
+                width: gatewayHomeConfig.frame.width,
+                height: {
+                  mobileRem: gatewayHomeConfig.frame.height.mobileRem * (gateway.planet.frameHeightScale ?? 1),
+                  viewport: gatewayHomeConfig.frame.height.viewport * (gateway.planet.frameHeightScale ?? 1),
+                  desktopRem: gatewayHomeConfig.frame.height.desktopRem * (gateway.planet.frameHeightScale ?? 1),
+                },
+                radiusRem: gatewayHomeConfig.frame.radiusRem,
+              });
+
+              const expanded = guide && isHovered && !selected;
+              // While one window is under the pointer the other two give way, so the row keeps its width.
+              const squeezed = guide && !selected && hoveredSlot !== null && !isHovered;
+
               return (
-                <motion.div
+                <div
                   key={gateway.id}
+                  // This window is what takes the hover and the click. It widens where it stands, so the pointer stays inside it.
+                  onPointerEnter={(event) => event.pointerType === "mouse" && enterPortal(gateway.id)}
+                  onPointerLeave={(event) => event.pointerType === "mouse" && leavePortal(gateway.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSelect(gateway);
+                  }}
+                  className={`relative shrink-0 ${selected ? 'cursor-default pointer-events-none' : 'cursor-pointer'}`}
+                  style={{
+                    ...frameSizeStyle,
+                    width: guide && !selected ? windowWidth(String(frameSizeStyle.width), i, hoveredSlot, expandFactor) : frameSizeStyle.width,
+                    transition: `width ${gatewayHomeConfig.hover.expandSeconds}s cubic-bezier(0.22, 1, 0.36, 1)`,
+                    zIndex: isHovered ? 51 : 50,
+                  }}
+                >
+                <motion.div
                   initial={{ opacity: 0, y: 50 }}
                   animate={{
-                    opacity: selected && !isSelected ? 0 : 1,
+                    opacity: selected && !isSelected ? 0 : globeOpacity(i, hoveredSlot, gatewayHomeConfig.hover.dimOpacity),
                     y: 0,
                     filter: selected && isSelected
                       ? `brightness(${gatewayHomeConfig.hover.selectedBrightness}) contrast(${gatewayHomeConfig.hover.selectedContrast})`
                       : "brightness(1) contrast(1)",
                   }}
-                  transition={{ duration: 0.8, delay: selected ? 0 : 0.2 + i * 0.15 }}
-                  onHoverStart={() => !selected && setHoveredPortal(gateway.id)}
-                  onHoverEnd={() => !selected && setHoveredPortal(null)}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleSelect(gateway);
+                  transition={{
+                    duration: 0.8,
+                    delay: selected || pageReady ? 0 : 0.2 + i * 0.15,
+                    opacity: { duration: 0.45 },
                   }}
-                  className={`group relative overflow-hidden ${selected ? 'cursor-default pointer-events-none' : 'cursor-pointer'} flex flex-col items-center transition-all duration-500`}
+                  className="group pointer-events-none relative h-full w-full overflow-hidden flex flex-col items-center transition-[box-shadow] duration-500"
                   style={{
-                    ...createFrameStyle({
-                      width: gatewayHomeConfig.frame.width,
-                      height: {
-                        mobileRem: gatewayHomeConfig.frame.height.mobileRem * (gateway.planet.frameHeightScale ?? 1),
-                        viewport: gatewayHomeConfig.frame.height.viewport * (gateway.planet.frameHeightScale ?? 1),
-                        desktopRem: gatewayHomeConfig.frame.height.desktopRem * (gateway.planet.frameHeightScale ?? 1),
-                      },
-                      radiusRem: gatewayHomeConfig.frame.radiusRem,
-                    }),
+                    borderRadius: frameSizeStyle.borderRadius,
                     ...(debug.showFrames ? {
                       borderWidth: `${gatewayHomeConfig.frame.borderWidthPx}px`,
                       borderStyle: 'solid',
@@ -299,14 +345,13 @@ export function SpaceGatewayHome() {
                       backgroundPosition: gateway.theme.frameImageSrc ? 'auto, center' : 'auto',
                       backgroundColor: 'rgba(0,0,0,0.6)',
                     } : {}),
-                    zIndex: 50,
                   }}
                 >
                   {debug.showPortalEffects ? gateway.effects.map((effect, effectIndex) => (
                     <GatewayEffectLayer key={`${gateway.id}-${effect.kind}-${effectIndex}`} effect={effect} />
                   )) : null}
 
-                  {debug.showPlanets ? (
+                  {debug.showPlanets && assetsReady && planetsStarted > i ? (
                     <div className="pointer-events-none" style={createPlanetStageStyle(gatewayHomeConfig.planetStage)}>
                       <motion.div
                         className="absolute inset-0 pointer-events-none"
@@ -326,11 +371,11 @@ export function SpaceGatewayHome() {
                           transformOrigin: 'center center',
                         }}
                       />
-                      <div style={createAnchorStyle(gateway.planet.anchor)}>
+                      <div style={{ ...createAnchorStyle(gateway.planet.anchor), opacity: readyPlanets[gateway.id] ? 1 : 0, transition: 'opacity 0.9s ease' }}>
                         <motion.div
                           animate={{
                             y: isHovered || isSelected ? -gateway.planet.hoverLiftPx : 0,
-                            scale: isHovered || isSelected ? gatewayHomeConfig.hover.planetScale : 1,
+                            scale: expanded ? gatewayHomeConfig.hover.expandedPlanetScale : squeezed ? Math.min(gatewayHomeConfig.hover.squeezedPlanetScale, squeezeFactor(expandFactor)) : isHovered || isSelected ? gatewayHomeConfig.hover.planetScale : 1,
                           }}
                           transition={{ duration: 1.2, ease: "easeOut" }}
                           style={{
@@ -350,31 +395,15 @@ export function SpaceGatewayHome() {
                   ) : null}
 
                   {debug.showLabels ? (
-                    <motion.div
-                      animate={{ opacity: selected ? 0 : 1 }}
-                      className="relative z-10 w-full mt-auto p-4 pb-4 md:pb-6 text-center bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none"
-                    >
-                      <motion.h2
-                        animate={{
-                          opacity: isHovered || isSelected ? 1 : 0,
-                          y: isHovered || isSelected ? 0 : 10,
-                        }}
-                        transition={{ duration: 0.28, ease: "easeOut" }}
-                        className="text-xl md:text-2xl font-extrabold mb-1 tracking-wider uppercase text-white drop-shadow-md"
-                      >
-                        {gateway.label}
-                      </motion.h2>
-                      <motion.p
-                        animate={{
-                          opacity: isHovered || isSelected ? 1 : 0,
-                          y: isHovered || isSelected ? 0 : 8,
-                        }}
-                        transition={{ duration: 0.28, ease: "easeOut", delay: 0.04 }}
-                        className="text-xs md:text-sm text-white/80"
-                      >
-                        {gateway.description}
-                      </motion.p>
-                    </motion.div>
+                    <GatewayPortalInfo
+                      label={portalTitle(gateway.id, language)}
+                      copy={portalCopy(gateway.id, language)}
+                      enterText={ui.enter}
+                      accent={gateway.theme.glowColor}
+                      active={isHovered && !selected}
+                      expanded={expanded}
+                      expandedWidthCss={expandedWidth(String(frameSizeStyle.width), expandFactor)}
+                    />
                   ) : null}
 
                   {debug.showPortalEffects ? (
@@ -384,6 +413,7 @@ export function SpaceGatewayHome() {
                     />
                   ) : null}
                 </motion.div>
+                </div>
               );
             })}
           </div>
@@ -397,10 +427,12 @@ export function SpaceGatewayHome() {
             camera={{ position: gatewayHomeConfig.astronaut.camera.position, fov: gatewayHomeConfig.astronaut.camera.fov }}
             dpr={[1, 2]}
           >
-            <SpaceBackgroundAstronaut isWarping={!!selected} targetIndex={activeIndex} />
+            <SpaceBackgroundAstronaut isWarping={!!selected} targetIndex={activeIndex} talkSide={talking ? astronautSide() : null} onReady={() => setAstronautReady(true)} />
           </Canvas>
         </div>
       ) : null}
+
+      <AstronautSpeech portal={talking && hoveredInfo && hoveredCopy ? { label: portalTitle(hoveredInfo.id, language), speech: hoveredCopy.speech } : null} side={astronautSide()} />
 
       <AnimatePresence>
         {selected && (
@@ -418,10 +450,15 @@ export function SpaceGatewayHome() {
         )}
       </AnimatePresence>
 
+      <GatewayLanguageToggle language={language} />
+
       <GatewayLoadingScreen
-        loadingProgress={loadingProgress}
-        isVisible={!isGatewayReady}
-        isFinishing={isLoaderFinishing}
+        completed={completed}
+        isVisible={!pageReady}
+        onDone={() => {
+          markGatewaySeen();
+          setIsGatewayReady(true);
+        }}
       />
     </section>
   );

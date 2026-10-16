@@ -1,79 +1,40 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Reveal } from "@/components/tech/Reveal";
 import { fengshuiLinks } from "@/content/fengshui-content";
-import { useFengShuiCopy } from "@/components/fengshui/FengShuiLanguage";
+import { useFengShuiCopy, useFengShuiWorldCopy } from "@/components/fengshui/FengShuiLanguage";
 
-const containerVariants = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.1 },
-  },
-};
-
-const pillVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
-  },
-};
-
+/** The call to try Bazica Web: a night card with a light running round its edge, a pulsing badge and a gold button. */
 export function FengShuiLinksSection() {
   const copy = useFengShuiCopy().linksSection;
+  const cta = useFengShuiWorldCopy().cta;
 
   return (
-    <section className="cv-section-shell">
-      <Reveal>
-        <div className="cv-panel-strong relative overflow-hidden rounded-[2.25rem] px-6 py-12 md:px-12 md:py-16">
-          <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2.25rem]">
-            <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-purple-500/12 blur-3xl" />
-            <div className="absolute -bottom-20 -right-16 h-64 w-64 rounded-full bg-cyan-500/10 blur-3xl" />
-            <div className="absolute left-1/2 top-0 h-px w-3/4 -translate-x-1/2 bg-gradient-to-r from-transparent via-purple-500/40 to-transparent" />
-          </div>
-
-          <div className="relative mx-auto max-w-2xl text-center">
-            <span className="cv-eyebrow">{copy.eyebrow}</span>
-            <h2 className="cv-section-title mt-3">
-              {copy.title}{" "}
-              <span className="cv-gradient-text-purple-pink">{copy.accent}</span>
+    <section className="fs-band fs-band-paper fs-links" data-kit-section="Bắt đầu / Begin">
+      <div className="fs-wrap fs-narrow">
+        <Reveal>
+          <div className="fs-cta">
+            <span className="fs-cta-badge">
+              <i aria-hidden="true" />
+              {cta.badge}
+            </span>
+            <span className="fs-eyebrow">{copy.eyebrow}</span>
+            <h2 className="fs-title fs-cta-title">
+              {copy.title} <span className="fs-cta-accent">{copy.accent}</span>
             </h2>
-            <p className="cv-section-copy mt-5">{copy.description}</p>
-
-            <motion.div
-              className="mt-10 flex flex-wrap justify-center gap-3"
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-            >
-              <motion.a
-                href={fengshuiLinks.app}
-                variants={pillVariants}
-                whileHover={{ scale: 1.04, transition: { duration: 0.18 } }}
-                whileTap={{ scale: 0.97 }}
-                className="cv-gradient-button"
-              >
+            <p className="fs-copy">{copy.description}</p>
+            <p className="fs-cta-free">{cta.free}</p>
+            <div className="fs-actions fs-actions-center">
+              <a href={fengshuiLinks.app} className="fs-btn fs-btn-cta">
                 {copy.appCta}
-              </motion.a>
-
-              <motion.a
-                href={fengshuiLinks.repo}
-                target="_blank"
-                rel="noreferrer"
-                variants={pillVariants}
-                whileHover={{ scale: 1.04, transition: { duration: 0.18 } }}
-                whileTap={{ scale: 0.97 }}
-                className="cv-ghost-button"
-              >
+              </a>
+              <a href={fengshuiLinks.repo} target="_blank" rel="noreferrer" className="fs-btn fs-btn-ghost">
                 {copy.repoCta}
-              </motion.a>
-            </motion.div>
+              </a>
+            </div>
           </div>
-        </div>
-      </Reveal>
+        </Reveal>
+      </div>
     </section>
   );
 }

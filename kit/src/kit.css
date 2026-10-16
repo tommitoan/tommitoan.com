@@ -1,0 +1,387 @@
+/* Shared look for tommitoan.com and bazi.tommitoan.com: paper-and-ink tokens and the global effects.
+   Every name is prefixed with kit- so it cannot collide with a site's own styles. */
+
+:root {
+  --kit-paper: #f3ead7;
+  --kit-surface: #fbf5e6;
+  --kit-ink: #3b2f20;
+  --kit-muted: #66553f;
+  --kit-line: #8a7a5a;
+  --kit-seal: #8b2e1f;
+  --kit-gold: #f2d391;
+  /* A solid fill in the seal colour (buttons, badges) and the text that goes on it. In the light look the fill is the seal
+     itself; in the dark look the seal turns lighter to stay readable as text, so the fill keeps its own, darker red. */
+  --kit-seal-solid: var(--kit-seal);
+  --kit-on-seal: var(--kit-paper);
+  /* Soft versions for fills behind text, and the colour of shadows (an RGB triple, so it can take an alpha). */
+  --kit-card: #ffffff;
+  --kit-card-soft: rgba(255, 255, 255, 0.5);
+  --kit-card-hover: rgba(255, 255, 255, 0.85);
+  --kit-shadow: 59, 47, 32;
+  --kit-night: #0c1024;
+  --kit-wood: #267843;
+  --kit-fire: #c43728;
+  --kit-earth: #8d5f1f;
+  --kit-metal: #586b74;
+  --kit-water: #276da7;
+  --kit-ease: cubic-bezier(0.65, 0, 0.35, 1);
+  --kit-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --kit-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --kit-z-dots: 800;
+  --kit-z-progress: 900;
+  --kit-z-slats: 1000;
+  --kit-z-seal: 1100;
+  --kit-z-cursor: 1200;
+  --kit-han: "Noto Serif SC", "Noto Serif CJK SC", "Songti SC", serif;
+  /* What covers the page: the boot guard, the opening seal and the slats. They follow the page's look, paper by
+     default; a page that opens in the night sky sets data-kit-theme="night" on <html> (see init's `theme`). */
+  --kit-cover-bg: var(--kit-paper);
+  --kit-cover-ink: var(--kit-seal);
+  --kit-cover-muted: var(--kit-muted);
+  --kit-slat: var(--kit-seal);
+}
+/* The dark appearance: the page says data-theme="dark" (tommitoan.com) or data-kit-appearance="dark" (any site of the kit).
+   Paper becomes deep ink-blue, ink becomes warm paper, and the element colours and the seal are lifted to stay readable. */
+html[data-theme="dark"],
+html[data-kit-appearance="dark"] {
+  --kit-paper: #12152b;
+  --kit-surface: #1b1f3c;
+  --kit-ink: #ece3d0;
+  --kit-muted: #cdc7db;
+  --kit-line: #5a608f;
+  --kit-seal: #f6a08a;
+  --kit-seal-solid: #b4402c;
+  --kit-on-seal: #ffffff;
+  --kit-card: #232850;
+  --kit-card-soft: rgba(255, 255, 255, 0.05);
+  --kit-card-hover: rgba(255, 255, 255, 0.11);
+  --kit-shadow: 0, 0, 0;
+  --kit-wood: #5fd08c;
+  --kit-fire: #ff8672;
+  --kit-earth: #dba94f;
+  --kit-metal: #a9bfca;
+  --kit-water: #74b7f0;
+}
+html[data-kit-theme="night"] {
+  --kit-cover-bg: #070b1d;
+  --kit-cover-ink: var(--kit-gold);
+  --kit-cover-muted: rgba(238, 232, 255, 0.7);
+  --kit-slat: #0c1230;
+}
+
+/* Smooth scroll (Lenis) */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+/* Boot guard: the inline snippet adds this class before first paint so nothing flashes before the seal or the
+   reveal mounts. It removes itself after 4 seconds even if the script never loads. */
+html.kit-pending::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: var(--kit-z-seal);
+  background: var(--kit-cover-bg);
+  animation: kit-pending-failsafe 0s 4s forwards;
+}
+@keyframes kit-pending-failsafe {
+  to {
+    visibility: hidden;
+  }
+}
+
+/* Slat transition */
+.kit-slats {
+  position: fixed;
+  inset: 0;
+  z-index: var(--kit-z-slats);
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  pointer-events: none;
+}
+.kit-slats[hidden] {
+  display: none;
+}
+.kit-slats > i {
+  background: var(--kit-slat);
+  margin-right: -1px;
+  transform: scaleY(0);
+}
+/* In the night look each slat carries a thin gold edge, like a lit panel of the sky. */
+html[data-kit-theme="night"] .kit-slats > i {
+  box-shadow: inset -1px 0 0 rgba(242, 211, 145, 0.22), inset 0 -40px 60px -40px rgba(242, 211, 145, 0.12);
+}
+.kit-slats.is-covering {
+  pointer-events: auto;
+}
+
+/* Opening seal */
+.kit-seal {
+  position: fixed;
+  inset: 0;
+  z-index: var(--kit-z-seal);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  background: var(--kit-cover-bg);
+  color: var(--kit-cover-ink);
+}
+.kit-seal-mark {
+  width: 132px;
+  height: 132px;
+  margin: 0 auto 14px;
+  display: grid;
+  place-items: center;
+  border: 5px solid var(--kit-cover-ink);
+  border-radius: 6px;
+  font: 400 82px/1 var(--kit-han);
+  transform: rotate(-6deg);
+}
+.kit-seal-tag {
+  font: 400 13px/1.4 system-ui, sans-serif;
+  letter-spacing: 0.04em;
+  color: var(--kit-cover-muted);
+}
+
+/* Heading reveal: words rise out of a mask. The hidden state exists only after the script split the heading. */
+.kit-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.14em;
+}
+.kit-word > span {
+  display: inline-block;
+  will-change: transform;
+}
+[data-kit-reveal][data-kit-ready]:not([data-kit-revealed]) .kit-word > span {
+  transform: translateY(115%);
+}
+
+/* Progress bar and section dots */
+.kit-progress {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: env(safe-area-inset-top, 0px);
+  height: 3px;
+  z-index: var(--kit-z-progress);
+  background: var(--kit-seal);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  pointer-events: none;
+}
+.kit-dots {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: var(--kit-z-dots);
+  display: flex;
+  flex-direction: column;
+}
+/* Each button is a 24 px square (WCAG 2.5.8); the visible dot is drawn inside it. */
+.kit-dots button {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.kit-dots button::before {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border: 1px solid var(--kit-seal);
+  border-radius: 50%;
+  background: transparent;
+}
+.kit-dots button[aria-current="true"]::before {
+  background: var(--kit-seal);
+}
+.kit-dots button span {
+  position: absolute;
+  right: 26px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 1px 6px;
+  white-space: nowrap;
+  font: 400 11px/1.5 system-ui, sans-serif;
+  color: var(--kit-ink);
+  background: var(--kit-paper);
+  border: 0.5px solid var(--kit-line);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.kit-dots button:hover span,
+.kit-dots button:focus-visible span {
+  opacity: 1;
+}
+.kit-dots button:focus-visible {
+  outline: 2px solid var(--kit-seal);
+  outline-offset: -2px;
+  border-radius: 50%;
+}
+
+/* Ink wash background: three soft stains that drift while the page scrolls. Needs the page canvas to paint
+   its own background (set it on html, or on body when html has none) so the layer shows above it. */
+.kit-wash-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.kit-wash {
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform;
+}
+.kit-wash:nth-child(1) {
+  width: 560px;
+  height: 560px;
+  left: -180px;
+  top: 8%;
+  background: radial-gradient(circle, rgba(139, 46, 31, 0.09), transparent 65%);
+}
+.kit-wash:nth-child(2) {
+  width: 480px;
+  height: 480px;
+  right: -140px;
+  top: 46%;
+  background: radial-gradient(circle, rgba(38, 120, 67, 0.08), transparent 65%);
+}
+.kit-wash:nth-child(3) {
+  width: 520px;
+  height: 520px;
+  left: 20%;
+  top: 78%;
+  background: radial-gradient(circle, rgba(39, 109, 167, 0.07), transparent 65%);
+}
+
+/* Hour clock */
+.kit-clock {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.kit-clock-han {
+  font: 400 20px/1 var(--kit-han);
+  color: var(--kit-seal);
+}
+
+/* Magnetic buttons: the script moves them; this keeps the movement smooth. */
+[data-kit-magnetic] {
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kit-wash-layer,
+  .kit-slats,
+  .kit-seal {
+    display: none;
+  }
+  html.kit-pending::before {
+    display: none;
+  }
+}
+
+/* Pointer ring and ink splash (opt-in). The real pointer stays visible; the ring only follows it. */
+.kit-cursor-ring {
+  position: fixed;
+  left: -15px;
+  top: -15px;
+  z-index: var(--kit-z-cursor);
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid var(--kit-seal);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--kit-seal) 8%, transparent);
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.kit-splash {
+  position: fixed;
+  z-index: var(--kit-z-cursor);
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  border-radius: 50%;
+  background: var(--kit-seal);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .kit-cursor-ring,
+  .kit-splash {
+    display: none;
+  }
+}
+
+/* Ink dust (effect 2): the plain glyph stays until the canvas has drawn, then fades behind it. */
+[data-kit-dust] {
+  position: relative;
+}
+.kit-dust-glyph {
+  display: block;
+  font: 400 var(--kit-dust-size, 240px) / 1 var(--kit-han);
+  color: color-mix(in srgb, var(--kit-seal) 22%, transparent);
+  text-align: center;
+  user-select: none;
+  transition: opacity 600ms var(--kit-ease);
+}
+.kit-dust-on .kit-dust-glyph {
+  opacity: 0;
+}
+.kit-dust-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Life strip (effect 25, light): frames stacked in one box, one active at a time, and a star that falls onto them. */
+[data-kit-life] {
+  position: relative;
+}
+[data-kit-life] img[data-age] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 700ms var(--kit-ease);
+}
+[data-kit-life] img[data-age]:first-of-type,
+[data-kit-life] img.is-active {
+  opacity: 1;
+}
+[data-kit-life].kit-life-playing img[data-age]:first-of-type:not(.is-active) {
+  opacity: 0;
+}
+[data-kit-life-star] {
+  position: absolute;
+  left: 50%;
+  top: 18%;
+  width: 34px;
+  height: 34px;
+  margin-left: -17px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fffbe9 0 14%, rgba(242, 211, 145, 0.85) 30%, rgba(242, 211, 145, 0) 70%);
+  opacity: 0;
+  pointer-events: none;
+}

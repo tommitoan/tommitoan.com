@@ -21,6 +21,12 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@kit": [
+        "./kit/src/index.ts"
+      ],
+      "@kit/*": [
+        "./kit/src/*"
       ]
     },
     "plugins": [
