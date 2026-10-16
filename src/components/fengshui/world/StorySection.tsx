@@ -95,7 +95,7 @@ function ScrollStory() {
             <div className="fs-story-cards" aria-hidden="true">
               {SAMPLE_PILLARS.map((han, index) => (
                 <div key={han} className="fs-story-slot" data-shown={index < cards ? "true" : "false"}>
-                  <PillarCard han={han} label={labels[index]} generic={{ stem: copy.stemWord, branch: copy.branchWord }} />
+                  <PillarCard han={han} label={labels[index]} />
                 </div>
               ))}
             </div>

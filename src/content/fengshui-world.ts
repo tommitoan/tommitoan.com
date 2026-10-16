@@ -26,7 +26,7 @@ export type WorldCopy = {
     ageUnit: string;
     frameAlts: [string, string, string];
   };
-  story: { eyebrow: string; title: string; label: string; stemWord: string; branchWord: string; steps: [WorldStep, WorldStep, WorldStep, WorldStep] };
+  story: { eyebrow: string; title: string; label: string; steps: [WorldStep, WorldStep, WorldStep, WorldStep] };
   dial: {
     eyebrow: string;
     title: string;
@@ -65,9 +65,51 @@ export type WorldCopy = {
     imageAlt: string;
     finderInvalid: string;
   };
+  /** The earthly branches section: a ring of the twelve with a painting and the facts of the one in focus. */
+  branches: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    pickerLabel: string;
+    ringLabel: string;
+    imageAlt: string;
+    hoursLabel: string;
+    monthLabel: string;
+    /** With {term}, {from}, {to} and {month}: the solar term that opens the month and its usual dates. */
+    monthText: string;
+    yearsLabel: string;
+    hiddenLabel: string;
+    harmonyLabel: string;
+    clashLabel: string;
+    cautionLabel: string;
+    hint: string;
+    note: string;
+  };
+  /** The chart anatomy section: the eight characters of the sample chart, one at a time, with the pillar's place in the sixty cycle. */
+  anatomy: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    chartLabel: string;
+    stemRow: string;
+    branchRow: string;
+    pillarTitles: [string, string, string, string];
+    dayMasterBadge: string;
+    animalLabel: string;
+    hoursLabel: string;
+    ringLabel: string;
+    /** Where the pillar stands in the cycle, with {n} for its number from 1 to 60. */
+    ringCaption: string;
+    hint: string;
+    note: string;
+    /** What each place is used for in reading: a line for the stem and one for the branch of each pillar. */
+    roles: [AnatomyRole, AnatomyRole, AnatomyRole, AnatomyRole];
+  };
   marquee: { eyebrow: string; title: string; caption: string };
   footer: { note: string; replay: string };
 };
+
+export type AnatomyRole = { stem: string; branch: string };
 
 const vi: WorldCopy = {
   clock: { hour: "Giờ", previous: "Vừa qua", next: "Sắp tới", left: "còn lại" },
@@ -88,8 +130,6 @@ const vi: WorldCopy = {
     eyebrow: "Cách đọc",
     title: "Bốn trụ, bốn bước",
     label: "Bốn bước đọc một lá số: năm, tháng, ngày, giờ",
-    stemWord: "Thiên Can",
-    branchWord: "Địa Chi",
     steps: [
       { glyph: "年", kicker: "Bước 1 · Trụ Năm", title: "Năm đổi ở Lập Xuân", text: "Trụ năm đổi vào Lập Xuân, khoảng 4 tháng 2, chứ không phải mùng một Tết." },
       { glyph: "月", kicker: "Bước 2 · Trụ Tháng", title: "Tháng chạy theo tiết khí", text: "Mười hai tiết khí chia năm thành mười hai tháng. Sinh vào mùa nào thì Nhật Chủ vượng hay suy theo mùa đó." },
@@ -134,6 +174,60 @@ const vi: WorldCopy = {
     imageAlt: "Tranh minh họa Thiên Can {name}",
     finderInvalid: "Ngày chưa hợp lệ. Nhập theo dd/mm/yyyy, từ năm 1900 đến 2100.",
   },
+  branches: {
+    eyebrow: "Địa Chi",
+    title: "Mười hai Địa Chi",
+    description:
+      "Mười hai Chi làm ba việc cùng lúc: chia một ngày thành mười hai canh giờ, đặt tên cho mười hai tháng tiết khí, và đặt tên cho mười hai năm của vòng con giáp. Trụ giờ, trụ tháng và trụ năm đều lấy Chi từ đó. Mỗi Chi còn mang một hành, một âm dương và vài Thiên Can ẩn bên trong.",
+    pickerLabel: "Chọn một Địa Chi",
+    ringLabel: "Vòng mười hai Địa Chi, Tý ở trên cùng, đánh dấu Chi hợp và Chi xung với Chi đang chọn",
+    imageAlt: "Tranh minh họa Địa Chi {name}",
+    hoursLabel: "Canh giờ",
+    monthLabel: "Tháng Ba-zi",
+    monthText: "mở đầu ở {term} ({from}–{to}/{month})",
+    yearsLabel: "Các năm",
+    hiddenLabel: "Can ẩn",
+    harmonyLabel: "Lục hợp",
+    clashLabel: "Lục xung",
+    cautionLabel: "Cần tránh",
+    hint: "Tự chạy mỗi vài giây; rê chuột vào một Chi để chọn và giữ lại. Đường liền nối Chi hợp, đường đứt nối Chi xung.",
+    note: "Năm tính theo năm Ba-zi, đổi ở Lập Xuân, nên người sinh trong tháng một hoặc tháng hai có thể thuộc năm trước. Hình tượng chỉ để ghi nhớ.",
+  },
+  anatomy: {
+    eyebrow: "Giải phẫu",
+    title: "Tám chữ của một lá số",
+    description:
+      "Một lá số có bốn trụ, mỗi trụ là một Thiên Can nằm trên một Địa Chi: tám chữ. Rê chuột vào từng chữ để xem nó là gì và dùng để đọc điều gì. Vòng bên cạnh cho thấy cặp can chi đó đứng ở đâu trong sáu mươi cặp.",
+    chartLabel: "Bốn trụ của lá số mẫu, tám chữ",
+    stemRow: "Thiên Can",
+    branchRow: "Địa Chi",
+    pillarTitles: ["Trụ Năm", "Trụ Tháng", "Trụ Ngày", "Trụ Giờ"],
+    dayMasterBadge: "Nhật Chủ",
+    animalLabel: "Con giáp",
+    hoursLabel: "Giờ",
+    ringLabel: "Vòng sáu mươi cặp can chi, đánh dấu bốn trụ của lá số mẫu",
+    ringCaption: "Thứ {n} trong 60",
+    hint: "Tự chạy mỗi vài giây; rê chuột vào một chữ để chọn và giữ lại.",
+    note: "Cách gắn mỗi vị trí với đời sống là quy ước truyền thống, dùng để học cách đọc, không phải kết luận về ai.",
+    roles: [
+      {
+        stem: "Can của năm sinh. Ba-zi đổi năm ở Lập Xuân chứ không phải mùng một Tết. Theo truyền thống, trụ năm là lớp ngoài cùng của lá số: gốc gác gia đình và thế hệ đi trước.",
+        branch: "Chi của năm sinh, cũng là con giáp của năm Ba-zi. Truyền thống xem đây là phần xa nhất của lá số, bối cảnh bạn lớn lên.",
+      },
+      {
+        stem: "Can của tháng sinh. Tháng đổi theo tiết khí, nên người sinh sát mốc tiết có thể thuộc tháng bên cạnh. Truyền thống gắn trụ tháng với cha mẹ và môi trường làm việc.",
+        branch: "Chi của tháng sinh cho biết bạn sinh vào mùa nào. Đây là chi có sức nặng lớn nhất khi xét Nhật Chủ vượng hay suy.",
+      },
+      {
+        stem: "Nhật Chủ: chính bạn trong lá số. Cả lá số được đọc quanh chữ này, nên đây là chữ đầu tiên cần tìm.",
+        branch: "Chi của ngày sinh, nằm ngay dưới Nhật Chủ. Truyền thống gọi là cung phối ngẫu, nơi xem các mối quan hệ gần gũi nhất.",
+      },
+      {
+        stem: "Can của giờ sinh. Giờ tính theo múi giờ nơi sinh, lệch hai tiếng là đổi cả trụ. Truyền thống gắn trụ giờ với con cái và giai đoạn về sau.",
+        branch: "Chi của giờ sinh, tức canh giờ dài hai tiếng bạn chào đời. Biết giờ sinh chính xác là điều khó nhất khi lập lá số.",
+      },
+    ],
+  },
   marquee: { eyebrow: "Giáp Tý", title: "Vòng sáu mươi năm", caption: "Sáu mươi cặp can chi, cứ sáu mươi năm lại quay về từ đầu." },
   footer: { note: "© Toan Ngo · tommitoan", replay: "Trải nghiệm lại hành trình" },
 };
@@ -157,8 +251,6 @@ const en: WorldCopy = {
     eyebrow: "How to read",
     title: "Four pillars, four steps",
     label: "Four steps to read a chart: year, month, day, hour",
-    stemWord: "Stem",
-    branchWord: "Branch",
     steps: [
       { glyph: "年", kicker: "Step 1 · Year pillar", title: "The year turns at Lichun", text: "The year pillar changes at Lichun, around 4 February, not on Lunar New Year's day." },
       { glyph: "月", kicker: "Step 2 · Month pillar", title: "Months follow the solar terms", text: "Twelve solar terms divide the year into twelve months. The season you are born in decides whether the Day Master is strong or weak." },
@@ -202,6 +294,60 @@ const en: WorldCopy = {
     finderNote: "Counted by calendar date. If you were born from 23:00 the day may count as the next one, depending on the convention; Bazica Web uses your exact birth time.",
     imageAlt: "Painting of the heavenly stem {name}",
     finderInvalid: "That is not a valid date. Type it as dd/mm/yyyy, from 1900 to 2100.",
+  },
+  branches: {
+    eyebrow: "Earthly branches",
+    title: "The twelve earthly branches",
+    description:
+      "The twelve branches do three jobs at once: they divide a day into twelve double-hours, they name the twelve solar-term months, and they name the twelve years of the animal cycle. The hour, month and year pillars all take their branch from there. Each branch also carries an element, a yin or yang, and a few stems hidden inside it.",
+    pickerLabel: "Pick an earthly branch",
+    ringLabel: "The ring of the twelve earthly branches, Zi at the top, with the harmony and clash of the chosen branch marked",
+    imageAlt: "Painting of the earthly branch {name}",
+    hoursLabel: "Double-hour",
+    monthLabel: "Ba-zi month",
+    monthText: "opens at {term} ({from}–{to}/{month})",
+    yearsLabel: "Years",
+    hiddenLabel: "Hidden stems",
+    harmonyLabel: "Six harmony",
+    clashLabel: "Six clash",
+    cautionLabel: "Avoid concluding",
+    hint: "It moves on by itself every few seconds; move over a branch to pick it and hold it. A solid line joins its harmony, a dashed line its clash.",
+    note: "Years are Ba-zi years, which change at Lichun, so someone born in January or February may belong to the year before. The imagery is only for remembering.",
+  },
+  anatomy: {
+    eyebrow: "Anatomy",
+    title: "The eight characters of a chart",
+    description:
+      "A chart has four pillars, each a heavenly stem over an earthly branch: eight characters. Move over each one to see what it is and what it is used for in reading. The ring beside it shows where that pair stands among the sixty.",
+    chartLabel: "The four pillars of the sample chart, eight characters",
+    stemRow: "Heavenly stem",
+    branchRow: "Earthly branch",
+    pillarTitles: ["Year pillar", "Month pillar", "Day pillar", "Hour pillar"],
+    dayMasterBadge: "Day Master",
+    animalLabel: "Animal",
+    hoursLabel: "Hours",
+    ringLabel: "The ring of sixty stem and branch pairs, with the four pillars of the sample chart marked",
+    ringCaption: "No. {n} of 60",
+    hint: "It moves on by itself every few seconds; move over a character to pick it and hold it.",
+    note: "Tying each place to areas of life is a traditional convention, used here to learn how to read, not a verdict on anyone.",
+    roles: [
+      {
+        stem: "The stem of the birth year. Ba-zi changes the year at Lichun, not on Lunar New Year's day. By tradition the year pillar is the outermost layer of the chart: family background and the generation before you.",
+        branch: "The branch of the birth year, also the animal of the Ba-zi year. Tradition treats it as the furthest part of the chart, the setting you grew up in.",
+      },
+      {
+        stem: "The stem of the birth month. Months change with the solar terms, so someone born close to a term may belong to the next month. Tradition ties the month pillar to parents and the working environment.",
+        branch: "The branch of the birth month tells which season you were born in. It weighs most when judging whether the Day Master is strong or weak.",
+      },
+      {
+        stem: "The Day Master: you, in the chart. The whole chart is read around this character, so it is the first one to find.",
+        branch: "The branch of the birth day, sitting right under the Day Master. Tradition calls it the spouse palace, where close relationships are read.",
+      },
+      {
+        stem: "The stem of the birth hour. Count the hour in the time zone of the birthplace; two hours off changes the whole pillar. Tradition ties the hour pillar to children and later life.",
+        branch: "The branch of the birth hour, the two-hour period you were born in. The exact birth time is the hardest thing to know when building a chart.",
+      },
+    ],
   },
   marquee: { eyebrow: "Jia Zi", title: "The sixty-year cycle", caption: "Sixty stem-and-branch pairs, starting over every sixty years." },
   footer: { note: "© Toan Ngo · tommitoan", replay: "Experience the journey again" },
