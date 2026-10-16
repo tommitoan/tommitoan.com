@@ -2460,7 +2460,7 @@ html[data-kit-appearance="dark"] .fs-galaxy::before {
   inset: 0;
   background: url("/gateway/backgrounds/space-bg.webp") center / cover no-repeat;
   /* Paler and whiter than the home page's galaxy: less colour, a lot more light. */
-  filter: saturate(0.6) brightness(1.7) contrast(0.92);
+  filter: saturate(0.6) brightness(1.4) contrast(0.95);
 }
 /* A cool white haze like the atmosphere of the Feng Shui planet, and a deep-ink veil that keeps the text readable. */
 html[data-theme="dark"] .fs-galaxy::after,
@@ -2469,44 +2469,78 @@ html[data-kit-appearance="dark"] .fs-galaxy::after {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 80% 50% at 50% -6%, rgba(226, 234, 255, 0.3), rgba(226, 234, 255, 0) 70%),
-    radial-gradient(ellipse 55% 45% at 88% 72%, rgba(214, 224, 250, 0.16), rgba(214, 224, 250, 0) 70%),
-    radial-gradient(ellipse 50% 40% at 8% 60%, rgba(206, 220, 255, 0.12), rgba(206, 220, 255, 0) 70%),
-    linear-gradient(to bottom, rgba(14, 17, 40, 0.58), rgba(14, 17, 40, 0.5) 45%, rgba(14, 17, 40, 0.64));
+    radial-gradient(ellipse 80% 50% at 50% -6%, rgba(226, 234, 255, 0.22), rgba(226, 234, 255, 0) 70%),
+    radial-gradient(ellipse 55% 45% at 88% 72%, rgba(214, 224, 250, 0.1), rgba(214, 224, 250, 0) 70%),
+    radial-gradient(ellipse 50% 40% at 8% 60%, rgba(206, 220, 255, 0.08), rgba(206, 220, 255, 0) 70%),
+    linear-gradient(to bottom, rgba(14, 17, 40, 0.76), rgba(14, 17, 40, 0.7) 45%, rgba(14, 17, 40, 0.8));
 }
-/* Stars: one picture of stars (public/fengshui/stars.webp, it tiles without a seam) laid twice at different sizes and offsets so
-   no grid shows, and a few bright ones that twinkle (opacity only, so the browser animates it without the page's scripts). */
+/* Stars: one picture of stars (public/fengshui/stars.webp, it tiles without a seam) in three layers that drift all the time, each
+   at its own size, speed and direction, like the stars of the home page. A layer is a little larger than the screen by one tile
+   and moves by exactly one tile, so the loop has no seam; only `transform` and `opacity` change, so the browser animates it
+   without the page's scripts. The stars are kept faint on purpose: they are a backdrop, not what the eye should follow. */
+.fs-galaxy {
+  overflow: hidden;
+}
 .fs-galaxy-stars {
+  --tw: 1200px;
+  --th: 800px;
   position: absolute;
-  inset: 0;
-  z-index: 1;
-  background-image: url("/fengshui/stars.webp"), url("/fengshui/stars.webp");
-  background-size: 1200px 800px, 1740px 1160px;
-  background-position: 0 0, 420px 310px;
-  opacity: 0.72;
-}
-.fs-galaxy-stars::after {
-  content: "";
-  position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: calc(100% + var(--tw));
+  height: calc(100% + var(--th));
   background-image: url("/fengshui/stars.webp");
-  background-size: 2700px 1800px;
-  background-position: 700px 200px;
-  animation: fs-galaxy-twinkle 5.5s ease-in-out infinite;
+  background-size: var(--tw) var(--th);
+  will-change: transform;
+}
+.fs-galaxy-stars-a {
+  opacity: 0.4;
+  animation: fs-galaxy-drift-a 240s linear infinite;
+}
+.fs-galaxy-stars-b {
+  --tw: 800px;
+  --th: 533px;
+  opacity: 0.3;
+  background-position: 310px 190px;
+  animation: fs-galaxy-drift-b 170s linear infinite;
+}
+.fs-galaxy-stars-c {
+  --tw: 1500px;
+  --th: 1000px;
+  background-position: 520px 410px;
+  animation: fs-galaxy-drift-c 420s linear infinite, fs-galaxy-twinkle 9s ease-in-out infinite;
+}
+@keyframes fs-galaxy-drift-a {
+  to {
+    transform: translate3d(-1200px, -800px, 0);
+  }
+}
+@keyframes fs-galaxy-drift-b {
+  to {
+    transform: translate3d(-800px, 0, 0);
+  }
+}
+@keyframes fs-galaxy-drift-c {
+  to {
+    transform: translate3d(0, -1000px, 0);
+  }
 }
 @keyframes fs-galaxy-twinkle {
   0%,
   100% {
-    opacity: 0.2;
+    opacity: 0.12;
   }
   50% {
-    opacity: 1;
+    opacity: 0.45;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .fs-galaxy-stars::after {
+  .fs-galaxy-stars {
     animation: none;
-    opacity: 0.6;
+    will-change: auto;
+  }
+  .fs-galaxy-stars-c {
+    opacity: 0.25;
   }
 }
 /* In the dark look the bands, the footer and the pinned story let the galaxy through, and cards turn into dark glass. */
