@@ -28,6 +28,7 @@ const FILES = [
   { glob: /^\/fengshui\/terms\/.*\.webp$/, max: 30, label: "solar term paintings" },
   { glob: /^\/fengshui\/stems\/.*\.webp$/, max: 60, label: "heavenly stem paintings" },
   { glob: /^\/fengshui\/branches\/.*\.webp$/, max: 40, label: "earthly branch paintings" },
+  { glob: /^\/fengshui\/nayin\/.*\.webp$/, max: 30, label: "Nayin paintings" },
   { glob: /^\/gateway\/.*\.webp$/, max: 600, label: "gateway images" },
 ];
 

@@ -7,6 +7,7 @@ import { FengShuiPrinciplesSection } from "@/components/fengshui/sections/FengSh
 import { FengShuiLinksSection } from "@/components/fengshui/sections/FengShuiLinksSection";
 import { BirthScene } from "@/components/fengshui/world/BirthScene";
 import { DayMaster } from "@/components/fengshui/world/DayMaster";
+import { NaYin } from "@/components/fengshui/world/NaYin";
 import { Marquee } from "@/components/fengshui/world/Marquee";
 import { SolarDial } from "@/components/fengshui/world/SolarDial";
 import { Anatomy } from "@/components/fengshui/world/Anatomy";
@@ -49,6 +50,7 @@ export default function FengShuiPage() {
       <DayMaster />
       <Branches />
       <Anatomy />
+      <NaYin />
       <FengShuiBasicsSection />
       <FengShuiPillarsSection />
       <FengShuiLanesSection />

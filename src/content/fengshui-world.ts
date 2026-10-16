@@ -85,6 +85,20 @@ export type WorldCopy = {
     hint: string;
     note: string;
   };
+  /** The Nạp Âm section: the thirty sounds of the sixty pairs as paintings, with the one in focus explained. */
+  nayin: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    pickerLabel: string;
+    kindLabel: string;
+    pairsLabel: string;
+    questionLabel: string;
+    /** With {pillar} and {pair}: shown when the focused entry holds a pillar of the sample chart. */
+    sampleLine: string;
+    hint: string;
+    note: string;
+  };
   /** The chart anatomy section: the eight characters of the sample chart, one at a time, with the pillar's place in the sixty cycle. */
   anatomy: {
     eyebrow: string;
@@ -192,6 +206,19 @@ const vi: WorldCopy = {
     cautionLabel: "Cần tránh",
     hint: "Tự chạy mỗi vài giây; rê chuột vào một Chi để chọn và giữ lại. Đường liền nối Chi hợp, đường đứt nối Chi xung.",
     note: "Năm tính theo năm Ba-zi, đổi ở Lập Xuân, nên người sinh trong tháng một hoặc tháng hai có thể thuộc năm trước. Hình tượng chỉ để ghi nhớ.",
+  },
+  nayin: {
+    eyebrow: "Nạp Âm",
+    title: "Ba mươi Nạp Âm",
+    description:
+      "Trong vòng sáu mươi Can Chi, cứ hai cặp liên tiếp dùng chung một cái tên và một hành: đó là Nạp Âm. Sáu mươi cặp thành ba mươi tên, mỗi tên là một hình tượng như Hải Trung Kim hay Lư Trung Hỏa, và mỗi trụ của lá số đều mang một Nạp Âm. Các ô bên dưới đi theo thứ tự của vòng sáu mươi.",
+    pickerLabel: "Chọn một Nạp Âm",
+    kindLabel: "Nạp Âm hành {element}",
+    pairsLabel: "Hai cặp Can Chi",
+    questionLabel: "Câu hỏi để kiểm tra",
+    sampleLine: "Trong lá số mẫu: {pillar} ({pair}) mang Nạp Âm này.",
+    hint: "Tự chạy mỗi vài giây; rê chuột vào một ô để chọn và giữ lại.",
+    note: "Hình tượng chỉ để ghi nhớ, không phải kết luận về ai. Tên Nạp Âm và cách giải theo truyền thống có nhiều dị bản.",
   },
   anatomy: {
     eyebrow: "Giải phẫu",
@@ -313,6 +340,19 @@ const en: WorldCopy = {
     cautionLabel: "Avoid concluding",
     hint: "It moves on by itself every few seconds; move over a branch to pick it and hold it. A solid line joins its harmony, a dashed line its clash.",
     note: "Years are Ba-zi years, which change at Lichun, so someone born in January or February may belong to the year before. The imagery is only for remembering.",
+  },
+  nayin: {
+    eyebrow: "Nayin",
+    title: "The thirty Nayin",
+    description:
+      "In the sixty-pair cycle, every two pairs in a row share one name and one element: that is the Nayin (the sound). Sixty pairs make thirty names, each an image such as Sea Metal or Furnace Fire, and every pillar of a chart carries a Nayin. The tiles below follow the order of the sixty-pair cycle.",
+    pickerLabel: "Pick a Nayin",
+    kindLabel: "{element} Nayin",
+    pairsLabel: "The two pairs",
+    questionLabel: "A question to test it with",
+    sampleLine: "In the sample chart: the {pillar} ({pair}) carries this Nayin.",
+    hint: "It moves on by itself every few seconds; move over a tile to pick it and hold it.",
+    note: "The imagery is only for remembering, not a verdict on anyone. Nayin names and their traditional explanations have many variants.",
   },
   anatomy: {
     eyebrow: "Anatomy",

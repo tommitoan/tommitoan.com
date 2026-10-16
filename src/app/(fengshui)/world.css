@@ -2209,3 +2209,145 @@
     animation: none;
   }
 }
+
+/* Nạp Âm: thirty paintings in cycle order as a grid, and the one in focus explained beside it. */
+.fs-ny-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 2rem 2.5rem;
+  align-items: start;
+  margin-top: 1.6rem;
+}
+.fs-ny-tiles {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+.fs-ny-tile {
+  position: relative;
+  padding: 0;
+  overflow: hidden;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  background: var(--kit-surface);
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.fs-ny-tile img {
+  display: block;
+  width: 100%;
+  height: auto;
+  opacity: 0.78;
+  transition: opacity 0.2s;
+}
+.fs-ny-tile:hover img,
+.fs-ny-tile[aria-pressed="true"] img {
+  opacity: 1;
+}
+.fs-ny-tile[aria-pressed="true"] {
+  z-index: 1;
+  border-color: var(--kit-seal);
+  box-shadow: 0 8px 20px rgba(59, 47, 32, 0.3);
+  transform: scale(1.08);
+}
+.fs-ny-tile em {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  background: var(--kit-seal);
+  color: var(--kit-paper);
+  font-size: 0.58rem;
+  font-style: normal;
+  font-weight: 600;
+}
+.fs-ny-timer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--kit-seal);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+.fs-ny-timer[data-running="true"] {
+  animation: fs-ny-fill 3s linear forwards;
+}
+@keyframes fs-ny-fill {
+  to {
+    transform: scaleX(1);
+  }
+}
+.fs-ny-info {
+  min-height: 30rem;
+  padding: 1.2rem 1.4rem;
+  background: var(--kit-surface);
+  border: 0.5px solid var(--kit-line);
+  border-radius: 6px;
+}
+.fs-ny-info p {
+  margin: 0.6rem 0 0;
+  color: var(--kit-muted);
+}
+.fs-ny-info h3 {
+  margin: 0.3rem 0 0;
+  font: 400 1.6rem/1.2 var(--fs-serif);
+}
+.fs-ny-art {
+  float: right;
+  width: 11rem;
+  margin: 0 0 0.6rem 1rem;
+}
+.fs-ny-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 8px 22px rgba(59, 47, 32, 0.22);
+  animation: fs-br-in 0.5s ease-out;
+}
+.fs-ny-info .fs-ny-pairs {
+  color: var(--kit-ink);
+}
+.fs-ny-info .fs-ny-question {
+  clear: both;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--kit-line);
+  font-size: 0.92rem;
+}
+.fs-ny-question b {
+  color: var(--kit-ink);
+}
+.fs-ny-info .fs-ny-sample {
+  color: var(--kit-seal);
+  font-size: 0.88rem;
+}
+@media (max-width: 760px) {
+  .fs-ny-grid {
+    grid-template-columns: 1fr;
+  }
+  .fs-ny-tiles {
+    gap: 0.35rem;
+  }
+  .fs-ny-tile em {
+    font-size: 0.5rem;
+    padding: 0 0.25rem;
+  }
+  .fs-ny-art {
+    width: 8.5rem;
+  }
+  .fs-ny-info {
+    min-height: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fs-ny-tile,
+  .fs-ny-tile img {
+    transition: none;
+  }
+  .fs-ny-art img {
+    animation: none;
+  }
+}
