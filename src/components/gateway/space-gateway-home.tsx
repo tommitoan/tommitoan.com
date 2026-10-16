@@ -10,6 +10,7 @@ import { GatewayLoadingScreen } from "@/components/gateway/GatewayLoadingScreen"
 import { MatrixRainCanvas } from "@/components/gateway/MatrixRainCanvas";
 import { AuroraCanvas } from "@/components/gateway/AuroraCanvas";
 import { AstronautSpeech } from "@/components/gateway/AstronautSpeech";
+import { completedWork } from "@/components/gateway/gatewayLoader";
 import { GatewayLanguageToggle } from "@/components/gateway/GatewayLanguageToggle";
 import { GatewayPortalInfo } from "@/components/gateway/GatewayPortalInfo";
 import { GATEWAY_UI, portalCopy } from "@/components/gateway/gatewayCopy";
@@ -92,10 +93,13 @@ export function SpaceGatewayHome() {
   const ui = GATEWAY_UI[language];
   const [hoveredPortal, setHoveredPortal] = useState<GatewayHomeId | null>(null);
   const [selected, setSelected] = useState<GatewayHomeId | null>(null);
-  const [loadingProgress, setLoadingProgress] = useState(0);
   const [isGatewayReady, setIsGatewayReady] = useState(false);
   const [assetsReady, setAssetsReady] = useState(false);
-  const [isLoaderFinishing, setIsLoaderFinishing] = useState(false);
+  const [astronautReady, setAstronautReady] = useState(false);
+  // The planets start one after another, so the first frames of the loader are not lost to all three starting at once.
+  const [planetsStarted, setPlanetsStarted] = useState(0);
+  // A part that never gets ready (no WebGL, a failed download) must not keep the loader on screen for good.
+  const [gaveUp, setGaveUp] = useState(false);
   const [readyPlanets, setReadyPlanets] = useState<Record<GatewayHomeId, boolean>>({
     tech: false,
     discover: false,
@@ -143,47 +147,30 @@ export function SpaceGatewayHome() {
       Promise.all(Array.from(assetUrls).map(preloadImage)).then(() => undefined),
     ];
 
-    Promise.all(tasks).then(() => {
-      if (cancelled) return;
-      setAssetsReady(true);
-    });
+    // A chunk that fails to load must not keep the loader on screen for good: the page opens either way.
+    Promise.all(tasks)
+      .catch(() => undefined)
+      .then(() => {
+        if (cancelled) return;
+        setAssetsReady(true);
+      });
 
     return () => {
       cancelled = true;
     };
   }, []);
 
+  // Start the planets one after another once the first screen's pictures are in.
   useEffect(() => {
-    if (assetsReady && loadingProgress >= 100) {
-      setIsLoaderFinishing(true);
-      const timeout = window.setTimeout(() => {
-        setIsGatewayReady(true);
-      }, 350);
-      return () => window.clearTimeout(timeout);
-    }
-  }, [assetsReady, loadingProgress]);
+    if (!assetsReady) return;
+    const timers = [0, 1, 2].map((index) => window.setTimeout(() => setPlanetsStarted(index + 1), index * 260));
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
+  }, [assetsReady]);
 
   useEffect(() => {
-    if (isGatewayReady || loadingProgress >= 100) {
-      return;
-    }
-
-    const interval = window.setInterval(() => {
-      setLoadingProgress((current) => {
-        if (current >= 100) {
-          return 100;
-        }
-
-        if (!assetsReady) {
-          return Math.min(current + 1, 99);
-        }
-
-        return Math.min(current + 4, 100);
-      });
-    }, 16);
-
-    return () => window.clearInterval(interval);
-  }, [assetsReady, loadingProgress, isGatewayReady]);
+    const timer = window.setTimeout(() => setGaveUp(true), 12000);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   const handlePlanetReady = (portalId: GatewayHomeId) => {
     setReadyPlanets((current) => {
@@ -224,6 +211,14 @@ export function SpaceGatewayHome() {
     ? gatewayHomeConfig.transitions.zoomOffsetXByPortal[activePortal.id]
     : "0vw";
   const debug = gatewayHomeConfig.debug;
+  // The loader fills as the parts of the page are really ready, and finishes only when the visitor can see all of it.
+  const completed = gaveUp
+    ? 100
+    : completedWork({
+        assets: assetsReady,
+        astronaut: astronautReady || !debug.showAstronaut,
+        planets: debug.showPlanets ? Object.values(readyPlanets).filter(Boolean).length : 3,
+      });
   const guide = canGuide(viewportWidth, !!reducedMotion);
   const hoveredSlot = hoveredPortal ? gatewayHomeConfig.portals.findIndex((item) => item.id === hoveredPortal) : null;
   // The astronaut introduces the portal under the pointer, when there is room and motion for it.
@@ -348,7 +343,7 @@ export function SpaceGatewayHome() {
                     <GatewayEffectLayer key={`${gateway.id}-${effect.kind}-${effectIndex}`} effect={effect} />
                   )) : null}
 
-                  {debug.showPlanets && assetsReady ? (
+                  {debug.showPlanets && assetsReady && planetsStarted > i ? (
                     <div className="pointer-events-none" style={createPlanetStageStyle(gatewayHomeConfig.planetStage)}>
                       <motion.div
                         className="absolute inset-0 pointer-events-none"
@@ -424,7 +419,7 @@ export function SpaceGatewayHome() {
             camera={{ position: gatewayHomeConfig.astronaut.camera.position, fov: gatewayHomeConfig.astronaut.camera.fov }}
             dpr={[1, 2]}
           >
-            <SpaceBackgroundAstronaut isWarping={!!selected} targetIndex={activeIndex} talkSide={talking ? astronautSide(hoveredSlot) : null} />
+            <SpaceBackgroundAstronaut isWarping={!!selected} targetIndex={activeIndex} talkSide={talking ? astronautSide(hoveredSlot) : null} onReady={() => setAstronautReady(true)} />
           </Canvas>
         </div>
       ) : null}
@@ -449,11 +444,7 @@ export function SpaceGatewayHome() {
 
       <GatewayLanguageToggle language={language} />
 
-      <GatewayLoadingScreen
-        loadingProgress={loadingProgress}
-        isVisible={!isGatewayReady}
-        isFinishing={isLoaderFinishing}
-      />
+      <GatewayLoadingScreen completed={completed} isVisible={!isGatewayReady} onDone={() => setIsGatewayReady(true)} />
     </section>
   );
 }

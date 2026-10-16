@@ -1,5 +1,5 @@
 "use client";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useFrame, useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
 import { MathUtils } from "three";
@@ -12,15 +12,21 @@ type Props = {
   targetIndex?: number;
   /** While set, the astronaut turns to face the visitor, grows and stands on this side. Null: he faces the globes. */
   talkSide?: "left" | "right" | null;
+  /** Called once the pictures are loaded and the astronaut is on the stage. */
+  onReady?: () => void;
 };
 
-export function SpaceBackgroundAstronaut({ isWarping = false, targetIndex = 1, talkSide = null }: Props) {
+export function SpaceBackgroundAstronaut({ isWarping = false, targetIndex = 1, talkSide = null, onReady }: Props) {
   const rootRef = useRef<Group>(null);
   const billboardRef = useRef<Group>(null);
   const poseRef = useRef<Group>(null);
   const materialRef = useRef<MeshBasicMaterial>(null);
   const [back, front, pulled] = useLoader(TextureLoader, [gatewayHomeConfig.astronaut.assetSrc, gatewayHomeConfig.astronaut.frontAssetSrc, gatewayHomeConfig.astronaut.pulledAssetSrc]);
   const astronautConfig = gatewayHomeConfig.astronaut;
+
+  useEffect(() => {
+    onReady?.();
+  }, [onReady]);
 
   const warpProgress = useRef(0);
   const talkProgress = useRef(0);
