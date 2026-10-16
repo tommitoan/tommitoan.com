@@ -11,6 +11,7 @@ import { MatrixRainCanvas } from "@/components/gateway/MatrixRainCanvas";
 import { AuroraCanvas } from "@/components/gateway/AuroraCanvas";
 import { AstronautSpeech } from "@/components/gateway/AstronautSpeech";
 import { GatewayLanguageToggle } from "@/components/gateway/GatewayLanguageToggle";
+import { GatewayPortalInfo } from "@/components/gateway/GatewayPortalInfo";
 import { GATEWAY_UI, portalCopy } from "@/components/gateway/gatewayCopy";
 import { useSiteLanguage } from "@/lib/site-language";
 import { astronautSide, canGuide, expandedWidth, globeOpacity } from "@/components/gateway/gatewayHover";
@@ -391,51 +392,15 @@ export function SpaceGatewayHome() {
                   ) : null}
 
                   {debug.showLabels ? (
-                    <motion.div
-                      animate={{ opacity: selected ? 0 : 1 }}
-                      className="relative z-10 w-full mt-auto p-4 pb-4 md:pb-6 text-center bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none"
-                    >
-                      <motion.h2
-                        animate={{
-                          opacity: isHovered || isSelected ? 1 : 0,
-                          y: isHovered || isSelected ? 0 : 10,
-                        }}
-                        transition={{ duration: 0.28, ease: "easeOut" }}
-                        className="text-xl md:text-2xl font-extrabold mb-1 tracking-wider uppercase text-white drop-shadow-md"
-                      >
-                        {gateway.label}
-                      </motion.h2>
-                      <motion.p
-                        animate={{
-                          opacity: isHovered || isSelected ? 1 : 0,
-                          y: isHovered || isSelected ? 0 : 8,
-                        }}
-                        transition={{ duration: 0.28, ease: "easeOut", delay: 0.04 }}
-                        className="text-xs md:text-sm text-white/80"
-                      >
-                        {portalCopy(gateway.id, language).description}
-                      </motion.p>
-                      <motion.ul
-                        aria-hidden={!expanded}
-                        animate={{ opacity: expanded ? 1 : 0, height: expanded ? "auto" : 0, marginTop: expanded ? 12 : 0 }}
-                        transition={{ duration: 0.4, ease: "easeOut", delay: expanded ? 0.25 : 0 }}
-                        className="mx-auto grid max-w-[34rem] grid-cols-2 gap-2 overflow-hidden"
-                      >
-                        {portalCopy(gateway.id, language).highlights.map((item) => (
-                          <li key={item} className="flex items-center justify-center rounded-xl border border-white/25 bg-white/10 px-3 py-1.5 text-center text-[0.72rem] leading-snug text-white/90 backdrop-blur-sm">
-                            {item}
-                          </li>
-                        ))}
-                      </motion.ul>
-                      <motion.p
-                        aria-hidden={!expanded}
-                        animate={{ opacity: expanded ? 0.85 : 0 }}
-                        transition={{ duration: 0.3, delay: expanded ? 0.45 : 0 }}
-                        className="mt-3 text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-cyan-200"
-                      >
-                        {ui.enter} →
-                      </motion.p>
-                    </motion.div>
+                    <GatewayPortalInfo
+                      label={gateway.label}
+                      copy={portalCopy(gateway.id, language)}
+                      enterText={ui.enter}
+                      accent={gateway.theme.glowColor}
+                      active={isHovered && !selected}
+                      expanded={expanded}
+                      expandedWidthCss={expandedWidth(String(frameSizeStyle.width), gatewayHomeConfig.hover.expandFactor)}
+                    />
                   ) : null}
 
                   {debug.showPortalEffects ? (
