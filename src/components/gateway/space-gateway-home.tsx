@@ -10,6 +10,9 @@ import { GatewayLoadingScreen } from "@/components/gateway/GatewayLoadingScreen"
 import { MatrixRainCanvas } from "@/components/gateway/MatrixRainCanvas";
 import { AuroraCanvas } from "@/components/gateway/AuroraCanvas";
 import { AstronautSpeech } from "@/components/gateway/AstronautSpeech";
+import { GatewayLanguageToggle } from "@/components/gateway/GatewayLanguageToggle";
+import { GATEWAY_UI, portalCopy } from "@/components/gateway/gatewayCopy";
+import { useSiteLanguage } from "@/lib/site-language";
 import { astronautSide, canGuide, expandedWidth, globeOpacity } from "@/components/gateway/gatewayHover";
 import { markWarpArrival } from "@/components/gateway/warpArrival";
 import {
@@ -83,6 +86,9 @@ function readViewportWidth(): number {
 export function SpaceGatewayHome() {
   const router = useRouter();
   const reducedMotion = useReducedMotion();
+  // English is the first render; a stored choice applies after hydration, and without one the browser's language and time zone decide.
+  const language = useSiteLanguage("en");
+  const ui = GATEWAY_UI[language];
   const [hoveredPortal, setHoveredPortal] = useState<GatewayHomeId | null>(null);
   const [selected, setSelected] = useState<GatewayHomeId | null>(null);
   const [loadingProgress, setLoadingProgress] = useState(0);
@@ -222,6 +228,7 @@ export function SpaceGatewayHome() {
   // The astronaut introduces the portal under the pointer, when there is room and motion for it.
   const talking = !!hoveredPortal && !selected && guide;
   const hoveredInfo = hoveredPortal ? gatewayHomeConfig.portals.find((item) => item.id === hoveredPortal) ?? null : null;
+  const hoveredCopy = hoveredInfo ? portalCopy(hoveredInfo.id, language) : null;
 
   return (
     <section className="space-gateway-shell relative w-full h-screen overflow-hidden text-white">
@@ -406,7 +413,27 @@ export function SpaceGatewayHome() {
                         transition={{ duration: 0.28, ease: "easeOut", delay: 0.04 }}
                         className="text-xs md:text-sm text-white/80"
                       >
-                        {gateway.description}
+                        {portalCopy(gateway.id, language).description}
+                      </motion.p>
+                      <motion.ul
+                        aria-hidden={!expanded}
+                        animate={{ opacity: expanded ? 1 : 0, height: expanded ? "auto" : 0, marginTop: expanded ? 12 : 0 }}
+                        transition={{ duration: 0.4, ease: "easeOut", delay: expanded ? 0.25 : 0 }}
+                        className="mx-auto grid max-w-[34rem] grid-cols-2 gap-2 overflow-hidden"
+                      >
+                        {portalCopy(gateway.id, language).highlights.map((item) => (
+                          <li key={item} className="flex items-center justify-center rounded-xl border border-white/25 bg-white/10 px-3 py-1.5 text-center text-[0.72rem] leading-snug text-white/90 backdrop-blur-sm">
+                            {item}
+                          </li>
+                        ))}
+                      </motion.ul>
+                      <motion.p
+                        aria-hidden={!expanded}
+                        animate={{ opacity: expanded ? 0.85 : 0 }}
+                        transition={{ duration: 0.3, delay: expanded ? 0.45 : 0 }}
+                        className="mt-3 text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-cyan-200"
+                      >
+                        {ui.enter} →
                       </motion.p>
                     </motion.div>
                   ) : null}
@@ -437,7 +464,7 @@ export function SpaceGatewayHome() {
         </div>
       ) : null}
 
-      <AstronautSpeech portal={talking && hoveredInfo ? { label: hoveredInfo.label, speech: hoveredInfo.speech } : null} side={astronautSide(hoveredSlot)} />
+      <AstronautSpeech portal={talking && hoveredInfo && hoveredCopy ? { label: hoveredInfo.label, speech: hoveredCopy.speech } : null} side={astronautSide(hoveredSlot)} />
 
       <AnimatePresence>
         {selected && (
@@ -454,6 +481,8 @@ export function SpaceGatewayHome() {
           />
         )}
       </AnimatePresence>
+
+      <GatewayLanguageToggle language={language} />
 
       <GatewayLoadingScreen
         loadingProgress={loadingProgress}
