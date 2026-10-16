@@ -8,7 +8,7 @@ const socialImage = `${BASE}/social-card.png`;
 const avatarImage = `${BASE}/profile/avatar-cartoon.png`;
 
 const displayFont = Space_Grotesk({
-  subsets: ["latin"],
+  subsets: ["latin", "vietnamese"],
   variable: "--font-display",
 });
 
@@ -18,7 +18,7 @@ const bodyFont = Instrument_Sans({
 });
 
 const brandFont = Dancing_Script({
-  subsets: ["latin"],
+  subsets: ["latin", "vietnamese"],
   weight: "700",
   variable: "--font-brand",
 });

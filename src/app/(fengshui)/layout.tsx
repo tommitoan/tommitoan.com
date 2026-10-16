@@ -7,7 +7,7 @@ import { KitMount } from "@/components/fengshui/world/KitMount";
 import { WorldFooter } from "@/components/fengshui/world/WorldFooter";
 import { SkipLink } from "@/components/fengshui/world/SkipLink";
 import { WorldHeader } from "@/components/fengshui/world/WorldHeader";
-import { worldSerif } from "../world-font";
+import { worldSans, worldSerif } from "../world-font";
 
 /**
  * Adds the cover before first paint when the visitor arrives from the sister site. The night look is set first, so the
@@ -18,7 +18,7 @@ const bootScript =
 
 export default function FengShuiLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className={`fs-world ${worldSerif.variable}`}>
+    <div className={`fs-world ${worldSerif.variable} ${worldSans.variable}`}>
       <script dangerouslySetInnerHTML={{ __html: bootScript }} />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link rel="stylesheet" href={hanFontHref()} precedence="default" />

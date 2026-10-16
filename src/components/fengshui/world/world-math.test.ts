@@ -3,7 +3,7 @@ import { NIGHT, PAPER } from "@kit/color";
 import { SOLAR_TERMS_VI } from "@kit/solar";
 import { arcPath, dayForLongitude, dayIndexOf, daysInYear, daysPerSecond, dialDay, dialState, isMonthOpener, JIE_INDEXES, longitudeAt, radialLabel, ringPoint, SOLAR_TERMS_HAN } from "./dial-math";
 import { marqueeAdvance, marqueeSkew, sixtyCycle, smoothVelocity } from "./marquee-math";
-import { bezier, easeToward, LIFE_SPAN, luckMarkX, LUCK_PILLARS, pinProgress, sceneFrame, sceneGeometry, starCurve } from "./scene-math";
+import { ageAtWalk, bezier, easeToward, FRAME_AGES, LIFE_SPAN, luckMarkX, LUCK_PILLARS, pinProgress, sceneFrame, sceneGeometry, starCurve } from "./scene-math";
 import { ringRotation, storyStep, storyView } from "./story-math";
 
 const g = sceneGeometry(1200, 760);
@@ -27,7 +27,7 @@ describe("birth scene frame", () => {
     expect(f.day.sky).toEqual(PAPER);
     expect(f.age).toBe(LIFE_SPAN);
     expect(f.figureX).toBeCloseTo(g.endX, 5);
-    expect(f.blend).toEqual({ from: 5, to: 5, t: 0 });
+    expect(f.blend).toEqual({ from: FRAME_AGES.length - 1, to: FRAME_AGES.length - 1, t: 0 });
     expect(f.texts.third).toBe(1);
     expect(f.texts.first).toBe(0);
     expect(f.nebulaOpacity).toBe(0);
@@ -327,5 +327,31 @@ describe("dial that plays and follows the pointer", () => {
       expect(day).toBeGreaterThanOrEqual(0);
       expect(day).toBeLessThan(365);
     }
+  });
+});
+
+describe("age along the walk", () => {
+  it("starts at 0, ends at the life span and never goes back", () => {
+    expect(ageAtWalk(0)).toBe(0);
+    expect(ageAtWalk(1)).toBe(LIFE_SPAN);
+    let previous = -1;
+    for (let step = 0; step <= 200; step += 1) {
+      const age = ageAtWalk(step / 200);
+      expect(age).toBeGreaterThanOrEqual(previous);
+      previous = age;
+    }
+  });
+
+  it("reaches each frame age at its stop, with the crawling child getting a real share", () => {
+    expect(ageAtWalk(0.1)).toBe(1);
+    expect(ageAtWalk(0.26)).toBe(12);
+    expect(ageAtWalk(0.67)).toBe(45);
+    expect(ageAtWalk(0.96)).toBe(80);
+    // more than a tenth of the walk happens before the child is one year old: the crawling frame is not a blink
+    expect(ageAtWalk(0.05)).toBeCloseTo(0.5, 5);
+  });
+
+  it("keeps the frame ages sorted", () => {
+    expect([...FRAME_AGES]).toEqual([...FRAME_AGES].sort((a, b) => a - b));
   });
 });

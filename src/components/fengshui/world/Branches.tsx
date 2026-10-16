@@ -79,10 +79,6 @@ export function Branches() {
               <line className="fs-br-clash" {...line(clash)} />
               <line className="fs-br-harmony" {...line(harmony)} />
             </svg>
-            <figure className="fs-br-art">
-              {/* eslint-disable-next-line @next/next/no-img-element -- watercolour of the animal, the export has no image optimiser */}
-              <img key={selected} src={branchImage(selected)} alt={copy.imageAlt.replace("{name}", name)} width={296} height={294} decoding="async" />
-            </figure>
             {BRANCHES.map((branch, index) => {
               const place = ringPercent(index, RING);
               return (
@@ -106,9 +102,17 @@ export function Branches() {
                 </button>
               );
             })}
+            <p className="fs-br-legend" aria-hidden="true">
+              <span data-kind="harmony">{copy.harmonyLabel}</span>
+              <span data-kind="clash">{copy.clashLabel}</span>
+            </p>
           </div>
 
           <div className="fs-br-info" aria-live="off">
+            <figure className="fs-br-art">
+              {/* eslint-disable-next-line @next/next/no-img-element -- watercolour of the animal, the export has no image optimiser */}
+              <img key={selected} src={branchImage(selected)} alt={copy.imageAlt.replace("{name}", name)} width={296} height={294} decoding="async" />
+            </figure>
             <span className="fs-an-eyebrow">
               {branchKind(info, language)} · {info.animal[language]}
             </span>

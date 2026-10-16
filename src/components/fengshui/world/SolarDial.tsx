@@ -205,10 +205,10 @@ export function SolarDial() {
               </text>
             );
           })}
-          <text x={CENTRE.x} y={CENTRE.y - 4} className="fs-dial-centre">
+          <text x={CENTRE.x} y={CENTRE.y - 12} className="fs-dial-centre" dominantBaseline="central">
             {state.longitude.toFixed(0)}°
           </text>
-          <text x={CENTRE.x} y={CENTRE.y + 14} className="fs-dial-centre-sub">
+          <text x={CENTRE.x} y={CENTRE.y + 18} className="fs-dial-centre-sub" dominantBaseline="central">
             {termName(info, language)}
           </text>
           <g ref={sunRef} transform={initial.transform}>

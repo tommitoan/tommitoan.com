@@ -74,8 +74,37 @@ function drawStar(ctx: CanvasRenderingContext2D, x: number, y: number, radius: n
   ctx.fill();
 }
 
-/** The falling star with its trail, the landing ring and the newborn's halo. `pulse` is a slow 0.88 to 1.12 beat. */
-export function drawGuidingStar(ctx: CanvasRenderingContext2D, frame: SceneFrame, curve: readonly [Point, Point, Point, Point], landing: Point, pulse: number): void {
+/** A small four-point sparkle, a thin cross with a bright core. */
+function drawSparkle(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, alpha: number): void {
+  ctx.strokeStyle = `rgba(255,246,220,${alpha.toFixed(3)})`;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(x - size, y);
+  ctx.lineTo(x + size, y);
+  ctx.moveTo(x, y - size);
+  ctx.lineTo(x, y + size);
+  ctx.stroke();
+  ctx.fillStyle = `rgba(255,252,240,${alpha.toFixed(3)})`;
+  ctx.beginPath();
+  ctx.arc(x, y, size * 0.22, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+/** Six small sparkles that twinkle on their own beats around a point; the guiding star shines with them while it waits. */
+export function drawSparkles(ctx: CanvasRenderingContext2D, x: number, y: number, radius: number, time: number, alpha: number): void {
+  for (let i = 0; i < 6; i += 1) {
+    const angle = (i / 6) * Math.PI * 2 + 0.6;
+    const distance = radius * (5.5 + (i % 3) * 2.2);
+    const beat = 0.5 + 0.5 * Math.sin(time / (170 + i * 53) + i * 1.7);
+    drawSparkle(ctx, x + Math.cos(angle) * distance, y + Math.sin(angle) * distance * 0.8, 2.5 + beat * 4.5, alpha * beat * 0.9);
+  }
+}
+
+/**
+ * The falling star with its trail, the landing ring and the newborn's halo. `pulse` is a slow beat around 1; `time` is the
+ * clock in milliseconds, for the twinkle.
+ */
+export function drawGuidingStar(ctx: CanvasRenderingContext2D, frame: SceneFrame, curve: readonly [Point, Point, Point, Point], landing: Point, pulse: number, time = 0): void {
   const { star } = frame;
   const radius = star.radius * pulse;
   if (star.alpha > 0.01) {
@@ -88,6 +117,7 @@ export function drawGuidingStar(ctx: CanvasRenderingContext2D, frame: SceneFrame
       ctx.fill();
     }
     drawStar(ctx, star.point.x, star.point.y, radius, star.alpha);
+    drawSparkles(ctx, star.point.x, star.point.y, radius, time, star.alpha);
   }
   if (star.ring > 0) {
     ctx.strokeStyle = `rgba(255,226,170,${(0.55 * (1 - star.ring)).toFixed(3)})`;

@@ -1,24 +1,25 @@
 "use client";
 
 import { Reveal } from "@/components/tech/Reveal";
-import { useFengShuiCopy } from "@/components/fengshui/FengShuiLanguage";
+import { useFengShuiCopy, useFengShuiLanguage } from "@/components/fengshui/FengShuiLanguage";
 import { CountUp } from "@/components/fengshui/world/CountUp";
 import { WorldHeading } from "@/components/fengshui/world/WorldHeading";
 
 export function FengShuiPillarsSection() {
   const copy = useFengShuiCopy();
+  const language = useFengShuiLanguage();
 
   return (
     <section className="fs-band fs-band-paper" data-kit-section="Lý do / Why">
       <div className="fs-wrap">
         <WorldHeading eyebrow={copy.pillarsHeading.eyebrow} title={`${copy.pillarsHeading.title} ${copy.pillarsHeading.accent}`} />
-        <div className="fs-grid fs-grid-3">
+        <div className="fs-grid fs-grid-4">
           {copy.pillars.map((pillar, index) => (
             <Reveal key={pillar.title} delay={0.08 * (index + 1)}>
               <div className="fs-panel fs-card fs-reason">
                 <p className="fs-reason-figure">
                   <b>
-                    <CountUp value={pillar.figure} duration={1200 + index * 250} />
+                    <CountUp value={pillar.figure} duration={1200 + index * 250} suffix={pillar.suffix} separator={language === "vi" ? "." : ","} />
                   </b>
                   <span>{pillar.unit}</span>
                 </p>

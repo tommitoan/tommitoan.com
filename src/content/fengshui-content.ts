@@ -9,6 +9,8 @@ export type FengShuiPillar = {
   figure: number;
   /** What the number counts, in a few words. */
   unit: string;
+  /** Written right after the number, for a floor such as "+" in "400+". */
+  suffix?: string;
 };
 
 export type FengShuiLaneStatus = "done" | "next" | "later";
@@ -146,25 +148,33 @@ const vi: FengShuiCopy = {
   pillarsHeading: { eyebrow: "Lý do", title: "Vì sao mình", accent: "làm điều này" },
   pillars: [
     {
-      title: "Vì sao có trang này",
+      title: "Mỗi lá số một cách luận giải",
       description:
-        "Đây là chỗ cho phần việc nằm giữa lập trình, diễn giải và thiết kế sản phẩm: lấy những lĩnh vực ít người làm phần mềm rồi biến chúng thành công cụ dùng được lâu dài.",
-      figure: 60,
-      unit: "cặp can chi trong một vòng Giáp Tý",
+        "Bốn trụ ghép lại cho ra 518.400 lá số khác nhau. Mỗi lá có cấu trúc riêng, nên phải được luận giải riêng thay vì đọc theo khuôn mẫu.",
+      figure: 518400,
+      unit: "lá số khác nhau, từ 60 × 12 × 60 × 12 của bốn trụ",
     },
     {
       title: "Bazica cho thấy điều gì",
       description:
         "Mình có thể chuyển quy tắc của một lĩnh vực thành code rõ ràng, đưa ra một sản phẩm công khai dùng được, và theo nó đến cùng thay vì bỏ dở ở mức thử nghiệm.",
-      figure: 700,
-      unit: "năm ngày sinh Bazica tính được, 1700–2399",
+      figure: 255669,
+      unit: "ngày sinh Bazica tính được, từ 1700 đến 2399",
     },
     {
-      title: "Sắp tới",
+      title: "Những lá số đã xem",
       description:
-        "Thêm bài giải thích, kể rõ hơn về sản phẩm, và có thể có thêm công cụ về Bát Tự, lịch và phong thuỷ nếu giao diện vẫn giữ được sự gọn gàng.",
-      figure: 3,
-      unit: "hướng làm tiếp: bài viết, kể chuyện, công cụ",
+        "Tính đến năm 2026, mình đã xem và luận giải lá số cho hơn 400 khách hàng. Đó là kinh nghiệm thật đứng sau phần mềm này.",
+      figure: 400,
+      suffix: "+",
+      unit: "khách hàng mình đã xem lá số, tính đến năm 2026",
+    },
+    {
+      title: "Từ nghề đến phần mềm",
+      description:
+        "Mười năm xem và luận giải lá số Bát Tự là nền để mình viết Bazica cho đúng và dễ đọc.",
+      figure: 10,
+      unit: "năm kinh nghiệm xem và luận giải lá số Bát Tự",
     },
   ],
   lanesHeading: { eyebrow: "Lộ trình", title: "Hướng đi", accent: "tiếp theo" },
@@ -278,25 +288,33 @@ const en: FengShuiCopy = {
   pillarsHeading: { eyebrow: "Pillars", title: "Why", accent: "this matters" },
   pillars: [
     {
-      title: "Why this route exists",
+      title: "Every chart is read on its own",
       description:
-        "It gives a proper home to the part of my work that sits between engineering, interpretation, and product design. It is where unusual domains get turned into durable software surfaces.",
-      figure: 60,
-      unit: "stem and branch pairs in one Jiazi cycle",
+        "The four pillars combine into 518,400 different charts. Each has its own structure, so each has to be interpreted on its own instead of being read from a template.",
+      figure: 518400,
+      unit: "different charts, from 60 × 12 × 60 × 12 across the four pillars",
     },
     {
       title: "What Bazica proves",
       description:
         "It proves I can encode domain rules clearly, ship a usable public artifact, and keep a focused product coherent instead of leaving it as an experiment forever.",
-      figure: 700,
-      unit: "years of birth dates Bazica computes, 1700–2399",
+      figure: 255669,
+      unit: "birth dates Bazica computes, from 1700 to 2399",
     },
     {
-      title: "What comes next",
+      title: "Charts I have read",
       description:
-        "More explainers, richer product storytelling, and possibly additional tools around Ba-zi, calendar systems, and Feng Shui workflows if the surface stays clear enough.",
-      figure: 3,
-      unit: "directions ahead: writing, storytelling, tools",
+        "By 2026 I have read and interpreted charts for more than 400 clients. That is the real experience behind this software.",
+      figure: 400,
+      suffix: "+",
+      unit: "clients whose charts I have read, up to 2026",
+    },
+    {
+      title: "From the craft to the software",
+      description:
+        "Ten years of reading and interpreting Ba-zi charts is the ground I wrote Bazica on, so it is correct and easy to read.",
+      figure: 10,
+      unit: "years of experience reading and interpreting Ba-zi charts",
     },
   ],
   lanesHeading: { eyebrow: "Roadmap", title: "Where this is", accent: "headed" },
