@@ -1,4 +1,4 @@
-/* tommitoan kit 0.6.0 */
+/* tommitoan kit 0.7.0 */
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
@@ -173,6 +173,9 @@ function skyColor(progress, appearance = "light") {
   return stops[stops.length - 1][1];
 }
 var textMix = (lum) => smoothstep(seg(lum, 100, 140));
+function skyAlpha(progress, appearance = "light") {
+  return appearance === "dark" ? 1 - smoothstep(seg(progress, 0.5, 0.75)) : 1;
+}
 function dayState(progress, appearance = "light") {
   const p = clamp(progress, 0, 1);
   const sky = skyColor(p, appearance);
@@ -2044,7 +2047,7 @@ function createTransitions(options) {
 }
 
 // kit/src/version.ts
-var KIT_VERSION = "0.6.0";
+var KIT_VERSION = "0.7.0";
 
 // kit/src/wash.ts
 function mountWash(tier) {
@@ -2106,6 +2109,7 @@ function createDayCycle(options = {}) {
     render(progress, appearance = "light") {
       const state = dayState(progress, appearance);
       root.style.setProperty("--kit-sky", rgbString(state.sky));
+      root.style.setProperty("--kit-sky-a", skyAlpha(progress, appearance).toFixed(3));
       root.style.setProperty("--kit-fg", rgbString(state.fg));
       root.style.setProperty("--kit-fg-muted", rgbString(state.muted));
       if (paintBody) document.body.style.background = rgbString(state.sky);
@@ -2113,6 +2117,7 @@ function createDayCycle(options = {}) {
     },
     destroy() {
       root.style.removeProperty("--kit-sky");
+      root.style.removeProperty("--kit-sky-a");
       root.style.removeProperty("--kit-fg");
       root.style.removeProperty("--kit-fg-muted");
       if (paintBody) document.body.style.background = bodyBefore;
@@ -2196,6 +2201,7 @@ export {
   resolveTier,
   seg,
   shichen,
+  skyAlpha,
   skyColor,
   smoothstep,
   solarLongitude,

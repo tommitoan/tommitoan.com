@@ -4,7 +4,7 @@ import { DEFAULT_DRIFT, driftProgress, parseDrift, shouldMountDrift } from "./dr
 import { sampleTargets, shouldMountDust, stepParticle, type Particle } from "./dust";
 import { nextFrame, parseLifeFrames, shouldMountLife } from "./life";
 import { applyTheme, resolveTheme } from "./theme";
-import { dayState, luminance, seg, skyColor, smoothstep, textMix, INK_NIGHT, NIGHT, PAPER } from "./color";
+import { dayState, luminance, seg, skyAlpha, skyColor, smoothstep, textMix, INK_NIGHT, NIGHT, PAPER } from "./color";
 import { resolveTier } from "./env";
 import { blendFrames } from "./keyframes";
 import { pathHasPrefix, shouldCoverNavigation, shouldPlaySeal, shouldRevealArrival, originOf, type ClickInfo, type ArrivalInfo } from "./navigation";
@@ -41,6 +41,21 @@ describe("colour math", () => {
     // and the default look is unchanged
     expect(skyColor(1, "light")).toEqual(PAPER);
     expect(skyColor(0.5)).toEqual(skyColor(0.5, "light"));
+  });
+
+  it("the dark sky is opaque at first and thins out to nothing; the light sky is always opaque", () => {
+    expect(skyAlpha(0, "dark")).toBe(1);
+    expect(skyAlpha(0.5, "dark")).toBe(1);
+    expect(skyAlpha(0.75, "dark")).toBe(0);
+    expect(skyAlpha(1, "dark")).toBe(0);
+    let previous = 2;
+    for (let p = 0; p <= 1.0001; p += 0.02) {
+      const alpha = skyAlpha(p, "dark");
+      expect(alpha).toBeLessThanOrEqual(previous + 1e-9);
+      previous = alpha;
+    }
+    for (let p = 0; p <= 1; p += 0.25) expect(skyAlpha(p, "light")).toBe(1);
+    expect(skyAlpha(0.6)).toBe(1);
   });
 
   it("text stays light all through the dark journey", () => {

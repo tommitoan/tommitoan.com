@@ -20,7 +20,7 @@ export function WorldHeader() {
   return (
     <header className="fs-header">
       <div className="fs-header-inner">
-        <Link href="/" className="fs-brand">
+        <Link href="/" prefetch={false} className="fs-brand">
           tommitoan
         </Link>
         <nav aria-label="Primary" className="fs-nav">

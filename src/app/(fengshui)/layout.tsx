@@ -24,6 +24,9 @@ export default function FengShuiLayout({ children }: Readonly<{ children: React.
       <script dangerouslySetInnerHTML={{ __html: bootScript }} />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link rel="stylesheet" href={hanFontHref()} precedence="default" />
+      <div className="fs-galaxy" aria-hidden="true">
+        <i className="fs-galaxy-stars" />
+      </div>
       <KitMount />
       <SkipLink />
       <WorldHeader />

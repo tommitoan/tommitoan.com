@@ -176,7 +176,8 @@ export function sceneFrame(progress: number, g: SceneGeometry, appearance: Appea
     sun: {
       size: sunSize,
       top: lerp(sunLow, g.height * 0.3 - sunSize / 2, climb),
-      opacity: 0.95 * clamp(rise * 3, 0, 1) * lerp(1, 0.13, smoothstep(seg(p, 0.56, 0.8))),
+      // On paper the sun stays as a faint disc; on the dark ending it sets completely.
+      opacity: 0.95 * clamp(rise * 3, 0, 1) * lerp(1, appearance === "dark" ? 0 : 0.13, smoothstep(seg(p, 0.56, 0.8))),
       color: lerpColor([246, 208, 120], [196, 84, 52], warm),
       glowAlpha: 0.42 * (1 - climb) * (1 - warm),
     },

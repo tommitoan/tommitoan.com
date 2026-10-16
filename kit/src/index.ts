@@ -125,7 +125,7 @@ export function init(options: KitOptions = {}): Kit {
 export { KIT_VERSION as version } from "./version";
 export { blendFrames } from "./keyframes";
 export { createDayCycle } from "./day-cycle";
-export { clamp, lerp, smoothstep, seg, skyColor, dayState } from "./color";
+export { clamp, lerp, smoothstep, seg, skyColor, skyAlpha, dayState } from "./color";
 export type { Appearance } from "./color";
 export { solarLongitude, solarTerm, monthBranch, baziYear, ganzhiYear } from "./solar";
 export { shichen } from "./shichen";

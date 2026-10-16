@@ -392,7 +392,8 @@
   height: 100svh;
   min-height: 560px;
   overflow: hidden;
-  background: var(--kit-sky, #0c1024);
+  /* The sky may thin out at the end of the dark journey (--kit-sky-a), so the galaxy behind shows through. */
+  background: color-mix(in srgb, var(--kit-sky, #0c1024) calc(var(--kit-sky-a, 1) * 100%), transparent);
   color: var(--kit-fg, #eee8ff);
 }
 .fs-scene-stage > * {
@@ -2433,5 +2434,110 @@ html[data-kit-appearance="dark"] .fs-static-figure {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+/* The galaxy of the home page and the Tech page, in the dark look: the same picture, paler and whiter (less colour, more light,
+   a cool white haze like the atmosphere of the Feng Shui planet), under a deep-ink veil that keeps the text readable. It stays
+   fixed while the page scrolls over it. In the light look it is not there, and the picture is not even downloaded. */
+.fs-world {
+  isolation: isolate;
+}
+.fs-galaxy {
+  display: none;
+}
+html[data-theme="dark"] .fs-galaxy,
+html[data-kit-appearance="dark"] .fs-galaxy {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+html[data-theme="dark"] .fs-galaxy::before,
+html[data-kit-appearance="dark"] .fs-galaxy::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/gateway/backgrounds/space-bg.webp") center / cover no-repeat;
+  /* Paler and whiter than the home page's galaxy: less colour, a lot more light. */
+  filter: saturate(0.6) brightness(1.7) contrast(0.92);
+}
+/* A cool white haze like the atmosphere of the Feng Shui planet, and a deep-ink veil that keeps the text readable. */
+html[data-theme="dark"] .fs-galaxy::after,
+html[data-kit-appearance="dark"] .fs-galaxy::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -6%, rgba(226, 234, 255, 0.3), rgba(226, 234, 255, 0) 70%),
+    radial-gradient(ellipse 55% 45% at 88% 72%, rgba(214, 224, 250, 0.16), rgba(214, 224, 250, 0) 70%),
+    radial-gradient(ellipse 50% 40% at 8% 60%, rgba(206, 220, 255, 0.12), rgba(206, 220, 255, 0) 70%),
+    linear-gradient(to bottom, rgba(14, 17, 40, 0.58), rgba(14, 17, 40, 0.5) 45%, rgba(14, 17, 40, 0.64));
+}
+/* Stars: one picture of stars (public/fengshui/stars.webp, it tiles without a seam) laid twice at different sizes and offsets so
+   no grid shows, and a few bright ones that twinkle (opacity only, so the browser animates it without the page's scripts). */
+.fs-galaxy-stars {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-image: url("/fengshui/stars.webp"), url("/fengshui/stars.webp");
+  background-size: 1200px 800px, 1740px 1160px;
+  background-position: 0 0, 420px 310px;
+  opacity: 0.72;
+}
+.fs-galaxy-stars::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("/fengshui/stars.webp");
+  background-size: 2700px 1800px;
+  background-position: 700px 200px;
+  animation: fs-galaxy-twinkle 5.5s ease-in-out infinite;
+}
+@keyframes fs-galaxy-twinkle {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fs-galaxy-stars::after {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+/* In the dark look the bands, the footer and the pinned story let the galaxy through, and cards turn into dark glass. */
+html[data-theme="dark"] .fs-world,
+html[data-kit-appearance="dark"] .fs-world {
+  --kit-surface: rgba(22, 26, 54, 0.72);
+  --kit-card: rgba(32, 38, 78, 0.8);
+}
+html[data-theme="dark"] .fs-band-paper,
+html[data-theme="dark"] .fs-footer,
+html[data-theme="dark"] .fs-replay-row,
+html[data-theme="dark"] .fs-static-paper,
+html[data-theme="dark"] .fs-story-stage,
+html[data-kit-appearance="dark"] .fs-band-paper,
+html[data-kit-appearance="dark"] .fs-footer,
+html[data-kit-appearance="dark"] .fs-replay-row,
+html[data-kit-appearance="dark"] .fs-static-paper,
+html[data-kit-appearance="dark"] .fs-story-stage {
+  background: transparent;
+}
+html[data-theme="dark"] .fs-panel,
+html[data-theme="dark"] .fs-an-info,
+html[data-theme="dark"] .fs-br-info,
+html[data-theme="dark"] .fs-ny-info,
+html[data-theme="dark"] .fs-term,
+html[data-kit-appearance="dark"] .fs-panel,
+html[data-kit-appearance="dark"] .fs-an-info,
+html[data-kit-appearance="dark"] .fs-br-info,
+html[data-kit-appearance="dark"] .fs-ny-info,
+html[data-kit-appearance="dark"] .fs-term {
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
 }
 

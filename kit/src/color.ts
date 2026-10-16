@@ -71,6 +71,14 @@ export function skyColor(progress: number, appearance: Appearance = "light"): RG
 /** 0 when text must be light, 1 when it must be dark ink, switching around mid brightness. */
 export const textMix = (lum: number): number => smoothstep(seg(lum, 100, 140));
 
+/**
+ * How opaque the sky is. The light look is always opaque. The dark look lets the sky thin out as the journey settles, so a page
+ * that has its own background behind (a galaxy, for instance) shows through at the end instead of meeting a flat colour.
+ */
+export function skyAlpha(progress: number, appearance: Appearance = "light"): number {
+  return appearance === "dark" ? 1 - smoothstep(seg(progress, 0.5, 0.75)) : 1;
+}
+
 export interface DayState {
   progress: number;
   sky: RGB;

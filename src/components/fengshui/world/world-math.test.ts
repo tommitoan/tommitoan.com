@@ -40,6 +40,8 @@ describe("birth scene frame", () => {
     expect(f.day.sky).toEqual(INK_NIGHT);
     expect(f.day.textMix).toBe(0);
     expect(f.inkWashOpacity).toBe(0);
+    expect(f.sun.opacity).toBe(0);
+    expect(sceneFrame(1, g, "light").sun.opacity).toBeGreaterThan(0);
     expect(f.figureX).toBeCloseTo(g.endX, 5);
     // the beginning is the same night in both looks
     expect(sceneFrame(0, g, "dark").day.sky).toEqual(NIGHT);
