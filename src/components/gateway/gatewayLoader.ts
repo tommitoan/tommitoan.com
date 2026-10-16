@@ -44,3 +44,14 @@ export function stepProgress(shown: number, completed: number, sinceChangeMs: nu
   if (completed >= 100 && next > 99.6) return 100;
   return Math.min(100, Math.max(shown, next));
 }
+
+/**
+ * The number shown inside the ring: one decimal, rounded down so it never shows 100 before the ring is full ("37.4", "99.9"),
+ * and a plain "100" at the end. The decimal changes several times a second while the ring moves, so it reads as continuous.
+ */
+export function formatPercent(shown: number): string {
+  if (shown >= 100) return "100";
+  const tenths = Math.floor(Math.max(0, shown) * 10) / 10;
+  return tenths.toFixed(1);
+}
+

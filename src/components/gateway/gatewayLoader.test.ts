@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { completedWork, loaderTarget, MAX_FRAME_MS, PART_WEIGHTS, stepProgress, WAITING_CEILING } from "./gatewayLoader";
+import { completedWork, formatPercent, loaderTarget, MAX_FRAME_MS, PART_WEIGHTS, stepProgress, WAITING_CEILING } from "./gatewayLoader";
 
 /** Runs the ring frame by frame; `completedAt(ms)` says how much work is done at a time. */
 function run(totalMs: number, frameMs: number, completedAt: (ms: number) => number) {
@@ -73,3 +73,28 @@ describe("loader progress", () => {
     expect(calm).toBeGreaterThanOrEqual(30);
   });
 });
+
+describe("the number in the ring", () => {
+  it("shows one decimal, rounded down", () => {
+    expect(formatPercent(0)).toBe("0.0");
+    expect(formatPercent(37.46)).toBe("37.4");
+    expect(formatPercent(5.04)).toBe("5.0");
+    expect(formatPercent(-3)).toBe("0.0");
+  });
+
+  it("shows 100 only when the ring is full", () => {
+    expect(formatPercent(99.99)).toBe("99.9");
+    expect(formatPercent(99.96)).toBe("99.9");
+    expect(formatPercent(100)).toBe("100");
+  });
+
+  it("changes on most frames while the ring climbs at 60 frames a second", () => {
+    const { values } = run(6000, 16, (ms) => (ms < 400 ? 0 : ms < 1500 ? 25 : ms < 3000 ? 65 : 100));
+    const labels = values.map(formatPercent);
+    let changes = 0;
+    for (let i = 1; i < labels.length; i += 1) if (labels[i] !== labels[i - 1]) changes += 1;
+    // the ring moves on most of the frames of these six seconds, so the number does too
+    expect(changes).toBeGreaterThan(labels.length * 0.4);
+  });
+});
+

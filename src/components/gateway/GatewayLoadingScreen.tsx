@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { gatewayHomeConfig } from "@/components/gateway/gatewayHomeConfig";
-import { stepProgress } from "@/components/gateway/gatewayLoader";
+import { formatPercent, stepProgress } from "@/components/gateway/gatewayLoader";
 
 /** How long the screen takes to fade once the ring is full; the page opens when the fade is over. */
 const FADE_MS = 600;
@@ -47,7 +47,7 @@ export function GatewayLoadingScreen({ completed, isVisible, onDone }: GatewayLo
     let frame = 0;
     let last = 0;
     let shown = 0;
-    let shownText = -1;
+    let shownText = "";
     let doneTimer = 0;
     const tick = (now: number) => {
       if (!last) {
@@ -57,10 +57,10 @@ export function GatewayLoadingScreen({ completed, isVisible, onDone }: GatewayLo
       shown = stepProgress(shown, completedRef.current, now - changedAt.current, now - last);
       last = now;
       ringRef.current?.style.setProperty("--p", shown.toFixed(2));
-      const whole = Math.round(shown);
-      if (whole !== shownText && textRef.current) {
-        shownText = whole;
-        textRef.current.textContent = `${whole}%`;
+      const label = formatPercent(shown);
+      if (label !== shownText && textRef.current) {
+        shownText = label;
+        textRef.current.textContent = `${label}%`;
       }
       if (shown >= 100) {
         setFinishing(true);
@@ -150,9 +150,11 @@ export function GatewayLoadingScreen({ completed, isVisible, onDone }: GatewayLo
                       color: ringColor,
                       filter: `drop-shadow(0 0 18px ${ringColor}80)`,
                       fontVariantNumeric: "tabular-nums",
+                      minWidth: "5ch",
+                      textAlign: "center",
                     }}
                   >
-                    0%
+                    0.0%
                   </div>
                 </div>
               </div>
