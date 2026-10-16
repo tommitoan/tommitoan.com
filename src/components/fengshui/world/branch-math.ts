@@ -18,3 +18,14 @@ export function ringPercent(branch: number, radius: number): { left: number; top
   const angle = (branch / 12) * Math.PI * 2 - Math.PI / 2;
   return { left: 50 + radius * Math.cos(angle), top: 50 + radius * Math.sin(angle) };
 }
+
+/** The element of each three-harmony frame (tam hợp), by `branch % 4`: Thân Tý Thìn is Water, Tỵ Dậu Sửu Metal, Dần Ngọ Tuất Fire, Hợi Mão Mùi Wood. */
+const TRIAD_ELEMENTS = ["water", "metal", "fire", "wood"] as const;
+
+/** The other two branches of the three-harmony frame (tam hợp) that `branch` belongs to, and the frame's element. */
+export function sanHe(branch: number): { others: [number, number]; element: (typeof TRIAD_ELEMENTS)[number] } {
+  const group = branch % 4;
+  const members = [group, group + 4, group + 8];
+  const others = members.filter((member) => member !== branch) as [number, number];
+  return { others, element: TRIAD_ELEMENTS[group]! };
+}

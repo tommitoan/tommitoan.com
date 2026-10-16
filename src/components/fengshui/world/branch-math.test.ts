@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { TERMS } from "@/content/fengshui-terms";
 import { BRANCHES } from "@/content/fengshui-branches";
-import { liuChong, liuHe, monthTermIndex, ringPercent, yearsOf } from "./branch-math";
+import { liuChong, liuHe, monthTermIndex, ringPercent, sanHe, yearsOf } from "./branch-math";
 
 describe("branches", () => {
   it("pairs the six harmonies", () => {
@@ -46,5 +46,19 @@ describe("branches", () => {
   it("has a row of data for each branch", () => {
     expect(BRANCHES).toHaveLength(12);
     for (const info of BRANCHES) expect(info.hidden.length).toBeGreaterThan(0);
+  });
+
+  it("groups the four three-harmony frames", () => {
+    // Thân Tý Thìn (Water), Hợi Mão Mùi (Wood), Dần Ngọ Tuất (Fire), Tỵ Dậu Sửu (Metal)
+    expect(sanHe(0)).toEqual({ others: [4, 8], element: "water" });
+    expect(sanHe(8)).toEqual({ others: [0, 4], element: "water" });
+    expect(sanHe(11)).toEqual({ others: [3, 7], element: "wood" });
+    expect(sanHe(6)).toEqual({ others: [2, 10], element: "fire" });
+    expect(sanHe(9)).toEqual({ others: [1, 5], element: "metal" });
+    for (let b = 0; b < 12; b += 1) {
+      const { others } = sanHe(b);
+      expect(others).not.toContain(b);
+      expect(sanHe(others[0]).others).toContain(b);
+    }
   });
 });

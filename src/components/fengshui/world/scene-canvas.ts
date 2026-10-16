@@ -44,59 +44,35 @@ export function drawStarfield(ctx: CanvasRenderingContext2D, width: number, heig
   }
 }
 
+/** A soft glowing dot: the same look as the stars of the night sky (a core with a halo), here in gold. */
+function drawGlow(ctx: CanvasRenderingContext2D, x: number, y: number, core: number, haloRadius: number, haloAlpha: number, alpha: number): void {
+  const halo = ctx.createRadialGradient(x, y, 0, x, y, haloRadius);
+  halo.addColorStop(0, `rgba(255,222,140,${(haloAlpha * alpha).toFixed(3)})`);
+  halo.addColorStop(0.35, `rgba(255,200,100,${(haloAlpha * 0.4 * alpha).toFixed(3)})`);
+  halo.addColorStop(1, "rgba(255,190,90,0)");
+  ctx.fillStyle = halo;
+  ctx.beginPath();
+  ctx.arc(x, y, haloRadius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = `rgba(255,244,208,${alpha.toFixed(3)})`;
+  ctx.beginPath();
+  ctx.arc(x, y, core, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+/** The guiding star: a bright gold core inside a wide halo, like the white stars of the sky but warmer and larger. */
 function drawStar(ctx: CanvasRenderingContext2D, x: number, y: number, radius: number, alpha: number): void {
-  const glow = ctx.createRadialGradient(x, y, 0, x, y, radius * 7);
-  glow.addColorStop(0, `rgba(255,240,200,${0.9 * alpha})`);
-  glow.addColorStop(0.25, `rgba(255,214,140,${0.35 * alpha})`);
-  glow.addColorStop(1, "rgba(255,214,140,0)");
-  ctx.fillStyle = glow;
-  ctx.beginPath();
-  ctx.arc(x, y, radius * 7, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.strokeStyle = `rgba(255,246,220,${0.8 * alpha})`;
-  ctx.lineWidth = 1.2;
-  ctx.beginPath();
-  ctx.moveTo(x - radius * 8, y);
-  ctx.lineTo(x + radius * 8, y);
-  ctx.moveTo(x, y - radius * 8);
-  ctx.lineTo(x, y + radius * 8);
-  ctx.stroke();
-  ctx.lineWidth = 0.8;
-  ctx.beginPath();
-  ctx.moveTo(x - radius * 3.2, y - radius * 3.2);
-  ctx.lineTo(x + radius * 3.2, y + radius * 3.2);
-  ctx.moveTo(x - radius * 3.2, y + radius * 3.2);
-  ctx.lineTo(x + radius * 3.2, y - radius * 3.2);
-  ctx.stroke();
-  ctx.fillStyle = `rgba(255,252,240,${alpha})`;
-  ctx.beginPath();
-  ctx.arc(x, y, radius * 0.9, 0, Math.PI * 2);
-  ctx.fill();
+  drawGlow(ctx, x, y, radius * 0.95, radius * 11, 0.5, alpha);
+  drawGlow(ctx, x, y, radius * 0.6, radius * 4.5, 0.85, alpha);
 }
 
-/** A small four-point sparkle, a thin cross with a bright core. */
-function drawSparkle(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, alpha: number): void {
-  ctx.strokeStyle = `rgba(255,246,220,${alpha.toFixed(3)})`;
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(x - size, y);
-  ctx.lineTo(x + size, y);
-  ctx.moveTo(x, y - size);
-  ctx.lineTo(x, y + size);
-  ctx.stroke();
-  ctx.fillStyle = `rgba(255,252,240,${alpha.toFixed(3)})`;
-  ctx.beginPath();
-  ctx.arc(x, y, size * 0.22, 0, Math.PI * 2);
-  ctx.fill();
-}
-
-/** Six small sparkles that twinkle on their own beats around a point; the guiding star shines with them while it waits. */
+/** Five small gold glows that twinkle on their own beats around a point; the guiding star shines with them while it waits. */
 export function drawSparkles(ctx: CanvasRenderingContext2D, x: number, y: number, radius: number, time: number, alpha: number): void {
-  for (let i = 0; i < 6; i += 1) {
-    const angle = (i / 6) * Math.PI * 2 + 0.6;
-    const distance = radius * (5.5 + (i % 3) * 2.2);
-    const beat = 0.5 + 0.5 * Math.sin(time / (170 + i * 53) + i * 1.7);
-    drawSparkle(ctx, x + Math.cos(angle) * distance, y + Math.sin(angle) * distance * 0.8, 2.5 + beat * 4.5, alpha * beat * 0.9);
+  for (let i = 0; i < 5; i += 1) {
+    const angle = (i / 5) * Math.PI * 2 + 0.5;
+    const distance = radius * (6.5 + (i % 3) * 2.6);
+    const beat = 0.5 + 0.5 * Math.sin(time / (190 + i * 61) + i * 1.9);
+    drawGlow(ctx, x + Math.cos(angle) * distance, y + Math.sin(angle) * distance * 0.85, 0.9 + beat * 0.9, 6 + beat * 4, 0.5, alpha * (0.35 + 0.65 * beat));
   }
 }
 

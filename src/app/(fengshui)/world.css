@@ -940,25 +940,6 @@
 .fs-pr-item[aria-pressed="true"] .fs-pr-num {
   color: var(--kit-seal);
 }
-.fs-pr-timer {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 3px;
-  background: var(--kit-seal);
-  opacity: 0.55;
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-}
-.fs-pr-timer[data-running="true"] {
-  animation: fs-pr-fill 5s linear forwards;
-}
-@keyframes fs-pr-fill {
-  to {
-    transform: scaleX(1);
-  }
-}
 @media (prefers-reduced-motion: reduce) {
   .fs-pr-mark {
     animation: none;
@@ -1317,6 +1298,13 @@
   font: 400 30px var(--fs-serif);
   text-anchor: middle;
 }
+.fs-dial-centre-date {
+  fill: var(--kit-muted);
+  font: 500 13px var(--fs-sans);
+  letter-spacing: 0.06em;
+  text-anchor: middle;
+  font-variant-numeric: tabular-nums;
+}
 .fs-dial-centre-sub {
   fill: var(--kit-seal);
   font: 600 12px var(--fs-sans);
@@ -1435,11 +1423,30 @@
   background: #fff;
   box-shadow: 0 10px 28px rgba(59, 47, 32, 0.18);
 }
+/* The ten paintings sit on top of each other; the one of the stem in focus fades in over the one that leaves. */
+.fs-dm-frame {
+  position: relative;
+  aspect-ratio: 378 / 369;
+}
 .fs-dm-art img {
-  display: block;
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: auto;
-  animation: fs-term-in 0.5s ease both;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+.fs-dm-art img[data-shown] {
+  opacity: 1;
+}
+.fs-dm-info {
+  animation: fs-dm-info-in 0.5s ease both;
+}
+@keyframes fs-dm-info-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
 }
 .fs-dm-info p {
   margin: 0.6rem 0 0;
@@ -1461,7 +1468,8 @@
   color: var(--kit-seal);
   font: 400 1.2rem/1.3 var(--fs-serif);
 }
-/* The ten stems run along a belt from left to right without stopping; the pointer in the section holds it still. */
+/* The ten stems run along a belt from left to right without stopping, moved by script one frame at a time; the stem in the
+   middle is the one shown above, and the pointer in the section holds the belt still. */
 .fs-dm-picker {
   margin-top: 1.2rem;
   overflow: hidden;
@@ -1471,18 +1479,7 @@
 .fs-dm-track {
   display: flex;
   width: max-content;
-  animation: fs-dm-belt 36s linear infinite;
-}
-.fs-dm-track[data-paused="true"] {
-  animation-play-state: paused;
-}
-@keyframes fs-dm-belt {
-  from {
-    transform: translateX(-50%);
-  }
-  to {
-    transform: translateX(0);
-  }
+  will-change: transform;
 }
 .fs-dm-tile {
   flex: none;
@@ -1506,25 +1503,6 @@
   width: 100%;
   max-width: 56px;
   height: auto;
-}
-/* The thin bar that fills in three seconds on the stem in the middle, then the next one takes over. */
-.fs-dm-timer {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 3px;
-  background: var(--kit-seal);
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-}
-.fs-dm-timer[data-running="true"] {
-  animation: fs-dm-fill 3s linear forwards;
-}
-@keyframes fs-dm-fill {
-  to {
-    transform: scaleX(1);
-  }
 }
 .fs-dm-tile:hover {
   background: rgba(255, 255, 255, 0.85);
@@ -1572,6 +1550,10 @@
     flex-wrap: wrap;
     gap: 0.5rem;
     width: auto;
+  }
+  .fs-dm-art img,
+  .fs-dm-info {
+    transition: none;
     animation: none;
   }
   .fs-dm-tile {
@@ -1944,24 +1926,6 @@
   box-shadow: 0 0 0 1px var(--kit-seal), 0 8px 20px rgba(59, 47, 32, 0.14);
   transform: translateY(-2px);
 }
-.fs-an-timer {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 3px;
-  background: var(--kit-seal);
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-}
-.fs-an-timer[data-running="true"] {
-  animation: fs-an-fill 4s linear forwards;
-}
-@keyframes fs-an-fill {
-  to {
-    transform: scaleX(1);
-  }
-}
 .fs-an-info {
   min-height: 15.5rem;
   margin-top: 1.2rem;
@@ -2131,8 +2095,12 @@
   transition: opacity 0.3s;
 }
 .fs-br-harmony {
-  stroke: #a9792b;
-  stroke-width: 1.1;
+  stroke: #2f9e5c;
+  stroke-width: 1.2;
+}
+.fs-br-triad {
+  stroke: #2f6fbf;
+  stroke-width: 1;
 }
 .fs-br-clash {
   stroke: var(--kit-seal);
@@ -2158,7 +2126,10 @@
   width: 1.8rem;
   margin-right: 0.45rem;
   vertical-align: middle;
-  border-top: 2px solid #a9792b;
+  border-top: 2px solid #2f9e5c;
+}
+.fs-br-legend span[data-kind="triad"]::before {
+  border-top-color: #2f6fbf;
 }
 .fs-br-legend span[data-kind="clash"]::before {
   border-top: 2px dashed var(--kit-seal);
@@ -2209,7 +2180,12 @@
   background: #fff;
 }
 .fs-br-node[data-link="harmony"] {
-  border-color: #a9792b;
+  border-color: #2f9e5c;
+  border-width: 2px;
+}
+.fs-br-node[data-link="triad"] {
+  border-color: #2f6fbf;
+  border-width: 2px;
 }
 .fs-br-node[data-link="clash"] {
   border-style: dashed;
@@ -2221,24 +2197,6 @@
   background: #fff;
   color: var(--kit-seal);
   box-shadow: 0 0 0 1px var(--kit-seal), 0 6px 16px rgba(59, 47, 32, 0.2);
-}
-.fs-br-timer {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 3px;
-  background: var(--kit-seal);
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-}
-.fs-br-timer[data-running="true"] {
-  animation: fs-br-fill 4s linear forwards;
-}
-@keyframes fs-br-fill {
-  to {
-    transform: scaleX(1);
-  }
 }
 .fs-br-info {
   min-height: 26rem;
@@ -2254,6 +2212,9 @@
 .fs-br-facts,
 .fs-br-caution {
   clear: both;
+}
+.fs-br-facts .fs-br-wide {
+  grid-column: 1 / -1;
 }
 .fs-br-info .fs-br-imagery {
   color: var(--kit-ink);
@@ -2356,36 +2317,6 @@
   box-shadow: 0 8px 20px rgba(59, 47, 32, 0.3);
   transform: scale(1.08);
 }
-.fs-ny-tile em {
-  position: absolute;
-  top: 0.25rem;
-  right: 0.25rem;
-  padding: 0 0.35rem;
-  border-radius: 999px;
-  background: var(--kit-seal);
-  color: var(--kit-paper);
-  font-size: 0.58rem;
-  font-style: normal;
-  font-weight: 600;
-}
-.fs-ny-timer {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 3px;
-  background: var(--kit-seal);
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-}
-.fs-ny-timer[data-running="true"] {
-  animation: fs-ny-fill 3s linear forwards;
-}
-@keyframes fs-ny-fill {
-  to {
-    transform: scaleX(1);
-  }
-}
 .fs-ny-info {
   min-height: 30rem;
   padding: 1.2rem 1.4rem;
@@ -2437,11 +2368,7 @@
   .fs-ny-tiles {
     gap: 0.35rem;
   }
-  .fs-ny-tile em {
-    font-size: 0.5rem;
-    padding: 0 0.25rem;
-  }
-  .fs-ny-art {
+    .fs-ny-art {
     width: 8.5rem;
   }
   .fs-ny-info {

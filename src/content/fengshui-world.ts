@@ -80,6 +80,9 @@ export type WorldCopy = {
     yearsLabel: string;
     hiddenLabel: string;
     harmonyLabel: string;
+    /** The three-harmony frame, with {a} and {b} for the two other branches and {element}. */
+    triadLabel: string;
+    triadText: string;
     clashLabel: string;
     cautionLabel: string;
     hint: string;
@@ -142,13 +145,13 @@ const vi: WorldCopy = {
   },
   story: {
     eyebrow: "Cách đọc",
-    title: "Bốn trụ, bốn bước",
-    label: "Bốn bước đọc một lá số: năm, tháng, ngày, giờ",
+    title: "Đọc lá số trong bốn bước",
+    label: "Bốn bước đọc một lá số: trụ năm, trụ tháng, trụ ngày, trụ giờ",
     steps: [
-      { glyph: "年", kicker: "Bước 1 · Trụ Năm", title: "Năm đổi ở Lập Xuân", text: "Trụ năm đổi vào Lập Xuân, khoảng 4 tháng 2, chứ không phải mùng một Tết." },
-      { glyph: "月", kicker: "Bước 2 · Trụ Tháng", title: "Tháng chạy theo tiết khí", text: "Mười hai tiết khí chia năm thành mười hai tháng. Sinh vào mùa nào thì Nhật Chủ vượng hay suy theo mùa đó." },
-      { glyph: "日", kicker: "Bước 3 · Trụ Ngày", title: "Thiên can ngày là bạn", text: "Thiên can của ngày sinh là Nhật Chủ, tức là chính bạn. Các trụ còn lại đều được đọc trong quan hệ với nó." },
-      { glyph: "時", kicker: "Bước 4 · Trụ Giờ", title: "Giờ sinh theo nơi sinh", text: "Giờ sinh tính theo múi giờ nơi bạn sinh. Lệch hai tiếng là đổi luôn cả trụ giờ." },
+      { glyph: "年", kicker: "Bước 1 · Trụ Năm", title: "Năm mới bắt đầu từ Lập Xuân", text: "Bát Tự không đổi năm vào mùng một Tết mà vào Lập Xuân, khoảng ngày 4 tháng 2. Ai sinh trước mốc đó vẫn thuộc năm trước." },
+      { glyph: "月", kicker: "Bước 2 · Trụ Tháng", title: "Tháng đổi theo tiết khí", text: "Một năm có mười hai tháng, mỗi tháng mở đầu bằng một tiết khí. Mùa bạn sinh ra cho biết Nhật Chủ mạnh hay yếu." },
+      { glyph: "日", kicker: "Bước 3 · Trụ Ngày", title: "Ngày sinh chính là bạn", text: "Thiên Can của ngày sinh gọi là Nhật Chủ, đại diện cho chính bạn. Mọi can chi còn lại đều được đọc trong quan hệ với nó." },
+      { glyph: "時", kicker: "Bước 4 · Trụ Giờ", title: "Giờ sinh tính theo nơi sinh", text: "Giờ sinh tính theo múi giờ nơi bạn chào đời. Chỉ lệch hai tiếng là đã sang một trụ giờ khác." },
     ],
   },
   dial: {
@@ -194,7 +197,7 @@ const vi: WorldCopy = {
     description:
       "Mười hai Chi làm ba việc cùng lúc: chia một ngày thành mười hai canh giờ, đặt tên cho mười hai tháng tiết khí, và đặt tên cho mười hai năm của vòng con giáp. Trụ giờ, trụ tháng và trụ năm đều lấy Chi từ đó. Mỗi Chi còn mang một hành, một âm dương và vài Thiên Can ẩn bên trong.",
     pickerLabel: "Chọn một Địa Chi",
-    ringLabel: "Vòng mười hai Địa Chi, Tý ở trên cùng, đánh dấu Chi hợp và Chi xung với Chi đang chọn",
+    ringLabel: "Vòng mười hai Địa Chi, Tý ở trên cùng, đánh dấu Chi lục hợp, tam hợp và lục xung với Chi đang chọn",
     imageAlt: "Tranh minh họa Địa Chi {name}",
     hoursLabel: "Canh giờ",
     monthLabel: "Tháng Ba-zi",
@@ -202,9 +205,11 @@ const vi: WorldCopy = {
     yearsLabel: "Các năm",
     hiddenLabel: "Can ẩn",
     harmonyLabel: "Lục hợp",
+    triadLabel: "Tam hợp",
+    triadText: "{a} · {b} (cục {element})",
     clashLabel: "Lục xung",
     cautionLabel: "Cần tránh",
-    hint: "Tự chạy mỗi vài giây; rê chuột vào một Chi để chọn và giữ lại. Đường liền nối Chi hợp, đường đứt nối Chi xung.",
+    hint: "Tự chạy mỗi vài giây; rê chuột vào một Chi để chọn và giữ lại. Đường xanh lá nối Chi lục hợp, đường xanh dương nối ba Chi tam hợp, đường đứt đỏ nối Chi xung.",
     note: "Năm tính theo năm Ba-zi, đổi ở Lập Xuân, nên người sinh trong tháng một hoặc tháng hai có thể thuộc năm trước. Hình tượng chỉ để ghi nhớ.",
   },
   nayin: {
@@ -276,13 +281,13 @@ const en: WorldCopy = {
   },
   story: {
     eyebrow: "How to read",
-    title: "Four pillars, four steps",
-    label: "Four steps to read a chart: year, month, day, hour",
+    title: "Reading a chart in four steps",
+    label: "Four steps to read a chart: year, month, day and hour pillar",
     steps: [
-      { glyph: "年", kicker: "Step 1 · Year pillar", title: "The year turns at Lichun", text: "The year pillar changes at Lichun, around 4 February, not on Lunar New Year's day." },
-      { glyph: "月", kicker: "Step 2 · Month pillar", title: "Months follow the solar terms", text: "Twelve solar terms divide the year into twelve months. The season you are born in decides whether the Day Master is strong or weak." },
-      { glyph: "日", kicker: "Step 3 · Day pillar", title: "The day stem is you", text: "The stem of your birth day is the Day Master, the part of the chart that is you. Every other pillar is read against it." },
-      { glyph: "時", kicker: "Step 4 · Hour pillar", title: "The hour follows the birthplace", text: "Count the hour in the time zone where you were born. Two hours off, and the whole pillar changes." },
+      { glyph: "年", kicker: "Step 1 · Year pillar", title: "The year begins at Lichun", text: "Ba-zi does not change the year on Lunar New Year's day but at Lichun, around 4 February. Anyone born before that still belongs to the previous year." },
+      { glyph: "月", kicker: "Step 2 · Month pillar", title: "The month follows the solar terms", text: "A year has twelve months, each opened by a solar term. The season you were born in shows whether the Day Master is strong or weak." },
+      { glyph: "日", kicker: "Step 3 · Day pillar", title: "Your birth day is you", text: "The stem of the birth day is called the Day Master and stands for you. Every other stem and branch is read in relation to it." },
+      { glyph: "時", kicker: "Step 4 · Hour pillar", title: "The hour follows your birthplace", text: "The hour is counted in the time zone where you were born. Just two hours off, and it is a different hour pillar." },
     ],
   },
   dial: {
@@ -328,7 +333,7 @@ const en: WorldCopy = {
     description:
       "The twelve branches do three jobs at once: they divide a day into twelve double-hours, they name the twelve solar-term months, and they name the twelve years of the animal cycle. The hour, month and year pillars all take their branch from there. Each branch also carries an element, a yin or yang, and a few stems hidden inside it.",
     pickerLabel: "Pick an earthly branch",
-    ringLabel: "The ring of the twelve earthly branches, Zi at the top, with the harmony and clash of the chosen branch marked",
+    ringLabel: "The ring of the twelve earthly branches, Zi at the top, with the six harmony, three harmony and clash of the chosen branch marked",
     imageAlt: "Painting of the earthly branch {name}",
     hoursLabel: "Double-hour",
     monthLabel: "Ba-zi month",
@@ -336,9 +341,11 @@ const en: WorldCopy = {
     yearsLabel: "Years",
     hiddenLabel: "Hidden stems",
     harmonyLabel: "Six harmony",
+    triadLabel: "Three harmony",
+    triadText: "{a} · {b} ({element} frame)",
     clashLabel: "Six clash",
     cautionLabel: "Avoid concluding",
-    hint: "It moves on by itself every few seconds; move over a branch to pick it and hold it. A solid line joins its harmony, a dashed line its clash.",
+    hint: "It moves on by itself every few seconds; move over a branch to pick it and hold it. A green line joins its six harmony, blue lines join its three-harmony frame, and a dashed red line its clash.",
     note: "Years are Ba-zi years, which change at Lichun, so someone born in January or February may belong to the year before. The imagery is only for remembering.",
   },
   nayin: {

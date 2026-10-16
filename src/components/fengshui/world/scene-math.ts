@@ -165,7 +165,7 @@ export function sceneFrame(progress: number, g: SceneGeometry): SceneFrame {
     star: {
       fall,
       point,
-      radius: lerp(2.4, 6.5, fall) * (1 - 0.7 * landed),
+      radius: lerp(3.4, 6.5, fall) * (1 - 0.7 * landed),
       alpha: 1 - smoothstep(seg(p, 0.46, 0.52)),
       landed,
       ring: ringProgress > 0 && ringProgress < 1 ? ringProgress : 0,
