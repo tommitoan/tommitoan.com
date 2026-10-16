@@ -53,11 +53,22 @@ export const PORTAL_COPY: Record<GatewayHomeId, Record<SiteLanguage, PortalCopy>
   },
 };
 
+/** The name of each route as the home page shows it: Vietnamese visitors read it in Vietnamese. */
+export const PORTAL_TITLES: Record<GatewayHomeId, Record<SiteLanguage, string>> = {
+  tech: { en: "Tech", vi: "Kỹ thuật" },
+  discover: { en: "Discover", vi: "Khám phá" },
+  fengshui: { en: "Feng Shui", vi: "Phong thuỷ" },
+};
+
 /** The words of the home page that are not about one route. */
 export const GATEWAY_UI: Record<SiteLanguage, { enter: string; languageLabel: string }> = {
   en: { enter: "Click to enter", languageLabel: "Language" },
   vi: { enter: "Bấm để vào", languageLabel: "Ngôn ngữ" },
 };
+
+export function portalTitle(id: GatewayHomeId, language: SiteLanguage): string {
+  return PORTAL_TITLES[id][language];
+}
 
 export function portalCopy(id: GatewayHomeId, language: SiteLanguage): PortalCopy {
   return PORTAL_COPY[id][language];

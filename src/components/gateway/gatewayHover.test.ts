@@ -1,10 +1,42 @@
 import { describe, expect, it } from "vitest";
-import { astronautSide, canGuide, expandedWidth, globeOpacity, pulledTilt, turnSquash, typedText } from "./gatewayHover";
+import { astronautSide, canGuide, hoverExpandFactor, restingWindowWidth, expandedWidth, globeOpacity, pulledTilt, squeezeFactor, turnSquash, typedText, windowWidth } from "./gatewayHover";
 
 describe("window width", () => {
   it("multiplies any CSS length, including a clamp()", () => {
     expect(expandedWidth("20rem", 1.9)).toBe("calc(20rem * 1.9)");
     expect(expandedWidth("clamp(10.5rem, 15.5vw, 20.5rem)", 2)).toBe("calc(clamp(10.5rem, 15.5vw, 20.5rem) * 2)");
+  });
+});
+
+describe("accordion widths", () => {
+  it("makes the three windows add up to the same width whichever one is hovered", () => {
+    for (const factor of [1.5, 1.8, 2]) {
+      expect(factor + 2 * squeezeFactor(factor)).toBeCloseTo(3);
+    }
+  });
+
+  it("leaves every window alone when none is hovered, and grows only the hovered one", () => {
+    expect(windowWidth("20rem", 1, null, 1.8)).toBe("20rem");
+    expect(windowWidth("20rem", 1, 1, 1.8)).toBe("calc(20rem * 1.8)");
+    expect(windowWidth("20rem", 0, 1, 1.8)).toBe("calc(20rem * 0.6)");
+    expect(windowWidth("20rem", 2, 1, 1.8)).toBe("calc(20rem * 0.6)");
+  });
+});
+
+describe("how far the hovered window grows", () => {
+  it("follows the config's clamp for the resting width", () => {
+    expect(restingWindowWidth(400)).toBe(168);
+    expect(restingWindowWidth(1440)).toBeCloseTo(223.2);
+    expect(restingWindowWidth(4000)).toBe(328);
+  });
+
+  it("grows more on a small screen so the text still has room, and never past the limits", () => {
+    expect(hoverExpandFactor(1440)).toBe(1.8);
+    expect(hoverExpandFactor(1920)).toBe(1.8);
+    expect(hoverExpandFactor(1024)).toBeGreaterThan(1.9);
+    expect(hoverExpandFactor(768)).toBe(2);
+    // The other two windows still keep a usable width.
+    expect(squeezeFactor(hoverExpandFactor(768))).toBeGreaterThanOrEqual(0.5);
   });
 });
 
@@ -15,11 +47,8 @@ describe("dimming and the astronaut's side", () => {
     expect(globeOpacity(1, 0, 0.3)).toBe(0.3);
   });
 
-  it("puts the astronaut away from the hovered window", () => {
-    expect(astronautSide(0)).toBe("right");
-    expect(astronautSide(1)).toBe("right");
-    expect(astronautSide(2)).toBe("left");
-    expect(astronautSide(null)).toBe("right");
+  it("keeps the astronaut on the right whichever window is hovered", () => {
+    expect(astronautSide()).toBe("right");
   });
 });
 

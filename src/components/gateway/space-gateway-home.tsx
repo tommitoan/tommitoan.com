@@ -13,9 +13,10 @@ import { AstronautSpeech } from "@/components/gateway/AstronautSpeech";
 import { completedWork } from "@/components/gateway/gatewayLoader";
 import { GatewayLanguageToggle } from "@/components/gateway/GatewayLanguageToggle";
 import { GatewayPortalInfo } from "@/components/gateway/GatewayPortalInfo";
-import { GATEWAY_UI, portalCopy } from "@/components/gateway/gatewayCopy";
+import { GATEWAY_UI, portalCopy, portalTitle } from "@/components/gateway/gatewayCopy";
+import { hasSeenGateway, markGatewaySeen, subscribeNever } from "@/components/gateway/gatewaySession";
 import { useSiteLanguage } from "@/lib/site-language";
-import { astronautSide, canGuide, expandedWidth, globeOpacity } from "@/components/gateway/gatewayHover";
+import { astronautSide, canGuide, expandedWidth, globeOpacity, hoverExpandFactor, squeezeFactor, windowWidth } from "@/components/gateway/gatewayHover";
 import { markWarpArrival } from "@/components/gateway/warpArrival";
 import {
   createAnchorStyle,
@@ -94,6 +95,9 @@ export function SpaceGatewayHome() {
   const [hoveredPortal, setHoveredPortal] = useState<GatewayHomeId | null>(null);
   const [selected, setSelected] = useState<GatewayHomeId | null>(null);
   const [isGatewayReady, setIsGatewayReady] = useState(false);
+  // A visitor coming back from another route skips the ring (the server and the first render say "not seen", so they agree).
+  const returning = useSyncExternalStore(subscribeNever, hasSeenGateway, () => false);
+  const pageReady = isGatewayReady || returning;
   const [assetsReady, setAssetsReady] = useState(false);
   const [astronautReady, setAstronautReady] = useState(false);
   // The planets start one after another, so the first frames of the loader are not lost to all three starting at once.
@@ -220,6 +224,8 @@ export function SpaceGatewayHome() {
         planets: debug.showPlanets ? Object.values(readyPlanets).filter(Boolean).length : 3,
       });
   const guide = canGuide(viewportWidth, !!reducedMotion);
+  // The hovered window grows enough for its text, and the other two share what is left of the row.
+  const expandFactor = hoverExpandFactor(viewportWidth);
   const hoveredSlot = hoveredPortal ? gatewayHomeConfig.portals.findIndex((item) => item.id === hoveredPortal) : null;
   // The astronaut introduces the portal under the pointer, when there is room and motion for it.
   const talking = !!hoveredPortal && !selected && guide;
@@ -289,6 +295,8 @@ export function SpaceGatewayHome() {
               });
 
               const expanded = guide && isHovered && !selected;
+              // While one window is under the pointer the other two give way, so the row keeps its width.
+              const squeezed = guide && !selected && hoveredSlot !== null && !isHovered;
 
               return (
                 <div
@@ -303,7 +311,7 @@ export function SpaceGatewayHome() {
                   className={`relative shrink-0 ${selected ? 'cursor-default pointer-events-none' : 'cursor-pointer'}`}
                   style={{
                     ...frameSizeStyle,
-                    width: expanded ? expandedWidth(String(frameSizeStyle.width), gatewayHomeConfig.hover.expandFactor) : frameSizeStyle.width,
+                    width: guide && !selected ? windowWidth(String(frameSizeStyle.width), i, hoveredSlot, expandFactor) : frameSizeStyle.width,
                     transition: `width ${gatewayHomeConfig.hover.expandSeconds}s cubic-bezier(0.22, 1, 0.36, 1)`,
                     zIndex: isHovered ? 51 : 50,
                   }}
@@ -319,7 +327,7 @@ export function SpaceGatewayHome() {
                   }}
                   transition={{
                     duration: 0.8,
-                    delay: selected || isGatewayReady ? 0 : 0.2 + i * 0.15,
+                    delay: selected || pageReady ? 0 : 0.2 + i * 0.15,
                     opacity: { duration: 0.45 },
                   }}
                   className="group pointer-events-none relative h-full w-full overflow-hidden flex flex-col items-center transition-[box-shadow] duration-500"
@@ -367,7 +375,7 @@ export function SpaceGatewayHome() {
                         <motion.div
                           animate={{
                             y: isHovered || isSelected ? -gateway.planet.hoverLiftPx : 0,
-                            scale: expanded ? gatewayHomeConfig.hover.expandedPlanetScale : isHovered || isSelected ? gatewayHomeConfig.hover.planetScale : 1,
+                            scale: expanded ? gatewayHomeConfig.hover.expandedPlanetScale : squeezed ? Math.min(gatewayHomeConfig.hover.squeezedPlanetScale, squeezeFactor(expandFactor)) : isHovered || isSelected ? gatewayHomeConfig.hover.planetScale : 1,
                           }}
                           transition={{ duration: 1.2, ease: "easeOut" }}
                           style={{
@@ -388,13 +396,13 @@ export function SpaceGatewayHome() {
 
                   {debug.showLabels ? (
                     <GatewayPortalInfo
-                      label={gateway.label}
+                      label={portalTitle(gateway.id, language)}
                       copy={portalCopy(gateway.id, language)}
                       enterText={ui.enter}
                       accent={gateway.theme.glowColor}
                       active={isHovered && !selected}
                       expanded={expanded}
-                      expandedWidthCss={expandedWidth(String(frameSizeStyle.width), gatewayHomeConfig.hover.expandFactor)}
+                      expandedWidthCss={expandedWidth(String(frameSizeStyle.width), expandFactor)}
                     />
                   ) : null}
 
@@ -419,12 +427,12 @@ export function SpaceGatewayHome() {
             camera={{ position: gatewayHomeConfig.astronaut.camera.position, fov: gatewayHomeConfig.astronaut.camera.fov }}
             dpr={[1, 2]}
           >
-            <SpaceBackgroundAstronaut isWarping={!!selected} targetIndex={activeIndex} talkSide={talking ? astronautSide(hoveredSlot) : null} onReady={() => setAstronautReady(true)} />
+            <SpaceBackgroundAstronaut isWarping={!!selected} targetIndex={activeIndex} talkSide={talking ? astronautSide() : null} onReady={() => setAstronautReady(true)} />
           </Canvas>
         </div>
       ) : null}
 
-      <AstronautSpeech portal={talking && hoveredInfo && hoveredCopy ? { label: hoveredInfo.label, speech: hoveredCopy.speech } : null} side={astronautSide(hoveredSlot)} />
+      <AstronautSpeech portal={talking && hoveredInfo && hoveredCopy ? { label: portalTitle(hoveredInfo.id, language), speech: hoveredCopy.speech } : null} side={astronautSide()} />
 
       <AnimatePresence>
         {selected && (
@@ -444,7 +452,14 @@ export function SpaceGatewayHome() {
 
       <GatewayLanguageToggle language={language} />
 
-      <GatewayLoadingScreen completed={completed} isVisible={!isGatewayReady} onDone={() => setIsGatewayReady(true)} />
+      <GatewayLoadingScreen
+        completed={completed}
+        isVisible={!pageReady}
+        onDone={() => {
+          markGatewaySeen();
+          setIsGatewayReady(true);
+        }}
+      />
     </section>
   );
 }

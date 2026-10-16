@@ -41,7 +41,7 @@ export function AstronautSpeech({ portal, side }: Props) {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 8, scale: 0.96 }}
           transition={{ duration: 0.35, ease: "easeOut", delay: 0.25 }}
-          className="pointer-events-none absolute z-[70] w-[min(24rem,30vw)] rounded-2xl border border-white/25 bg-[rgba(10,14,32,0.78)] px-5 py-4 text-white shadow-[0_12px_40px_rgba(0,0,0,0.5)] backdrop-blur-md"
+          className="pointer-events-none absolute z-[70] w-[min(18.5rem,20vw)] rounded-2xl border border-white/25 bg-[rgba(10,14,32,0.78)] px-5 py-4 text-white shadow-[0_12px_40px_rgba(0,0,0,0.5)] backdrop-blur-md"
           style={{ bottom: "53vh", ...(side === "right" ? { right: "3.5vw" } : { left: "3.5vw" }) }}
         >
           <p className="mb-1 text-[0.7rem] font-bold uppercase tracking-[0.18em] text-cyan-200/80" style={{ fontFamily: "var(--font-gateway-display), var(--font-gateway-body), sans-serif" }}>{portal.label}</p>

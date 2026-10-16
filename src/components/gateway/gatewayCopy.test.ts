@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { GATEWAY_UI, PORTAL_COPY, portalCopy } from "./gatewayCopy";
+import { GATEWAY_UI, PORTAL_COPY, portalCopy, portalTitle } from "./gatewayCopy";
 import { gatewayHomeConfig } from "./gatewayHomeConfig";
 
 describe("home page copy", () => {
@@ -20,6 +20,15 @@ describe("home page copy", () => {
   it("keeps the astronaut's lines short enough for the bubble", () => {
     for (const portal of gatewayHomeConfig.portals) {
       for (const language of ["en", "vi"] as const) expect(portalCopy(portal.id, language).speech.length).toBeLessThan(170);
+    }
+  });
+
+  it("names every route in both languages, in Vietnamese for Vietnamese visitors", () => {
+    expect(portalTitle("tech", "vi")).toBe("Kỹ thuật");
+    expect(portalTitle("discover", "vi")).toBe("Khám phá");
+    expect(portalTitle("fengshui", "vi")).toBe("Phong thuỷ");
+    for (const portal of gatewayHomeConfig.portals) {
+      expect(portalTitle(portal.id, "en")).toBe(portal.label);
     }
   });
 
