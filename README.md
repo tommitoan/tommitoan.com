@@ -10,6 +10,58 @@ Personal website for Toan Ngo, built as a static Next.js space gateway with thre
   <a href="https://tommitoan.com/" target="_blank">Live Demo</a>
 </h3>
 
+## A look around
+
+Everything below is recorded from the running site (dark look, Vietnamese). The pictures live in `docs/media/`.
+
+### The home page: a guide at the gateway
+
+Point at a window and it opens while the other two give way, so the row never moves. The astronaut turns to face you, stands in the same place for every window and tells you what is inside. A visitor who comes back from another route skips the loading ring.
+
+<div align="center">
+  <img alt="Hovering the three windows of the home page: the window opens, the others narrow, the astronaut speaks" src="./docs/media/gateway-hover.gif" width="720" />
+</div>
+
+### Pulled into a portal
+
+Click a window and the astronaut is pulled into the planet, still facing you, while the view zooms in after him. The Feng Shui world then opens on its first frame.
+
+<div align="center">
+  <img alt="Clicking the Feng Shui window: the astronaut is pulled into the planet and the world opens" src="./docs/media/gateway-warp.gif" width="720" />
+</div>
+
+### Feng Shui: one scroll, one life
+
+A star falls, a person is born and grows through seven stages while the sky changes from night to dawn to day. A reload, or a click from the gateway, always starts the journey at its first frame.
+
+<div align="center">
+  <img alt="The birth scene from the falling star to old age, twelve moments of one scroll" src="./docs/media/fengshui-journey.gif" width="720" />
+</div>
+
+Below the story: the solar-terms dial with a strip of twelve months, the Day Master and its ten stems, the twelve earthly branches, and the thirty Nayin paintings.
+
+<div align="center">
+  <img alt="The solar-terms dial, the Day Master, the earthly branches and the Nayin grid" src="./docs/media/fengshui-sections.jpg" width="720" />
+</div>
+
+### Dark and light
+
+The whole site follows the visitor's choice (the sun or moon button, else the system setting). The Ba-zi site at [bazi.tommitoan.com](https://bazi.tommitoan.com/) shares the same look and the same saved choice key.
+
+<div align="center">
+  <img alt="The solar-terms dial in the dark look and in the light look" src="./docs/media/fengshui-themes.jpg" width="720" />
+</div>
+
+### The way to the Ba-zi site
+
+The last card takes its colours from the same tokens as the rest of the page: dark glass in the dark look, paper in the light one.
+
+<div align="center">
+  <img alt="The call card to open Bazica Web, in the dark look and in the light look" src="./docs/media/fengshui-call-card.jpg" width="720" />
+</div>
+
+> The recordings are made with headless Chrome against the built site (`pnpm build`, then any static server on `out/`). They are stills and short clips, not a test: run the site yourself to see it at full speed.
+
 ## Routes
 
 - `/` — gateway homepage with 3 interactive 3D portals
@@ -25,6 +77,7 @@ Personal website for Toan Ngo, built as a static Next.js space gateway with thre
 - **3D**: React Three Fiber + Three.js (planet rendering)
 - **Animation**: Framer Motion
 - **Fonts**: Space Grotesk (display), Instrument Sans (body)
+- **Look**: dark and light, from one shared kit (`kit/`, also vendored by the Ba-zi site)
 
 ## Repo Structure
 
