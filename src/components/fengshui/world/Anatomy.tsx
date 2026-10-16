@@ -84,7 +84,6 @@ export function Anatomy() {
               </b>
               <span>{tileName}</span>
               {pillarIndex === 2 && part === "stem" ? <em>{copy.dayMasterBadge}</em> : null}
-              {index === selected ? <i className="fs-an-timer" data-running={playing ? "true" : "false"} aria-hidden="true" /> : null}
             </button>
           );
         })}

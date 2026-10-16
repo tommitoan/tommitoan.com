@@ -9,7 +9,7 @@ import { WorldHeading } from "@/components/fengshui/world/WorldHeading";
 const AUTOPLAY_MS = 5000;
 
 /**
- * The principles one at a time: the one in focus is lit and fills a thin bar, then the next takes over. Moving the pointer
+ * The principles one at a time: the one in focus is lit, then the next takes over. Moving the pointer
  * over a principle (or focusing it) lights it at once and holds it while the pointer stays in the list. All three are always
  * on the page in full, so nothing depends on the show.
  */
@@ -64,7 +64,6 @@ export function FengShuiPrinciplesSection() {
                 >
                   <span className="fs-pr-num">{index + 1}</span>
                   <span className="fs-pr-text">{principle}</span>
-                  {index === selected ? <i className="fs-pr-timer" data-running={playing ? "true" : "false"} aria-hidden="true" /> : null}
                 </button>
               </li>
             ))}

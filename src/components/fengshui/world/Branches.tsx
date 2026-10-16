@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useFengShuiLanguage, useFengShuiWorldCopy } from "@/components/fengshui/FengShuiLanguage";
 import { BRANCHES, branchImage, branchKind, branchName } from "@/content/fengshui-branches";
-import { stemName, STEMS } from "@/content/fengshui-stems";
+import { ELEMENT_NAMES, stemName, STEMS } from "@/content/fengshui-stems";
 import { TERMS } from "@/content/fengshui-terms";
 import { BRANCHES_HAN } from "@kit/solar";
-import { liuChong, liuHe, monthTermIndex, ringPercent, yearsOf } from "./branch-math";
+import { liuChong, liuHe, monthTermIndex, ringPercent, sanHe, yearsOf } from "./branch-math";
 import { elementColor } from "./elements";
 import { RevealHeading } from "./RevealHeading";
 import { useReducedMotion } from "./use-reduced-motion";
@@ -52,10 +52,11 @@ export function Branches() {
   const han = BRANCHES_HAN[selected]!;
   const harmony = liuHe(selected);
   const clash = liuChong(selected);
+  const triad = sanHe(selected);
   const term = TERMS[monthTermIndex(selected)]!;
-  const line = (target: number) => {
-    const from = ringPercent(selected, RING);
-    const to = ringPercent(target, RING);
+  const line = (a: number, b: number) => {
+    const from = ringPercent(a, RING);
+    const to = ringPercent(b, RING);
     return { x1: from.left - 50, y1: from.top - 50, x2: to.left - 50, y2: to.top - 50 };
   };
 
@@ -76,8 +77,11 @@ export function Branches() {
           <div className="fs-br-ring" role="group" aria-label={copy.pickerLabel}>
             <svg viewBox="-50 -50 100 100" aria-hidden="true">
               <circle className="fs-br-orbit" cx="0" cy="0" r={RING} />
-              <line className="fs-br-clash" {...line(clash)} />
-              <line className="fs-br-harmony" {...line(harmony)} />
+              <line className="fs-br-clash" {...line(selected, clash)} />
+              <line className="fs-br-triad" {...line(selected, triad.others[0])} />
+              <line className="fs-br-triad" {...line(selected, triad.others[1])} />
+              <line className="fs-br-triad" {...line(triad.others[0], triad.others[1])} />
+              <line className="fs-br-harmony" {...line(selected, harmony)} />
             </svg>
             {BRANCHES.map((branch, index) => {
               const place = ringPercent(index, RING);
@@ -89,7 +93,7 @@ export function Branches() {
                   style={{ left: `${place.left}%`, top: `${place.top}%` }}
                   aria-pressed={index === selected}
                   aria-label={`${branchName(index, language)}, ${branch.animal[language]}`}
-                  data-link={index === harmony ? "harmony" : index === clash ? "clash" : undefined}
+                  data-link={index === harmony ? "harmony" : index === clash ? "clash" : triad.others.includes(index) ? "triad" : undefined}
                   onPointerEnter={(event) => event.pointerType === "mouse" && setSelected(index)}
                   onFocus={() => setSelected(index)}
                   onClick={() => setSelected(index)}
@@ -98,12 +102,12 @@ export function Branches() {
                     {BRANCHES_HAN[index]}
                   </b>
                   <span>{branchName(index, language)}</span>
-                  {index === selected ? <i className="fs-br-timer" data-running={playing ? "true" : "false"} aria-hidden="true" /> : null}
                 </button>
               );
             })}
             <p className="fs-br-legend" aria-hidden="true">
               <span data-kind="harmony">{copy.harmonyLabel}</span>
+              <span data-kind="triad">{copy.triadLabel}</span>
               <span data-kind="clash">{copy.clashLabel}</span>
             </p>
           </div>
@@ -150,6 +154,15 @@ export function Branches() {
               <div>
                 <dt>{copy.clashLabel}</dt>
                 <dd>{branchName(clash, language)}</dd>
+              </div>
+              <div className="fs-br-wide">
+                <dt>{copy.triadLabel}</dt>
+                <dd>
+                  {copy.triadText
+                    .replace("{a}", branchName(triad.others[0], language))
+                    .replace("{b}", branchName(triad.others[1], language))
+                    .replace("{element}", ELEMENT_NAMES[triad.element][language])}
+                </dd>
               </div>
             </dl>
             <p className="fs-br-caution">

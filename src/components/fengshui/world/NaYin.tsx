@@ -12,18 +12,17 @@ import { useReducedMotion } from "./use-reduced-motion";
 /** How long each Nạp Âm stays in focus while the section plays by itself. */
 const AUTOPLAY_MS = 3000;
 
-/** The entry of the sample chart's pillars: Year, Month, Day and Hour in turn. */
+/** The entries of the sample chart's pillars: Year, Month, Day and Hour in turn. */
 const SAMPLE_ENTRIES = SAMPLE_CYCLE.map(nayinOfPair);
 
 /**
  * The thirty Nạp Âm as a grid of paintings in the order of the sixty-pair cycle, with the one in focus explained beside it.
  * They come into focus one after another; moving the pointer over one (or focusing it) picks it at once and holds the show
- * while the pointer stays in the section. The entries that hold a pillar of the sample chart carry a small tag.
+ * while the pointer stays in the section. When the focused entry holds a pillar of the sample chart, the card says so.
  */
 export function NaYin() {
   const world = useFengShuiWorldCopy();
   const copy = world.nayin;
-  const labels = world.scene.pillarLabels;
   const language = useFengShuiLanguage();
   const reduced = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
@@ -67,7 +66,6 @@ export function NaYin() {
         >
           <div className="fs-ny-tiles" role="group" aria-label={copy.pickerLabel}>
             {NAYIN.map((entry, index) => {
-              const tag = SAMPLE_ENTRIES.indexOf(index);
               return (
                 <button
                   key={entry.name}
@@ -82,8 +80,6 @@ export function NaYin() {
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element -- watercolour of the sound, the export has no image optimiser */}
                   <img src={nayinImage(index)} alt="" width={200} height={196} loading="lazy" decoding="async" />
-                  {tag >= 0 ? <em>{labels[tag]}</em> : null}
-                  {index === selected ? <i className="fs-ny-timer" data-running={playing ? "true" : "false"} aria-hidden="true" /> : null}
                 </button>
               );
             })}
