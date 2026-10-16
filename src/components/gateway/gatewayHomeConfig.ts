@@ -341,7 +341,7 @@ export const gatewayHomeConfig = {
     expandFactor: 1.9,
     expandSeconds: 0.7,
     /** The planet in the hovered, widened window is a little larger. */
-    expandedPlanetScale: 1.14,
+    expandedPlanetScale: 1.06,
   },
   hoverBackdrop: {
     insetXPercent: 18,

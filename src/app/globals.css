@@ -453,3 +453,8 @@ select:focus-visible {
     scroll-behavior: auto !important;
   }
 }
+
+/* The home page: Vietnamese-capable body font, set on the section so the astronaut's bubble and the toggle inherit it. */
+.space-gateway-shell {
+  font-family: var(--font-gateway-body), var(--font-body), system-ui, sans-serif;
+}

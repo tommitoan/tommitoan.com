@@ -36,7 +36,8 @@ export function createMetadata(options: MetadataOptions = {}): Metadata {
     : { url: defaultSocialImage, width: 1200, height: 630, alt: `${displayTitle} — Tommi Toan` };
 
   return {
-    title,
+    // Without a title of its own the page keeps the layout's default; an explicit undefined here would remove the title tag.
+    ...(title ? { title } : {}),
     description: pageDescription,
     metadataBase: new URL(BASE),
     alternates: {
