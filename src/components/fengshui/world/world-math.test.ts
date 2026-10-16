@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { INK_NIGHT, NIGHT, PAPER } from "@kit/color";
 import { SOLAR_TERMS_VI } from "@kit/solar";
-import { arcPath, dayForLongitude, dayIndexOf, daysInYear, daysPerSecond, dialDay, dialState, isMonthOpener, JIE_INDEXES, longitudeAt, radialLabel, ringPoint, SOLAR_TERMS_HAN } from "./dial-math";
+import { arcPath, dayForLongitude, dayIndexOf, daysInYear, daysPerSecond, dialDay, dialState, isMonthOpener, JIE_INDEXES, longitudeAt, monthSpans, radialLabel, ringPoint, SOLAR_TERMS_HAN } from "./dial-math";
 import { marqueeAdvance, marqueeSkew, sixtyCycle, smoothVelocity } from "./marquee-math";
 import { ageAtWalk, bezier, easeToward, FRAME_AGES, galaxyVeil, LIFE_SPAN, luckMarkX, LUCK_PILLARS, pinProgress, sceneFrame, sceneGeometry, starCurve } from "./scene-math";
 import { ringRotation, storyStep, storyView } from "./story-math";
@@ -374,8 +374,8 @@ describe("age along the walk", () => {
 
 describe("the galaxy behind the dark journey", () => {
   it("is veiled thinly at the start, fully once the scene is over, and always fully in the light look", () => {
-    expect(galaxyVeil(0, "dark")).toBeCloseTo(0.3, 5);
-    expect(galaxyVeil(0.3, "dark")).toBeCloseTo(0.3, 5);
+    expect(galaxyVeil(0, "dark")).toBeCloseTo(0.55, 5);
+    expect(galaxyVeil(0.3, "dark")).toBeCloseTo(0.55, 5);
     expect(galaxyVeil(1, "dark")).toBe(1);
     let previous = 0;
     for (let p = 0; p <= 1.0001; p += 0.02) {
@@ -390,6 +390,28 @@ describe("the galaxy behind the dark journey", () => {
   it("draws no stars of its own in the dark look", () => {
     expect(sceneFrame(0.2, g, "dark").starfieldAlpha).toBe(0);
     expect(sceneFrame(0.2, g).starfieldAlpha).toBeGreaterThan(0);
+  });
+});
+
+describe("the twelve months of the dial", () => {
+  it("covers the whole year without a gap, in a leap year and a common year", () => {
+    for (const year of [2025, 2026, 2028]) {
+      const spans = monthSpans(year);
+      expect(spans).toHaveLength(12);
+      expect(spans[0]).toEqual({ month: 1, start: 0, days: 31 });
+      let next = 0;
+      for (const span of spans) {
+        expect(span.start).toBe(next);
+        next += span.days;
+      }
+      expect(next).toBe(daysInYear(year));
+    }
+    expect(monthSpans(2028)[1]!.days).toBe(29);
+    expect(monthSpans(2026)[1]!.days).toBe(28);
+  });
+
+  it("starts each month on the day index the dial uses", () => {
+    expect(monthSpans(2026)[9]).toEqual({ month: 10, start: dayIndexOf(2026, 10, 1), days: 31 });
   });
 });
 

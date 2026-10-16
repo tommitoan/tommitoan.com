@@ -1390,6 +1390,81 @@
   color: var(--kit-seal);
   font-weight: 500;
 }
+/* The year as twelve cells, each as wide as its days, above the slider: a month that is over is filled, the current one fills as
+   its days pass, and the two dots are its two solar terms (the red one opens a Ba-zi month). */
+.fs-dial-months {
+  display: grid;
+  gap: 3px;
+  margin: 0.55rem 0 0.35rem;
+  padding: 0;
+  list-style: none;
+}
+.fs-dial-months li {
+  min-width: 0;
+}
+.fs-dial-month {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 0.18rem;
+  width: 100%;
+  padding: 0.4rem 0 0.5rem;
+  overflow: hidden;
+  border: 1px solid var(--kit-line);
+  border-radius: 7px;
+  background: var(--kit-card-soft);
+  color: var(--kit-muted);
+  font: 600 0.72rem/1 var(--fs-sans);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.fs-dial-month u {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--kit-seal) calc(var(--fill, 0) * 100%), transparent calc(var(--fill, 0) * 100%));
+  opacity: 0.85;
+}
+.fs-dial-month-dots {
+  display: inline-flex;
+  gap: 3px;
+  height: 5px;
+}
+.fs-dial-month-dots i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--kit-line);
+}
+.fs-dial-month-dots i[data-opens="true"] {
+  background: var(--kit-seal);
+}
+.fs-dial-month[data-state="past"] {
+  color: var(--kit-ink);
+  border-color: color-mix(in srgb, var(--kit-seal) 45%, var(--kit-line));
+}
+.fs-dial-month:hover,
+.fs-dial-month:focus-visible {
+  background: var(--kit-card-hover);
+  color: var(--kit-ink);
+}
+.fs-dial-month[data-state="now"] {
+  border-color: var(--kit-seal);
+  background: var(--kit-card);
+  color: var(--kit-ink);
+  box-shadow: 0 0 0 1px var(--kit-seal), 0 4px 14px rgba(var(--kit-shadow), 0.22);
+}
+.fs-dial-month[data-state="now"] .fs-dial-month-name {
+  color: var(--kit-seal);
+}
+@media (max-width: 760px) {
+  .fs-dial-month {
+    font-size: 0.62rem;
+  }
+  .fs-dial-month-name {
+    letter-spacing: -0.02em;
+  }
+}
 .fs-dial-range {
   width: 100%;
   accent-color: var(--kit-seal);
@@ -2203,6 +2278,22 @@
   color: var(--kit-seal);
   box-shadow: 0 0 0 1px var(--kit-seal), 0 6px 16px rgba(var(--kit-shadow), 0.2);
 }
+/* In the dark look the branch in focus is the lit one: a warm, bright disc with dark ink on it and a glow, bigger than the rest,
+   so it is plainly the one to read (the linked branches only have a coloured ring). */
+html[data-theme="dark"] .fs-br-node[aria-pressed="true"],
+html[data-kit-appearance="dark"] .fs-br-node[aria-pressed="true"] {
+  z-index: 2;
+  border: 2px solid #fff3d2;
+  background: radial-gradient(circle at 50% 32%, #fffaf0, #f4dca4 78%);
+  color: #3a2a12;
+  transform: translate(-50%, -50%) scale(1.22);
+  box-shadow: 0 0 0 4px rgba(242, 211, 145, 0.32), 0 0 26px 6px rgba(242, 211, 145, 0.55), 0 10px 24px rgba(0, 0, 0, 0.45);
+}
+html[data-theme="dark"] .fs-br-node[aria-pressed="true"] b,
+html[data-kit-appearance="dark"] .fs-br-node[aria-pressed="true"] b {
+  color: #3a2a12 !important;
+  font-weight: 600;
+}
 .fs-br-info {
   min-height: 26rem;
   padding: 1.2rem 1.4rem;
@@ -2458,9 +2549,10 @@ html[data-kit-appearance="dark"] .fs-galaxy::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: url("/gateway/backgrounds/space-bg.webp") center / cover no-repeat;
+  /* A copy of the gateway's picture, so it can be re-rendered (whiter, greyer) without touching the gateway and the Tech page. */
+  background: url("/fengshui/galaxy.webp") center / cover no-repeat;
   /* Paler and whiter than the home page's galaxy: less colour, a lot more light. */
-  filter: saturate(0.6) brightness(1.4) contrast(0.95);
+  filter: saturate(0.55) brightness(1.4) contrast(0.95);
 }
 /* A cool white haze like the atmosphere of the Feng Shui planet. */
 html[data-theme="dark"] .fs-galaxy::after,
@@ -2587,5 +2679,39 @@ html[data-kit-appearance="dark"] .fs-term {
 html[data-theme="dark"] .fs-scene-haze,
 html[data-kit-appearance="dark"] .fs-scene-haze {
   display: none;
+}
+
+/* The call to try Bazica in the dark look: a brighter card with a wider glow of its own and a spotlight behind it, so it stands
+   out from the galaxy instead of sinking into it. */
+html[data-theme="dark"] .fs-links,
+html[data-kit-appearance="dark"] .fs-links {
+  background: radial-gradient(ellipse 62% 70% at 50% 52%, rgba(242, 211, 145, 0.16), rgba(190, 205, 255, 0.07) 48%, transparent 72%);
+}
+html[data-theme="dark"] .fs-cta,
+html[data-kit-appearance="dark"] .fs-cta {
+  box-shadow:
+    0 0 0 1px rgba(242, 211, 145, 0.5),
+    0 0 46px 6px rgba(242, 211, 145, 0.32),
+    0 0 120px 30px rgba(150, 170, 255, 0.22),
+    0 28px 70px rgba(0, 0, 0, 0.5);
+}
+html[data-theme="dark"] .fs-cta::before,
+html[data-kit-appearance="dark"] .fs-cta::before {
+  background: conic-gradient(from 0deg, transparent 0 55%, rgba(255, 233, 170, 0.55) 74%, rgba(255, 244, 205, 1) 88%, transparent 100%);
+}
+html[data-theme="dark"] .fs-cta::after,
+html[data-kit-appearance="dark"] .fs-cta::after {
+  background:
+    radial-gradient(ellipse 75% 62% at 50% 0%, rgba(255, 238, 200, 0.3), rgba(255, 238, 200, 0) 72%),
+    radial-gradient(ellipse 60% 50% at 50% 100%, rgba(150, 170, 255, 0.2), rgba(150, 170, 255, 0) 72%),
+    radial-gradient(1.4px 1.4px at 14% 30%, rgba(236, 243, 255, 0.9), transparent 60%),
+    radial-gradient(1.2px 1.2px at 82% 22%, rgba(236, 243, 255, 0.8), transparent 60%),
+    radial-gradient(1.6px 1.6px at 70% 78%, rgba(236, 243, 255, 0.85), transparent 60%),
+    radial-gradient(1.2px 1.2px at 26% 74%, rgba(236, 243, 255, 0.7), transparent 60%),
+    linear-gradient(160deg, #2a3478, #141b4c 55%, #0e1440);
+}
+html[data-theme="dark"] .fs-cta-title,
+html[data-kit-appearance="dark"] .fs-cta-title {
+  text-shadow: 0 0 28px rgba(255, 240, 205, 0.35);
 }
 

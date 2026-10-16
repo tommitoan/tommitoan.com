@@ -137,3 +137,12 @@ export function longitudeAtDay(year: number, day: number): number {
   const whole = Math.floor(day);
   return solarLongitude(noonUtc(year, whole) + (day - whole) * 86400000);
 }
+
+/** The twelve calendar months of a year: where each starts (a day index, 0 is 1 January) and how many days it has. */
+export function monthSpans(year: number): Array<{ month: number; start: number; days: number }> {
+  return Array.from({ length: 12 }, (_, index) => {
+    const month = index + 1;
+    return { month, start: dayIndexOf(year, month, 1), days: new Date(Date.UTC(year, month, 0)).getUTCDate() };
+  });
+}
+

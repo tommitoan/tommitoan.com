@@ -14,6 +14,7 @@ import {
   isMonthOpener,
   longitudeAt,
   longitudeAtDay,
+  monthSpans,
   radialLabel,
   ringPoint,
 } from "./dial-math";
@@ -240,6 +241,22 @@ export function SolarDial() {
           <label htmlFor={sliderId} className="fs-dial-label">
             {copy.dateLabel}: <b>{`${state.calendar.day}/${state.calendar.month}`}</b>
           </label>
+          <MonthStrip
+            year={year}
+            language={language}
+            month={state.calendar.month}
+            day={state.calendar.day}
+            onPick={(start) => {
+              hold();
+              setDriven(start);
+              release(2500);
+            }}
+            onEnter={(start) => {
+              hold();
+              setDriven(start);
+            }}
+            onLeave={() => release(250)}
+          />
           <input
             id={sliderId}
             type="range"
@@ -299,3 +316,67 @@ function Outputs({ state, month, monthHan }: { state: DialState; month: { stem: 
     </dl>
   );
 }
+
+const MONTH_SHORT = {
+  vi: ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12"],
+  en: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+} as const;
+
+/**
+ * The year as twelve cells, January to December, each as wide as its days, so the cell the Sun is in sits right above the
+ * slider's thumb. A month that is over is filled, the current one fills as its days pass, and each cell carries two dots for
+ * its two solar terms (the first of them opens a Ba-zi month). Pointing at a month, or pressing it, takes the dial to its first day.
+ */
+function MonthStrip({
+  year,
+  language,
+  month,
+  day,
+  onPick,
+  onEnter,
+  onLeave,
+}: {
+  year: number;
+  language: "vi" | "en";
+  month: number;
+  day: number;
+  onPick: (start: number) => void;
+  onEnter: (start: number) => void;
+  onLeave: () => void;
+}) {
+  const spans = monthSpans(year);
+  const names = new Intl.DateTimeFormat(language, { month: "long", timeZone: "UTC" });
+  return (
+    <ol className="fs-dial-months" style={{ gridTemplateColumns: spans.map((span) => `${span.days}fr`).join(" ") }} onPointerLeave={(event) => event.pointerType === "mouse" && onLeave()}>
+      {spans.map((span) => {
+        const fill = span.month < month ? 1 : span.month === month ? (day - 1 + 0.5) / span.days : 0;
+        const terms = TERMS.filter((term) => term.month === span.month).sort((first, second) => first.from - second.from);
+        const label = names.format(new Date(Date.UTC(year, span.month - 1, 1)));
+        return (
+          <li key={span.month}>
+            <button
+              type="button"
+              className="fs-dial-month"
+              data-state={span.month < month ? "past" : span.month === month ? "now" : "next"}
+              aria-current={span.month === month ? "date" : undefined}
+              aria-label={`${label}: ${terms.map((term) => termName(term, language)).join(", ")}`}
+              title={`${label}: ${terms.map((term) => termName(term, language)).join(", ")}`}
+              style={{ "--fill": fill.toFixed(3) } as React.CSSProperties}
+              onPointerEnter={(event) => event.pointerType === "mouse" && onEnter(span.start)}
+              onClick={() => onPick(span.start)}
+            >
+              <span className="fs-dial-month-name">{MONTH_SHORT[language][span.month - 1]}</span>
+              <span className="fs-dial-month-dots" aria-hidden="true">
+                {terms.map((term) => (
+                  <i key={term.vi} data-opens={isMonthOpener(TERMS.indexOf(term)) ? "true" : undefined} />
+                ))}
+              </span>
+              <u aria-hidden="true" />
+            </button>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+

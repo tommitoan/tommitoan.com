@@ -223,6 +223,6 @@ export function easeToward(current: number, target: number, factor = 0.14, epsil
  */
 export function galaxyVeil(progress: number, appearance: Appearance = "light"): number {
   if (appearance !== "dark") return 1;
-  return lerp(0.3, 1, smoothstep(seg(progress, 0.3, 0.78)));
+  return lerp(0.55, 1, smoothstep(seg(progress, 0.3, 0.78)));
 }
 
