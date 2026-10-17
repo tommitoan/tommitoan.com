@@ -115,7 +115,7 @@ export function Branches() {
           <div className="fs-br-info" aria-live="off">
             <figure className="fs-br-art">
               {/* eslint-disable-next-line @next/next/no-img-element -- watercolour of the animal, the export has no image optimiser */}
-              <img key={selected} src={branchImage(selected)} alt={copy.imageAlt.replace("{name}", name)} width={296} height={294} decoding="async" />
+              <img key={selected} src={branchImage(selected)} alt={copy.imageAlt.replace("{name}", name)} width={296} height={296} decoding="async" />
             </figure>
             <span className="fs-an-eyebrow">
               {branchKind(info, language)} · {info.animal[language]}

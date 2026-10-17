@@ -79,7 +79,7 @@ export function NaYin() {
                   onClick={() => setSelected(index)}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element -- watercolour of the sound, the export has no image optimiser */}
-                  <img src={nayinImage(index)} alt="" width={200} height={196} loading="lazy" decoding="async" />
+                  <img src={nayinImage(index)} alt="" width={200} height={200} loading="lazy" decoding="async" />
                 </button>
               );
             })}
@@ -88,7 +88,7 @@ export function NaYin() {
           <div className="fs-ny-info" aria-live="off">
             <figure className="fs-ny-art">
               {/* eslint-disable-next-line @next/next/no-img-element -- watercolour of the sound, the export has no image optimiser */}
-              <img key={selected} src={nayinImage(selected)} alt={info.name} width={200} height={196} decoding="async" />
+              <img key={selected} src={nayinImage(selected)} alt={info.name} width={200} height={200} decoding="async" />
             </figure>
             <span className="fs-an-eyebrow">{copy.kindLabel.replace("{element}", element)}</span>
             <h3>{info.name}</h3>

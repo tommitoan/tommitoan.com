@@ -1493,7 +1493,7 @@ html[data-kit-appearance="dark"] .fs-cta {
 /* The ten paintings sit on top of each other; the one of the stem in focus fades in over the one that leaves. */
 .fs-dm-frame {
   position: relative;
-  aspect-ratio: 378 / 369;
+  aspect-ratio: 1;
 }
 .fs-dm-art img {
   position: absolute;

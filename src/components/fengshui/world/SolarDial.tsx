@@ -227,7 +227,7 @@ export function SolarDial() {
           <p className="fs-copy">{copy.description}</p>
           <figure className="fs-term" data-opens={opens ? "true" : undefined}>
             {/* eslint-disable-next-line @next/next/no-img-element -- watercolour of the term, the export has no image optimiser */}
-            <img key={state.term.index} src={termImage(state.term.index)} alt={alt} width={121} height={122} className="fs-term-image" decoding="async" />
+            <img key={state.term.index} src={termImage(state.term.index)} alt={alt} width={121} height={121} className="fs-term-image" decoding="async" />
             <figcaption>
               <span className="fs-term-badge">{opens ? copy.opensBadge : copy.middleBadge}</span>
               <b className="fs-term-name">{termName(info, language)}</b>
