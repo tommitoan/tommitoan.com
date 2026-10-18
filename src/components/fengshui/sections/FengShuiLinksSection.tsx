@@ -3,6 +3,8 @@
 import { Reveal } from "@/components/tech/Reveal";
 import { fengshuiLinks } from "@/content/fengshui-content";
 import { useFengShuiCopy, useFengShuiWorldCopy } from "@/components/fengshui/FengShuiLanguage";
+import { ArtFigure } from "@/components/fengshui/world/WorldHeading";
+import { FENGSHUI_ART } from "@/content/fengshui-art";
 
 /** The call to try Bazica Web: a night card with a light running round its edge, a pulsing badge and a gold button. */
 export function FengShuiLinksSection() {
@@ -14,6 +16,7 @@ export function FengShuiLinksSection() {
       <div className="fs-wrap fs-narrow">
         <Reveal>
           <div className="fs-cta">
+            <ArtFigure art={FENGSHUI_ART.begin} />
             <span className="fs-cta-badge">
               <i aria-hidden="true" />
               {cta.badge}

@@ -4,6 +4,7 @@ import { Reveal } from "@/components/tech/Reveal";
 import { useFengShuiCopy, useFengShuiLanguage } from "@/components/fengshui/FengShuiLanguage";
 import { CountUp } from "@/components/fengshui/world/CountUp";
 import { WorldHeading } from "@/components/fengshui/world/WorldHeading";
+import { FENGSHUI_ART } from "@/content/fengshui-art";
 
 export function FengShuiPillarsSection() {
   const copy = useFengShuiCopy();
@@ -12,7 +13,7 @@ export function FengShuiPillarsSection() {
   return (
     <section className="fs-band fs-band-paper" data-kit-section="Lý do / Why">
       <div className="fs-wrap">
-        <WorldHeading eyebrow={copy.pillarsHeading.eyebrow} title={`${copy.pillarsHeading.title} ${copy.pillarsHeading.accent}`} />
+        <WorldHeading eyebrow={copy.pillarsHeading.eyebrow} title={`${copy.pillarsHeading.title} ${copy.pillarsHeading.accent}`} art={FENGSHUI_ART.why} />
         <div className="fs-grid fs-grid-4">
           {copy.pillars.map((pillar, index) => (
             <Reveal key={pillar.title} delay={0.08 * (index + 1)}>

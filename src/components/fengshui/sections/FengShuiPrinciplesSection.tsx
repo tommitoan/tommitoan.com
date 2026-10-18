@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useFengShuiCopy } from "@/components/fengshui/FengShuiLanguage";
 import { useReducedMotion } from "@/components/fengshui/world/use-reduced-motion";
 import { WorldHeading } from "@/components/fengshui/world/WorldHeading";
+import { FENGSHUI_ART } from "@/content/fengshui-art";
 
 /** How long each principle stays in focus while the section plays by itself. */
 const AUTOPLAY_MS = 5000;
@@ -40,7 +41,7 @@ export function FengShuiPrinciplesSection() {
   return (
     <section ref={sectionRef} className="fs-band fs-band-paper" data-kit-section="Nguyên tắc / Principles">
       <div className="fs-wrap fs-narrow">
-        <WorldHeading eyebrow={copy.principlesHeading.eyebrow} title={`${copy.principlesHeading.title} ${copy.principlesHeading.accent}`} />
+        <WorldHeading eyebrow={copy.principlesHeading.eyebrow} title={`${copy.principlesHeading.title} ${copy.principlesHeading.accent}`} art={FENGSHUI_ART.principles} />
         <div className="fs-pr-stage">
           <span key={selected} className="fs-pr-mark" aria-hidden="true">
             {String(selected + 1).padStart(2, "0")}

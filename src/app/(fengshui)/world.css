@@ -777,6 +777,24 @@
 .fs-heading {
   max-width: 62ch;
 }
+/* A wide picture of a band (src/content/fengshui-art.ts): calm, on a paper frame, never wider than the heading's column plus a little. */
+.fs-art {
+  margin: 1.75rem 0 0;
+  max-width: 44rem;
+}
+.fs-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  box-shadow:
+    0 0 0 6px #fff,
+    0 10px 26px rgb(0 0 0 / 0.16);
+}
+.fs-cta .fs-art {
+  margin: 0 auto 1.5rem;
+  max-width: 28rem;
+}
 .fs-grid {
   display: grid;
   gap: 1.25rem;
