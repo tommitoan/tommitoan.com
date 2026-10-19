@@ -212,7 +212,7 @@ export function SpaceGatewayHome() {
   };
 
   const activePortalOffsetX = activePortal
-    ? gatewayHomeConfig.transitions.zoomOffsetXByPortal[activePortal.id]
+    ? (viewportWidth > 0 && viewportWidth < 768 ? gatewayHomeConfig.transitions.zoomOffsetXMobileByPortal : gatewayHomeConfig.transitions.zoomOffsetXByPortal)[activePortal.id]
     : "0vw";
   const debug = gatewayHomeConfig.debug;
   // The loader fills as the parts of the page are really ready, and finishes only when the visitor can see all of it.
@@ -224,16 +224,27 @@ export function SpaceGatewayHome() {
         planets: debug.showPlanets ? Object.values(readyPlanets).filter(Boolean).length : 3,
       });
   const guide = canGuide(viewportWidth, !!reducedMotion);
+  // On a phone there is no hover, so each window carries its name all the time (the width is 0 until the first measure).
+  const compact = viewportWidth > 0 && viewportWidth < 768;
+  // A phone has no hover: the first tap on a window brings the astronaut over to introduce it, the second tap enters. With
+  // reduced motion there is no introduction, so one tap enters.
+  const preview = compact && !reducedMotion;
   // The hovered window grows enough for its text, and the other two share what is left of the row.
   const expandFactor = hoverExpandFactor(viewportWidth);
   const hoveredSlot = hoveredPortal ? gatewayHomeConfig.portals.findIndex((item) => item.id === hoveredPortal) : null;
   // The astronaut introduces the portal under the pointer, when there is room and motion for it.
-  const talking = !!hoveredPortal && !selected && guide;
+  const talking = !!hoveredPortal && !selected && (guide || preview);
   const hoveredInfo = hoveredPortal ? gatewayHomeConfig.portals.find((item) => item.id === hoveredPortal) ?? null : null;
   const hoveredCopy = hoveredInfo ? portalCopy(hoveredInfo.id, language) : null;
 
   return (
-    <section className="space-gateway-shell relative w-full h-screen overflow-hidden text-white">
+    <section
+      className="space-gateway-shell relative w-full h-screen overflow-hidden text-white"
+      // A tap on the sky sends the astronaut back to his place.
+      onClick={() => {
+        if (preview && !selected) setHoveredPortal(null);
+      }}
+    >
       <div className="absolute inset-0 z-0 pointer-events-none" style={spaceThemeBackgroundStyle} />
       <div className="absolute inset-0 z-[1] pointer-events-none" style={spaceThemeOverlayStyle} />
       <div className="absolute inset-0 z-[2] pointer-events-none">
@@ -273,7 +284,7 @@ export function SpaceGatewayHome() {
 
         <div className="relative z-10 w-full h-full flex flex-col items-center justify-center pt-4 pb-4 px-4 md:px-6">
           <div
-            className="flex flex-col md:flex-row items-center justify-center w-full max-w-7xl origin-center"
+            className="flex flex-row items-center justify-center w-full max-w-7xl origin-center"
             style={{
               ...createGapStyle(gatewayHomeConfig.row.gapMobileRem, gatewayHomeConfig.row.gapDesktopRem),
               height: `clamp(${gatewayHomeConfig.row.heightMobileRem}rem, ${gatewayHomeConfig.row.heightViewport}vh, ${gatewayHomeConfig.row.heightDesktopRem}rem)`,
@@ -302,10 +313,14 @@ export function SpaceGatewayHome() {
                 <div
                   key={gateway.id}
                   // This window is what takes the hover and the click. It widens where it stands, so the pointer stays inside it.
-                  onPointerEnter={(event) => event.pointerType === "mouse" && enterPortal(gateway.id)}
-                  onPointerLeave={(event) => event.pointerType === "mouse" && leavePortal(gateway.id)}
+                  onPointerEnter={(event) => event.pointerType === "mouse" && !compact && enterPortal(gateway.id)}
+                  onPointerLeave={(event) => event.pointerType === "mouse" && !compact && leavePortal(gateway.id)}
                   onClick={(e) => {
                     e.stopPropagation();
+                    if (preview && !selected && hoveredPortal !== gateway.id) {
+                      setHoveredPortal(gateway.id);
+                      return;
+                    }
                     handleSelect(gateway);
                   }}
                   className={`relative shrink-0 ${selected ? 'cursor-default pointer-events-none' : 'cursor-pointer'}`}
@@ -401,6 +416,7 @@ export function SpaceGatewayHome() {
                       enterText={ui.enter}
                       accent={gateway.theme.glowColor}
                       active={isHovered && !selected}
+                      compact={compact}
                       expanded={expanded}
                       expandedWidthCss={expandedWidth(String(frameSizeStyle.width), expandFactor)}
                     />
@@ -432,7 +448,7 @@ export function SpaceGatewayHome() {
         </div>
       ) : null}
 
-      <AstronautSpeech portal={talking && hoveredInfo && hoveredCopy ? { label: portalTitle(hoveredInfo.id, language), speech: hoveredCopy.speech } : null} side={astronautSide()} />
+      <AstronautSpeech portal={talking && hoveredInfo && hoveredCopy ? { label: portalTitle(hoveredInfo.id, language), speech: hoveredCopy.speech } : null} side={astronautSide()} compact={compact} hint={ui.tapToEnter} />
 
       <AnimatePresence>
         {selected && (

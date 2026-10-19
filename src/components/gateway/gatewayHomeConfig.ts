@@ -290,6 +290,12 @@ export const gatewayHomeConfig = {
       discover: "0vw",
       fengshui: "-40vw",
     } satisfies Record<GatewayHomeId, string>,
+    /** The same on a phone, where a column stands about 31 vw off the middle and the zoom is 3.5 times: 31 x 3.5 is about 110 vw. */
+    zoomOffsetXMobileByPortal: {
+      tech: "110vw",
+      discover: "0vw",
+      fengshui: "-110vw",
+    } satisfies Record<GatewayHomeId, string>,
     zoomOffsetY: "30vh",
     flashDelaySeconds: 2.8,
     flashDurationSeconds: 0.4,
@@ -297,7 +303,7 @@ export const gatewayHomeConfig = {
   row: {
     scale: 1,
     offsetYPx: -70,
-    gapMobileRem: 2,
+    gapMobileRem: 0.5,
     gapDesktopRem: 4,
     heightMobileRem: 24,
     heightViewport: 66,
@@ -378,6 +384,15 @@ export const gatewayHomeConfig = {
       z: 1,
       scale: 4,
     },
+    /**
+     * A phone (a canvas under 768 px wide) sees only about 1.7 world units across, so he is smaller, stays in the middle
+     * under the three windows, and is pulled into the portal's column rather than far out to the side.
+     */
+    mobile: {
+      placement: { y: -1.45, scale: 2.2 },
+      talk: { scale: 2.7, x: 0, y: -1.4 },
+      warp: { targetOffsetX: 0.55, endY: 0.4 },
+    },
     idle: {
       enabled: true,
       floatAmplitudeY: 0.03,
@@ -413,7 +428,7 @@ export const gatewayHomeConfig = {
         frameImageSrc: "/gateway/backgrounds/tech-bg.webp",
       },
       planet: {
-        ...makePortalPlanetLayout({ mobileRem: 7.75, viewport: 14.5, desktopRem: 16 }),
+        ...makePortalPlanetLayout({ mobileRem: 4.2, viewport: 14.5, desktopRem: 16 }),
         diffuse: "/gateway/textures/planets/earth-atmosphere.webp",
         normal: "/gateway/textures/planets/earth-normal.webp",
         specular: "/gateway/textures/planets/earth-specular.webp",
@@ -450,7 +465,7 @@ export const gatewayHomeConfig = {
         frameBg: "radial-gradient(ellipse at 50% 45%, rgba(34,211,238,0.10) 0%, rgba(0,40,60,0.58) 45%, rgba(0,0,0,0.88) 100%)",
       },
       planet: {
-        ...makePortalPlanetLayout({ mobileRem: 7.75, viewport: 14.5, desktopRem: 16 }),
+        ...makePortalPlanetLayout({ mobileRem: 4.2, viewport: 14.5, desktopRem: 16 }),
         diffuse: "/gateway/textures/planets/earth-atmosphere.webp",
         normal: "/gateway/textures/planets/earth-normal.webp",
         specular: "/gateway/textures/planets/earth-specular.webp",
@@ -482,7 +497,7 @@ export const gatewayHomeConfig = {
         frameBg: "radial-gradient(ellipse at 50% 50%, rgba(205,220,255,0.07) 0%, rgba(20,30,45,0.52) 45%, rgba(0,0,0,0.85) 100%)",
       },
       planet: {
-        ...makePortalPlanetLayout({ mobileRem: 7.75, viewport: 14.5, desktopRem: 16 }),
+        ...makePortalPlanetLayout({ mobileRem: 4.2, viewport: 14.5, desktopRem: 16 }),
         diffuse: "/gateway/textures/planets/earth-atmosphere.webp",
         normal: "/gateway/textures/planets/earth-normal.webp",
         specular: "/gateway/textures/planets/earth-specular.webp",
@@ -548,8 +563,12 @@ export function createFrameStyle(size: {
   height: ResponsiveSize;
   radiusRem: number;
 }): CSSProperties {
+  // On a phone the three windows share one row: a window never grows past a third of what is left after the page padding
+  // (1 rem each side) and the two gaps, so all three stay on screen. Wider windows keep their own clamp().
+  const { gapMobileRem, gapDesktopRem } = gatewayHomeConfig.row;
+  const rowShare = `calc((100vw - 2rem - 2 * clamp(${gapMobileRem}rem, 3vw, ${gapDesktopRem}rem)) / 3)`;
   return {
-    width: createClampSize(size.width, "vw"),
+    width: `min(${createClampSize(size.width, "vw")}, ${rowShare})`,
     height: createClampSize(size.height, "vh"),
     borderRadius: `${size.radiusRem}rem`,
   };

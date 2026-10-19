@@ -28,7 +28,9 @@ export function cycleIndex(stem: number, branch: number): number | null {
 /** Point on a ring of 60 places for cycle index `n`, starting at the top and running clockwise. */
 export function ringPoint(n: number, radius: number, center = 0): { x: number; y: number } {
   const angle = (n / 60) * Math.PI * 2 - Math.PI / 2;
-  return { x: center + radius * Math.cos(angle), y: center + radius * Math.sin(angle) };
+  // Rounded so the server and the browser print the same attribute text; the last float digits differ between engines.
+  const round = (value: number): number => Math.round(value * 1000) / 1000;
+  return { x: round(center + radius * Math.cos(angle)), y: round(center + radius * Math.sin(angle)) };
 }
 
 /** Cycle indices of the four sample pillars. */

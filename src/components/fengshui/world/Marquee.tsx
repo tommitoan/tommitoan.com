@@ -7,9 +7,9 @@ import { RevealHeading } from "./RevealHeading";
 import { useFengShuiWorldCopy } from "@/components/fengshui/FengShuiLanguage";
 import { useWorldMode } from "./use-world-mode";
 
-function Row({ items, trackRef }: { items: string[]; trackRef?: React.Ref<HTMLDivElement> }) {
+function Row({ items, trackRef, reverse }: { items: string[]; trackRef?: React.Ref<HTMLDivElement>; reverse?: boolean }) {
   return (
-    <div className="fs-marquee-row" aria-hidden="true">
+    <div className="fs-marquee-row" data-reverse={reverse ? "true" : undefined} aria-hidden="true">
       <div ref={trackRef} className="fs-marquee-track">
         {[0, 1].flatMap((copy) =>
           items.map((han) => {
@@ -82,14 +82,14 @@ export function Marquee() {
   }, [mode]);
 
   return (
-    <section ref={bandRef} className="fs-band fs-band-paper fs-marquee" data-kit-section="Giáp Tý / Cycle" aria-label={copy.title}>
+    <section ref={bandRef} className="fs-band fs-band-paper fs-marquee" data-mode={mode} data-kit-section="Giáp Tý / Cycle" aria-label={copy.title}>
       <div className="fs-wrap">
         <span className="fs-eyebrow">{copy.eyebrow}</span>
         <RevealHeading className="fs-title">{copy.title}</RevealHeading>
         <p className="fs-copy">{copy.caption}</p>
       </div>
       <Row items={items} trackRef={firstRef} />
-      <Row items={items} trackRef={secondRef} />
+      <Row items={items} trackRef={secondRef} reverse />
     </section>
   );
 }

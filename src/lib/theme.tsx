@@ -11,18 +11,9 @@ type ThemeContextValue = {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-function systemPrefersLight(): boolean {
-  if (typeof window === "undefined") return false;
-  try {
-    return window.matchMedia("(prefers-color-scheme: light)").matches;
-  } catch {
-    return false;
-  }
-}
-
 function getInitialTheme(): Theme {
   if (typeof window === "undefined") return "dark";
-  return resolveTheme(readStoredTheme(safeLocalStorage()), systemPrefersLight());
+  return resolveTheme(readStoredTheme(safeLocalStorage()));
 }
 
 function applyTheme(theme: Theme) {
@@ -35,21 +26,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     applyTheme(theme);
   }, [theme]);
-
-  // Without a saved choice the page follows the system setting while it is open.
-  useEffect(() => {
-    let query: MediaQueryList;
-    try {
-      query = window.matchMedia("(prefers-color-scheme: light)");
-    } catch {
-      return;
-    }
-    const handler = (event: MediaQueryListEvent) => {
-      if (readStoredTheme(safeLocalStorage()) === null) setThemeState(event.matches ? "light" : "dark");
-    };
-    query.addEventListener("change", handler);
-    return () => query.removeEventListener("change", handler);
-  }, []);
 
   // Only a deliberate choice is saved, so the first visit does not turn the system's pick into the visitor's.
   const setTheme = useCallback((next: Theme) => {

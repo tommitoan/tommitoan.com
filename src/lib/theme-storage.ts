@@ -26,10 +26,16 @@ export function saveTheme(storage: WritableStorage | null, theme: Theme): void {
   }
 }
 
-/** The saved choice wins; without one the system setting decides, and dark is the default. */
-export function resolveTheme(stored: Theme | null, systemPrefersLight: boolean): Theme {
-  return stored ?? (systemPrefersLight ? "light" : "dark");
+/** The saved choice wins; without one the site is dark, whatever the system setting says. */
+export function resolveTheme(stored: Theme | null): Theme {
+  return stored ?? "dark";
 }
+
+/**
+ * The same rule as a script for <head>, run before the first paint: the saved light or dark, else dark. The kit's boot
+ * script (shared with the sister site) still follows the system setting, so pages that run it add this after it.
+ */
+export const DEFAULT_DARK_SNIPPET = `try{var t=localStorage.getItem("${THEME_STORAGE_KEY}");document.documentElement.setAttribute("data-theme",t==="light"||t==="dark"?t:"dark")}catch(e){document.documentElement.setAttribute("data-theme","dark")}`;
 
 /** The browser's storage, or null where reaching it throws. */
 export function safeLocalStorage(): Storage | null {

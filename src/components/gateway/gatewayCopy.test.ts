@@ -34,6 +34,7 @@ describe("home page copy", () => {
 
   it("has the words of the page in both languages", () => {
     expect(GATEWAY_UI.en.enter).not.toBe(GATEWAY_UI.vi.enter);
+    expect(GATEWAY_UI.en.tapToEnter).not.toBe(GATEWAY_UI.vi.tapToEnter);
     expect(GATEWAY_UI.vi.languageLabel).toBe("Ngôn ngữ");
   });
 });
