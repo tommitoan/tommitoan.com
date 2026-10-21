@@ -1,7 +1,6 @@
-/** The wide pictures at the head of the bands of the Feng Shui page: public/fengshui/art/<name>.webp, 16:9 and without any text.
- * They are made with the Codex CLI in the bazica-web task `bazica-site-art` (PROMPTS_SET_3.md) and cut by its ingest_art_images.py, which writes
- * the size the file really has; fengshui-art.test.ts compares these numbers with the files, so they cannot drift. The pictures decorate bands
- * whose headings say everything, so they have no alt text.
+/** The wide pictures at the head of the bands of the Feng Shui page: public/fengshui/art/<name>.webp, 16:9, painted without any text and cut to size
+ * before they are put here. The width and height below are those of the files; fengshui-art.test.ts compares them with the real headers, so they
+ * cannot drift. The pictures decorate bands whose headings say everything, so they have no alt text.
  */
 export type FengShuiArt = { src: string; width: number; height: number };
 

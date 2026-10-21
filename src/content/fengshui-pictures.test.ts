@@ -23,8 +23,8 @@ function webpSize(data: Buffer): [number, number] {
 
 const read = (url: string): Buffer => readFileSync(path.join(process.cwd(), "public", url));
 
-// The pictures come from bazica-web (task/bazica-knowledge-base-integration/scripts/export_tommitoan_images.py). They are square, and
-// the world draws them with `height: auto` or a square frame, so a picture of another shape would be stretched or cropped.
+// The pictures are the square exports of the paintings of the sister site's knowledge pages. The world draws them with `height: auto` or a square
+// frame, so a picture of another shape would be stretched or cropped.
 const KINDS = [
   { name: "solar terms", count: 24, url: termImage, smallest: 192 },
   { name: "heavenly stems", count: 10, url: stemImage, smallest: 384 },

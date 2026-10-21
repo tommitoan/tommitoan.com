@@ -27,8 +27,10 @@ import {
   createSquareStyle,
   gatewayHomeConfig,
   gatewayHomeVignetteStyle,
+  isCompactViewport,
   spaceThemeBackgroundStyle,
   spaceThemeOverlayStyle,
+  zoomOffsetXFor,
   type GatewayHomeEffect,
   type GatewayHomeId,
   type GatewayHomePortal,
@@ -212,7 +214,7 @@ export function SpaceGatewayHome() {
   };
 
   const activePortalOffsetX = activePortal
-    ? (viewportWidth > 0 && viewportWidth < 768 ? gatewayHomeConfig.transitions.zoomOffsetXMobileByPortal : gatewayHomeConfig.transitions.zoomOffsetXByPortal)[activePortal.id]
+    ? zoomOffsetXFor(activePortal.id, viewportWidth)
     : "0vw";
   const debug = gatewayHomeConfig.debug;
   // The loader fills as the parts of the page are really ready, and finishes only when the visitor can see all of it.
@@ -225,7 +227,7 @@ export function SpaceGatewayHome() {
       });
   const guide = canGuide(viewportWidth, !!reducedMotion);
   // On a phone there is no hover, so each window carries its name all the time (the width is 0 until the first measure).
-  const compact = viewportWidth > 0 && viewportWidth < 768;
+  const compact = isCompactViewport(viewportWidth);
   // A phone has no hover: the first tap on a window brings the astronaut over to introduce it, the second tap enters. With
   // reduced motion there is no introduction, so one tap enters.
   const preview = compact && !reducedMotion;

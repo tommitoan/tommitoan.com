@@ -8,6 +8,8 @@
   --fs-harmony: #2f9e5c;
   --fs-triad: #2f6fbf;
   --fs-gold-deep: #a9792b;
+  /* The dawn gradient of the static story stays light in both looks, so the text on it keeps one dark ink. */
+  --fs-ink-on-dawn: #3b2f20;
   position: relative;
   min-height: 100vh;
   overflow-x: clip;
@@ -718,8 +720,7 @@
 }
 .fs-static-dawn {
   background: linear-gradient(#d9998a, #f1cfa6);
-  /* The dawn gradient stays light in both looks, so its text keeps a fixed dark ink instead of the theme's ink. */
-  color: #3b2f20;
+  color: var(--fs-ink-on-dawn);
 }
 .fs-static-paper {
   background: var(--kit-paper);
@@ -1747,7 +1748,9 @@ html[data-kit-appearance="dark"] .fs-cta {
 }
 
 @media (max-width: 760px) {
-  /* The section dots sit over the text on a phone and their labels stay open after a tap; the progress bar remains. */
+  /* The section dots sit over the text on a phone and their labels stay open after a tap, so they are left out; the progress bar and the
+     headings remain, and the dots only repeat them. The selector is heavier than the kit's single class on purpose, so the rule wins
+     whichever sheet is read first. */
   html body .kit-dots {
     display: none;
   }

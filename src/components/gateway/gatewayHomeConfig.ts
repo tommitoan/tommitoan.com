@@ -574,6 +574,20 @@ export function createFrameStyle(size: {
   };
 }
 
+/** Below this width (in px) the home page is laid out for a phone: names always shown, a tap to introduce a window, a smaller astronaut. */
+export const COMPACT_MAX_WIDTH = 768;
+
+/** A phone-sized window. A width of 0 means the window has not been measured yet, which is not a phone. */
+export function isCompactViewport(width: number): boolean {
+  return width > 0 && width < COMPACT_MAX_WIDTH;
+}
+
+/** How far the camera slides sideways while it zooms into a portal's column: a phone has its own offsets, the columns being closer to the middle. */
+export function zoomOffsetXFor(portal: GatewayHomeId, viewportWidth: number): string {
+  const { zoomOffsetXByPortal, zoomOffsetXMobileByPortal } = gatewayHomeConfig.transitions;
+  return (isCompactViewport(viewportWidth) ? zoomOffsetXMobileByPortal : zoomOffsetXByPortal)[portal];
+}
+
 export function createGapStyle(gapMobileRem: number, gapDesktopRem: number): CSSProperties {
   return {
     gap: `clamp(${gapMobileRem}rem, 3vw, ${gapDesktopRem}rem)`,
