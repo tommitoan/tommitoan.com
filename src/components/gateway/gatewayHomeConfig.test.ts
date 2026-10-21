@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createAnchorStyle, gatewayHomeConfig } from "./gatewayHomeConfig";
+import { COMPACT_MAX_WIDTH, createAnchorStyle, createFrameStyle, gatewayHomeConfig, isCompactViewport, zoomOffsetXFor } from "./gatewayHomeConfig";
 
 describe("createAnchorStyle", () => {
   it("places a centered anchor with centered translation", () => {
@@ -106,5 +106,35 @@ describe("gatewayHomeConfig", () => {
     expect(gatewayLoader.scaleSize).toBe(1);
     expect(gatewayLoader.color).toBe("#67e8f9");
     expect(gatewayLoader.glowStrength).toBe(4.8);
+  });
+});
+
+describe("the phone layout of the home page", () => {
+  it("is a phone only when the width is measured and under the boundary", () => {
+    expect(isCompactViewport(0)).toBe(false); // not measured yet
+    expect(isCompactViewport(1)).toBe(true);
+    expect(isCompactViewport(COMPACT_MAX_WIDTH - 1)).toBe(true);
+    expect(isCompactViewport(COMPACT_MAX_WIDTH)).toBe(false);
+    expect(isCompactViewport(1280)).toBe(false);
+  });
+
+  it("zooms toward a portal by the phone offsets on a phone and by the desktop ones elsewhere", () => {
+    const { zoomOffsetXByPortal, zoomOffsetXMobileByPortal } = gatewayHomeConfig.transitions;
+    for (const portal of gatewayHomeConfig.portals) {
+      expect(zoomOffsetXFor(portal.id, 390)).toBe(zoomOffsetXMobileByPortal[portal.id]);
+      expect(zoomOffsetXFor(portal.id, 1280)).toBe(zoomOffsetXByPortal[portal.id]);
+      expect(zoomOffsetXFor(portal.id, 0)).toBe(zoomOffsetXByPortal[portal.id]);
+    }
+    // The two outer columns move opposite ways and the middle one stays: on a phone as on a desktop.
+    expect(zoomOffsetXMobileByPortal.discover).toBe("0vw");
+    expect(parseFloat(zoomOffsetXMobileByPortal.tech)).toBe(-parseFloat(zoomOffsetXMobileByPortal.fengshui));
+  });
+
+  it("never lets a window grow past a third of the row, so all three stay on a phone", () => {
+    const style = createFrameStyle({ width: { mobileRem: 10, viewport: 30, desktopRem: 24 }, height: { mobileRem: 20, viewport: 60, desktopRem: 30 }, radiusRem: 2 });
+    const { gapMobileRem, gapDesktopRem } = gatewayHomeConfig.row;
+    expect(String(style.width)).toMatch(/^min\(clamp\(/);
+    expect(String(style.width)).toContain(`calc((100vw - 2rem - 2 * clamp(${gapMobileRem}rem, 3vw, ${gapDesktopRem}rem)) / 3)`);
+    expect(style.borderRadius).toBe("2rem");
   });
 });

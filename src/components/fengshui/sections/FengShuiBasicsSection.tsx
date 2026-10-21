@@ -4,6 +4,7 @@ import { Reveal } from "@/components/tech/Reveal";
 import { fengshuiLinks } from "@/content/fengshui-content";
 import { useFengShuiCopy } from "@/components/fengshui/FengShuiLanguage";
 import { WorldHeading } from "@/components/fengshui/world/WorldHeading";
+import { FENGSHUI_ART } from "@/content/fengshui-art";
 
 export function FengShuiBasicsSection() {
   const copy = useFengShuiCopy().basics;
@@ -11,7 +12,7 @@ export function FengShuiBasicsSection() {
   return (
     <section className="fs-band fs-band-paper" data-kit-section="Cơ sở / Basics">
       <div className="fs-wrap">
-        <WorldHeading eyebrow={copy.eyebrow} title={`${copy.title} ${copy.titleAccent}`} description={copy.description} />
+        <WorldHeading eyebrow={copy.eyebrow} title={`${copy.title} ${copy.titleAccent}`} description={copy.description} art={FENGSHUI_ART.basics} />
 
         <div className="fs-grid fs-grid-2">
           {copy.cards.map((card, index) => (

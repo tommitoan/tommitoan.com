@@ -11,6 +11,8 @@ type Props = {
   accent: string;
   /** The window is under the pointer. */
   active: boolean;
+  /** A phone: the three windows are narrow and there is no hover, so only the name is shown, always, at the top of the window. */
+  compact?: boolean;
   /** The window has grown wide (the hover guide is on): the highlights and the enter hint are shown too. */
   expanded: boolean;
   /** The window's width when grown, as a CSS length. */
@@ -35,7 +37,20 @@ const itemVariants: Variants = {
  * content is laid out at the window's grown width and centred, so nothing reflows while the window widens: the content only
  * fades and rises, and the window's edges reveal it like a curtain.
  */
-export function GatewayPortalInfo({ label, copy, enterText, accent, active, expanded, expandedWidthCss }: Props) {
+export function GatewayPortalInfo({ label, copy, enterText, accent, active, compact = false, expanded, expandedWidthCss }: Props) {
+  if (compact) {
+    return (
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 bg-gradient-to-b from-black/75 to-transparent px-1 pb-6 pt-3 text-center">
+        <h2
+          className="text-[0.68rem] font-bold uppercase tracking-[0.12em] text-white drop-shadow-md"
+          style={{ fontFamily: "var(--font-gateway-display), var(--font-gateway-body), sans-serif" }}
+        >
+          {label}
+        </h2>
+      </div>
+    );
+  }
+
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10" style={{ height: expanded || active ? "52%" : "30%" }}>
       <motion.div

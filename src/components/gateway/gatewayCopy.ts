@@ -61,9 +61,9 @@ export const PORTAL_TITLES: Record<GatewayHomeId, Record<SiteLanguage, string>> 
 };
 
 /** The words of the home page that are not about one route. */
-export const GATEWAY_UI: Record<SiteLanguage, { enter: string; languageLabel: string }> = {
-  en: { enter: "Click to enter", languageLabel: "Language" },
-  vi: { enter: "Bấm để vào", languageLabel: "Ngôn ngữ" },
+export const GATEWAY_UI: Record<SiteLanguage, { enter: string; tapToEnter: string; languageLabel: string }> = {
+  en: { enter: "Click to enter", tapToEnter: "Tap again to enter", languageLabel: "Language" },
+  vi: { enter: "Bấm để vào", tapToEnter: "Chạm lần nữa để vào", languageLabel: "Ngôn ngữ" },
 };
 
 export function portalTitle(id: GatewayHomeId, language: SiteLanguage): string {

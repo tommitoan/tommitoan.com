@@ -177,7 +177,7 @@ export function DayMaster() {
                     aria-hidden={index === selected ? undefined : true}
                     data-shown={index === selected ? "true" : undefined}
                     width={378}
-                    height={369}
+                    height={378}
                     decoding="async"
                   />
                 ))}
@@ -214,7 +214,7 @@ export function DayMaster() {
                     onClick={() => setSelected(stemIndex)}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element -- small watercolour of the stem */}
-                    <img src={stemImage(stemIndex)} alt="" width={56} height={55} loading="lazy" decoding="async" />
+                    <img src={stemImage(stemIndex)} alt="" width={56} height={56} loading="lazy" decoding="async" />
                     <span>{stemName(STEMS[stemIndex]!, language)}</span>
                   </button>
                 )),

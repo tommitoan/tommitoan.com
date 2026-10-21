@@ -8,6 +8,8 @@
   --fs-harmony: #2f9e5c;
   --fs-triad: #2f6fbf;
   --fs-gold-deep: #a9792b;
+  /* The dawn gradient of the static story stays light in both looks, so the text on it keeps one dark ink. */
+  --fs-ink-on-dawn: #3b2f20;
   position: relative;
   min-height: 100vh;
   overflow-x: clip;
@@ -490,6 +492,21 @@
   color: var(--kit-ink);
   font-size: 1rem;
 }
+/* On a phone the eight marks are about 40 px apart, so every second one drops to a lower line and the labels do not overlap. */
+@media (max-width: 760px) {
+  .fs-scene-mark span {
+    font-size: 0.6rem;
+  }
+  .fs-scene-mark b {
+    font-size: 0.85rem;
+  }
+  .fs-scene-mark[data-row="1"] span {
+    top: 52px;
+  }
+  .fs-scene-mark[data-row="1"] b {
+    top: 66px;
+  }
+}
 .fs-scene-shadow {
   height: 8px;
   border-radius: 50%;
@@ -703,7 +720,7 @@
 }
 .fs-static-dawn {
   background: linear-gradient(#d9998a, #f1cfa6);
-  color: var(--kit-ink);
+  color: var(--fs-ink-on-dawn);
 }
 .fs-static-paper {
   background: var(--kit-paper);
@@ -727,8 +744,9 @@
   color: var(--kit-gold);
   font-size: 0.8rem;
 }
+/* Two figures side by side on a 320 px phone too: the page gutter is 1 rem each side and the gap 1 rem. */
 .fs-static-figure {
-  width: min(200px, 50vw);
+  width: min(200px, calc((100vw - 3rem) / 2));
   height: auto;
 }
 .fs-static-figure-small {
@@ -776,6 +794,24 @@
 }
 .fs-heading {
   max-width: 62ch;
+}
+/* A wide picture of a band (src/content/fengshui-art.ts): calm, on a paper frame, never wider than the heading's column plus a little. */
+.fs-art {
+  margin: 1.75rem 0 0;
+  max-width: 44rem;
+}
+.fs-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  box-shadow:
+    0 0 0 6px #fff,
+    0 10px 26px rgb(0 0 0 / 0.16);
+}
+.fs-cta .fs-art {
+  margin: 0 auto 1.5rem;
+  max-width: 28rem;
 }
 .fs-grid {
   display: grid;
@@ -1233,6 +1269,21 @@ html[data-kit-appearance="dark"] .fs-cta {
   transform: scaleX(0);
   transform-origin: 0 50%;
 }
+/* On a phone the pinned stage starts below the fixed header and the ring shrinks, so the ring, the step, the four cards and
+   the counter all fit in one window. */
+@media (max-width: 760px) {
+  .fs-story-stage {
+    align-items: start;
+    padding-top: 5.8rem;
+    padding-bottom: 1rem;
+  }
+  .fs-story-grid {
+    gap: 0.6rem;
+  }
+  .fs-ring {
+    max-width: min(150px, 22svh);
+  }
+}
 .fs-story-card {
   display: grid;
   gap: 0.3rem;
@@ -1493,7 +1544,7 @@ html[data-kit-appearance="dark"] .fs-cta {
 /* The ten paintings sit on top of each other; the one of the stem in focus fades in over the one that leaves. */
 .fs-dm-frame {
   position: relative;
-  aspect-ratio: 378 / 369;
+  aspect-ratio: 1;
 }
 .fs-dm-art img {
   position: absolute;
@@ -1634,8 +1685,10 @@ html[data-kit-appearance="dark"] .fs-cta {
   .fs-dm-stage {
     grid-template-columns: 1fr;
   }
+  /* An explicit width: with only a max-width and auto margins the grid item shrinks to its padding, because the ten
+     paintings inside are absolutely positioned and give it no content width. */
   .fs-dm-art {
-    max-width: 320px;
+    width: min(100%, 320px);
     margin-inline: auto;
   }
   .fs-dm-tile {
@@ -1675,8 +1728,32 @@ html[data-kit-appearance="dark"] .fs-cta {
   font-size: 3.2rem;
   line-height: 1.25;
 }
+/* Without the scroll-driven scene (phones, weak devices) the rows still run on their own: each track holds the sixty
+   pairs twice, so moving it by half its width loops without a jump. The rows run in opposite directions. */
+@media (prefers-reduced-motion: no-preference) {
+  .fs-marquee[data-mode="static"] .fs-marquee-row {
+    overflow: hidden;
+  }
+  .fs-marquee[data-mode="static"] .fs-marquee-track {
+    animation: fs-marquee-run 150s linear infinite;
+  }
+  .fs-marquee[data-mode="static"] .fs-marquee-row[data-reverse] .fs-marquee-track {
+    animation-direction: reverse;
+  }
+}
+@keyframes fs-marquee-run {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
 
 @media (max-width: 760px) {
+  /* The section dots sit over the text on a phone and their labels stay open after a tap, so they are left out; the progress bar and the
+     headings remain, and the dots only repeat them. The selector is heavier than the kit's single class on purpose, so the rule wins
+     whichever sheet is read first. */
+  html body .kit-dots {
+    display: none;
+  }
   .fs-hero {
     padding-top: 9rem;
   }

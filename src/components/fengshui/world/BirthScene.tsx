@@ -243,6 +243,7 @@ function ScrollScene() {
               markRefs.current[index] = element;
             }}
             className="fs-scene-mark"
+            data-row={index % 2}
           >
             <i />
             <span>

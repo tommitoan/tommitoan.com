@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { useFrame, useLoader } from "@react-three/fiber";
+import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import { TextureLoader } from "three";
 import { MathUtils } from "three";
 import type { Group, MeshBasicMaterial } from "three";
@@ -22,7 +22,11 @@ export function SpaceBackgroundAstronaut({ isWarping = false, targetIndex = 1, t
   const poseRef = useRef<Group>(null);
   const materialRef = useRef<MeshBasicMaterial>(null);
   const [back, front, pulled] = useLoader(TextureLoader, [gatewayHomeConfig.astronaut.assetSrc, gatewayHomeConfig.astronaut.frontAssetSrc, gatewayHomeConfig.astronaut.pulledAssetSrc]);
-  const astronautConfig = gatewayHomeConfig.astronaut;
+  const base = gatewayHomeConfig.astronaut;
+  const compact = useThree((state) => state.size.width) < 768;
+  const astronautConfig = compact
+    ? { ...base, placement: { ...base.placement, ...base.mobile.placement }, talk: { ...base.talk, ...base.mobile.talk }, warp: { ...base.warp, ...base.mobile.warp } }
+    : base;
 
   useEffect(() => {
     onReady?.();

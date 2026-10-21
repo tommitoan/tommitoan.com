@@ -9,15 +9,17 @@ import { WorldFooter } from "@/components/fengshui/world/WorldFooter";
 import { SkipLink } from "@/components/fengshui/world/SkipLink";
 import { WorldHeader } from "@/components/fengshui/world/WorldHeader";
 import { ThemeProvider } from "@/lib/theme";
+import { DEFAULT_DARK_SNIPPET } from "@/lib/theme-storage";
 import { worldSans, worldSerif } from "../world-font";
 
 /**
  * Adds the cover before first paint when the visitor arrives from the sister site. The night look is set first, so the
  * cover is the dark sky and not the paper the shared stylesheet uses by default. Scroll restoration is turned off at the
- * same moment, so a reload does not bring the page back to where it was left.
+ * same moment, so a reload does not bring the page back to where it was left. The kit's boot script follows the system
+ * setting when nothing is saved, so the dark default is applied right after it.
  */
 const bootScript =
-  FRESH_START_SNIPPET + 'document.documentElement.setAttribute("data-kit-theme","night");' + readFileSync(path.join(process.cwd(), "kit/dist/kit-boot.js"), "utf8");
+  FRESH_START_SNIPPET + 'document.documentElement.setAttribute("data-kit-theme","night");' + readFileSync(path.join(process.cwd(), "kit/dist/kit-boot.js"), "utf8") + DEFAULT_DARK_SNIPPET;
 
 export default function FengShuiLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

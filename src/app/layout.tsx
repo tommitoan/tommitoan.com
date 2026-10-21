@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Instrument_Sans, Dancing_Script } from "next/font/google";
 import { siteContent } from "@/content/site-content";
+import { DEFAULT_DARK_SNIPPET } from "@/lib/theme-storage";
 import "./globals.css";
 
 const BASE = siteContent.siteMeta.domain;
@@ -158,18 +159,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
   const jsonLd = [personLd, websiteLd];
 
-  const themeScript = `(() => {
-    try {
-      const s = localStorage.getItem('tommitoan-theme');
-      const d = s || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-      document.documentElement.setAttribute('data-theme', d);
-    } catch (_) {
-      document.documentElement.setAttribute('data-theme', 'dark');
-    }
-  })();`;
+  const themeScript = `(() => {${DEFAULT_DARK_SNIPPET}})();`;
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

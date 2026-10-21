@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useFengShuiCopy } from "@/components/fengshui/FengShuiLanguage";
 import { WorldHeading } from "@/components/fengshui/world/WorldHeading";
+import { FENGSHUI_ART } from "@/content/fengshui-art";
 
 const REDUCED = "(prefers-reduced-motion: reduce)";
 
@@ -36,7 +37,7 @@ export function FengShuiLanesSection() {
   return (
     <section className="fs-band fs-band-paper" data-kit-section="Lộ trình / Roadmap">
       <div className="fs-wrap">
-        <WorldHeading eyebrow={copy.lanesHeading.eyebrow} title={`${copy.lanesHeading.title} ${copy.lanesHeading.accent}`} />
+        <WorldHeading eyebrow={copy.lanesHeading.eyebrow} title={`${copy.lanesHeading.title} ${copy.lanesHeading.accent}`} art={FENGSHUI_ART.roadmap} />
         <ol ref={lineRef} className="fs-road">
           {copy.lanes.map((lane, index) => (
             <li key={lane.title} className="fs-road-stop" data-status={lane.status} style={{ "--i": index } as React.CSSProperties}>
